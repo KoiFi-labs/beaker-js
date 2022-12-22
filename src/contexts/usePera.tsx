@@ -11,6 +11,8 @@ type Props = {
 export const PeraProvider: React.FC<Props> = ({ children }: Props): JSX.Element => {
   const peraWallet = new PeraWalletConnect();
   const [accountAddress, setAccountAddress] = useState([])
+  const isConnectedToPeraWallet = accountAddress?.length;
+
 
 
   const handleDisconnectWalletClick = () => {
@@ -41,7 +43,7 @@ export const PeraProvider: React.FC<Props> = ({ children }: Props): JSX.Element 
 
 
   return (
-    <PeraContext.Provider value={{ accountAddress, handleConnectWalletClick, handleDisconnectWalletClick}}>
+    <PeraContext.Provider value={{ accountAddress, handleConnectWalletClick, handleDisconnectWalletClick, isConnectedToPeraWallet }}>
     {children}
     </PeraContext.Provider>
   )

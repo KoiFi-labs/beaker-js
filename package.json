@@ -11,6 +11,7 @@
     "rebuild": "npx beaker generate contracts/artifacts/application.json src/"
   },
   "dependencies": {
+    "@nextui-org/react": "^1.0.0-beta.11",
     "@perawallet/connect": "^1.0.7",
     "@types/node": "18.11.9",
     "@types/react": "18.0.25",
