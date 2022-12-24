@@ -10,22 +10,20 @@ type Props = {
 
 export const PeraProvider: React.FC<Props> = ({ children }: Props): JSX.Element => {
   const peraWallet = new PeraWalletConnect();
-  const [accountAddress, setAccountAddress] = useState([])
-  const isConnectedToPeraWallet = accountAddress?.length;
+  const [peraAccountAddress, setAccountAddress] = useState([])
+  const isConnectedToPeraWallet = peraAccountAddress?.length;
 
-
-
-  const handleDisconnectWalletClick = () => {
+  const handleDisconnectPeraWalletClick = () => {
     peraWallet.disconnect();
     setAccountAddress([]);
 
   }
 
-  const handleConnectWalletClick = () =>{
+  const handleConnectPeraWalletClick = () =>{
     peraWallet
       .connect()
       .then((newAccounts) => {
-        peraWallet.connector?.on("disconnect", handleDisconnectWalletClick);
+        peraWallet.connector?.on("disconnect", handleDisconnectPeraWalletClick);
         setAccountAddress(newAccounts[0] as unknown as never[]);
       }, (error) => {
         if (error?.data?.type !== "CONNECT_MODAL_CLOSED") {
@@ -36,14 +34,14 @@ export const PeraProvider: React.FC<Props> = ({ children }: Props): JSX.Element 
 
   useEffect(() => {
     peraWallet.reconnectSession().then((accounts) => {
-      peraWallet.connector?.on("disconnect", handleDisconnectWalletClick);
-      if (accounts.length) setAccountAddress(accountAddress[0])
+      peraWallet.connector?.on("disconnect", handleDisconnectPeraWalletClick);
+      if (accounts.length) setAccountAddress(peraAccountAddress[0])
     });
   }, []);
 
 
   return (
-    <PeraContext.Provider value={{ accountAddress, handleConnectWalletClick, handleDisconnectWalletClick, isConnectedToPeraWallet }}>
+    <PeraContext.Provider value={{ peraAccountAddress, handleConnectPeraWalletClick, handleDisconnectPeraWalletClick, isConnectedToPeraWallet }}>
     {children}
     </PeraContext.Provider>
   )
