@@ -21,6 +21,7 @@ a {
   }
   body {
     color: white;
-    background: black;
+    background: rgb(0,0,0);
+    background: radial-gradient(circle,  rgba(0,0,0,1) 30%, rgb(1, 19, 53) 100%);
   }
 }

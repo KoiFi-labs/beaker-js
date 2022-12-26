@@ -44,7 +44,7 @@ const Nav: React.FC = (): JSX.Element => {
   }
 
   return (
-    <Navbar variant="sticky" css={{backgroundColor: 'transparent'}} >
+    <Navbar variant="sticky" maxWidth="fluid" >
       <Navbar.Brand >
         <Text b color="inherit" hideIn="xs">
          KoiFi

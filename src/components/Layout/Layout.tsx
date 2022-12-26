@@ -8,11 +8,12 @@ type Props = {
 
 export const Layout = ({ children }: Props) => {
 
-    return (
-        <Box css={{maxW: "100%"} }>
+    return (<>
+         <Box css={{maxW: "100%"} }>
             <Nav />
             {children}
             <Footer/>
-        </Box>
+         </Box>
+        </>
         );
 }

@@ -22,13 +22,10 @@ export default function Home() {
         <div className={styles.container}>
         <main className={styles.main}>
 
-            <h1 className={styles.title}>
-                KoiFi Protocol
-            </h1>
+            <Text h1 color="#ff4ecd"> KoiFi Protocol </Text>
 
-            <p className={styles.description}>
-            Swap on the leading decentralized crypto trading protocol. 
-            </p>
+            <Text> Swap on the leading decentralized crypto trading protocol. </Text>
+            <Spacer/>
             <code className={styles.code}>Hello KoiFi</code>
             <Spacer/>
             {showWallet()}
