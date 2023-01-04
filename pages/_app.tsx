@@ -3,6 +3,7 @@ import type { AppProps } from "next/app"
 import Head from "next/head"
 import { PeraProvider } from '../src/contexts/usePera'
 import { MyAlgoProvider } from '../src/contexts/useMyAlgo'
+import { SandboxProvider } from '../src/contexts/useSandbox'
 import { NextUIProvider, createTheme } from '@nextui-org/react';
 import { Layout } from '../src/components/Layout/Layout'
 import { themeConfig } from '../styles/themeConfig'
@@ -19,13 +20,15 @@ export default function App({ Component, pageProps }: AppProps) {
           <title>KoiFi Protocol</title>
         </Head>
         <NextUIProvider theme={theme}>
-          <PeraProvider>
-            <MyAlgoProvider>
-              <Layout>
-                <Component {...pageProps} />
-              </Layout>
-            </MyAlgoProvider>
-          </PeraProvider>
+          <SandboxProvider>
+            <PeraProvider>
+              <MyAlgoProvider>
+                <Layout>
+                  <Component {...pageProps} />
+                </Layout>
+              </MyAlgoProvider>
+            </PeraProvider>
+          </SandboxProvider>
         </NextUIProvider>
     </>
 )}

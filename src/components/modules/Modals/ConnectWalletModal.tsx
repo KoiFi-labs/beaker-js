@@ -2,6 +2,7 @@ import React from 'react'
 import { Modal, Text, Button } from '@nextui-org/react'
 import { usePera } from '../../../contexts/usePera';
 import { useMyAlgo } from '../../../contexts/useMyAlgo';
+import { useSandbox } from '../../../contexts/useSandbox';
 
 export type ConnectWalletModalProps = {
     isVisible: boolean,
@@ -10,6 +11,7 @@ export type ConnectWalletModalProps = {
 const ConnectWalletModal = ({isVisible, onHide}: ConnectWalletModalProps) => {
     const {handleConnectMyAlgoWalletClick } = useMyAlgo()
     const {handleConnectPeraWalletClick} = usePera()
+    const {handleConnectSandboxWalletClick} = useSandbox()
 
     const handleButtonPera = () => {
         handleConnectPeraWalletClick()
@@ -20,6 +22,11 @@ const ConnectWalletModal = ({isVisible, onHide}: ConnectWalletModalProps) => {
         handleConnectMyAlgoWalletClick()
         onHide()
     }
+
+    const handleButtonSandbox = () => {
+      handleConnectSandboxWalletClick()
+      onHide()
+  }
 
   return (
     <Modal
@@ -48,6 +55,13 @@ const ConnectWalletModal = ({isVisible, onHide}: ConnectWalletModalProps) => {
                 onClick={handleButtonMyAlgo}
                 >
                 Connect with MyAlgo
+            </Button>
+            <Button 
+                bordered 
+                color="primary"
+                onClick={handleButtonSandbox}
+                >
+                Connect with Sandox
             </Button>
         </Modal.Body>
         <Modal.Footer>
