@@ -1,5 +1,5 @@
 import React, {useState} from 'react'
-import { Modal, Text, Button, Input } from '@nextui-org/react'
+import { Modal, Text, Button, Input, useInput } from '@nextui-org/react'
 import { useSandbox } from '../../../contexts/useSandbox'
 import algoSdk from "algosdk"
 
@@ -8,14 +8,18 @@ export type ConnectWithSandboxModalProps = {
     onHide: () => void
 }
 const ConnectWithSandboxModal = ({isVisible, onHide}: ConnectWithSandboxModalProps) => {
-  const {setAccountAddress} = useSandbox()
+  const {setSandboxAccountAddress, setIsConnectedToSandboxWallet} = useSandbox()
     
   const handleSubmit = () => {
-    const address = algoSdk.mnemonicToSecretKey("hundred repeat excuse stadium year reopen inmate cherry pelican check lady sell lazy weekend route comic because atom fatal dizzy dinner gain behind able antique")
-    setAccountAddress([address.addr])
-    console.log(address)
+    const account = algoSdk.mnemonicToSecretKey(value)
+    setSandboxAccountAddress(account)
     onHide()
+    setIsConnectedToSandboxWallet(true)
+    reset()
+
   }
+
+  const {value, bindings, reset} = useInput("");
 
 
   return (
@@ -33,13 +37,14 @@ const ConnectWithSandboxModal = ({isVisible, onHide}: ConnectWithSandboxModalPro
         </Modal.Header>
         <Modal.Body>
           <Input 
+            {...bindings}
             bordered 
             label="Mnemonic"
             placeholder='Enter the 25 words separated by a space'
             id="inputConnectWithSandboxModal"
             >
-          </Input>
-          <Button size={"sm"} onPress={() => handleSubmit()}>
+            </Input>
+          <Button size={"sm"} onClick={handleSubmit}>
             Connect
           </Button>
         </Modal.Body>

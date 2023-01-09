@@ -85,8 +85,8 @@ export default function Sandbox() {
 
             {
                 sandboxAccountAddress?.length ?  
-                <Container>
-                    <Text>Connected to: {sandboxAccountAddress + getBalance()}</Text>
+                <Container fluid justify='center' display='flex'>
+                    <Text h4 color="secondary">Connected to: {sandboxAccountAddress}</Text>
                 </Container>: 
                 null
             }

@@ -1,0 +1,228 @@
+#pragma version 8
+intcblock 0 1
+bytecblock 0x6d6f6e737465724865616c7468 0x706c6179657244616d616765 0x64616d616765 0x6d7670 0x6d617844616d616765
+txn NumAppArgs
+intc_0 // 0
+==
+bnz main_l8
+txna ApplicationArgs 0
+pushbytes 0x77b08fa7 // "initialize_health(uint64)void"
+==
+bnz main_l7
+txna ApplicationArgs 0
+pushbytes 0x326681c5 // "attacks_the_monster()void"
+==
+bnz main_l6
+txna ApplicationArgs 0
+pushbytes 0x9789b03e // "reward_player()void"
+==
+bnz main_l5
+err
+main_l5:
+txn OnCompletion
+intc_0 // NoOp
+==
+txn ApplicationID
+intc_0 // 0
+!=
+&&
+assert
+callsub rewardplayer_6
+intc_1 // 1
+return
+main_l6:
+txn OnCompletion
+intc_0 // NoOp
+==
+txn ApplicationID
+intc_0 // 0
+!=
+&&
+assert
+callsub attacksthemonster_5
+intc_1 // 1
+return
+main_l7:
+txn OnCompletion
+intc_0 // NoOp
+==
+txn ApplicationID
+intc_0 // 0
+!=
+&&
+assert
+txna ApplicationArgs 1
+btoi
+callsub initializehealth_4
+intc_1 // 1
+return
+main_l8:
+txn OnCompletion
+intc_0 // NoOp
+==
+bnz main_l12
+txn OnCompletion
+intc_1 // OptIn
+==
+bnz main_l11
+err
+main_l11:
+txn ApplicationID
+intc_0 // 0
+!=
+assert
+callsub optin_1
+intc_1 // 1
+return
+main_l12:
+txn ApplicationID
+intc_0 // 0
+==
+assert
+callsub create_0
+intc_1 // 1
+return
+
+// create
+create_0:
+bytec_0 // "monsterHealth"
+intc_0 // 0
+app_global_put
+bytec_3 // "mvp"
+pushbytes 0x // ""
+app_global_put
+intc_0 // 0
+bytec_1 // "playerDamage"
+app_global_get_ex
+store 1
+store 0
+load 1
+!
+assert
+bytec_1 // "playerDamage"
+pushint 2 // 2
+app_global_put
+bytec 4 // "maxDamage"
+intc_0 // 0
+app_global_put
+retsub
+
+// opt_in
+optin_1:
+txn Sender
+bytec_2 // "damage"
+intc_0 // 0
+app_local_put
+retsub
+
+// auth_only
+authonly_2:
+global CreatorAddress
+==
+retsub
+
+// auth_only
+authonly_3:
+global CreatorAddress
+==
+retsub
+
+// initialize_health
+initializehealth_4:
+store 2
+txn Sender
+callsub authonly_2
+// unauthorized
+assert
+bytec_0 // "monsterHealth"
+load 2
+app_global_put
+retsub
+
+// attacks_the_monster
+attacksthemonster_5:
+bytec_0 // "monsterHealth"
+app_global_get
+intc_0 // 0
+>
+assert
+bytec_1 // "playerDamage"
+app_global_get
+bytec_0 // "monsterHealth"
+app_global_get
+>
+bnz attacksthemonster_5_l4
+bytec_0 // "monsterHealth"
+bytec_0 // "monsterHealth"
+app_global_get
+bytec_1 // "playerDamage"
+app_global_get
+-
+app_global_put
+attacksthemonster_5_l2:
+txn Sender
+bytec_2 // "damage"
+app_local_get
+bytec_1 // "playerDamage"
+app_global_get
++
+bytec 4 // "maxDamage"
+app_global_get
+>
+bz attacksthemonster_5_l5
+bytec_3 // "mvp"
+txn Sender
+app_global_put
+bytec 4 // "maxDamage"
+txn Sender
+bytec_2 // "damage"
+app_local_get
+bytec_1 // "playerDamage"
+app_global_get
++
+app_global_put
+b attacksthemonster_5_l5
+attacksthemonster_5_l4:
+bytec_0 // "monsterHealth"
+intc_0 // 0
+app_global_put
+b attacksthemonster_5_l2
+attacksthemonster_5_l5:
+txn Sender
+bytec_2 // "damage"
+txn Sender
+bytec_2 // "damage"
+app_local_get
+bytec_1 // "playerDamage"
+app_global_get
++
+app_local_put
+intc_1 // 1
+return
+
+// reward_player
+rewardplayer_6:
+txn Sender
+callsub authonly_3
+// unauthorized
+assert
+bytec_0 // "monsterHealth"
+app_global_get
+intc_0 // 0
+<=
+assert
+txna Accounts 1
+bytec_3 // "mvp"
+app_global_get
+==
+assert
+itxn_begin
+intc_1 // pay
+itxn_field TypeEnum
+txna Accounts 1
+itxn_field Receiver
+pushint 1000000 // 1000000
+itxn_field Amount
+itxn_submit
+intc_1 // 1
+return

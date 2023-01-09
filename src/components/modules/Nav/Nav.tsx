@@ -10,6 +10,7 @@ const Nav: React.FC = (): JSX.Element => {
   const {isConnectedToMyAlgoWallet, handleDisconnectMyAlgoWalletClick} = useMyAlgo()
   const {isConnectedToPeraWallet, handleDisconnectPeraWalletClick} = usePera()
   const {isConnectedToSandboxWallet, handleDisconnectSandboxWalletClick} = useSandbox()
+  console.log("Conected:", isConnectedToSandboxWallet)
 
   const [connectWalletModalVisible, setConnectWalletModalVisible] = useState<boolean>(false)
 
@@ -57,6 +58,7 @@ const Nav: React.FC = (): JSX.Element => {
         <Navbar.Link href="home">Home</Navbar.Link>
         <Navbar.Link href="#">About</Navbar.Link>
         <Navbar.Link href="sandbox">Sandbox</Navbar.Link>
+        <Navbar.Link href="beaker">Beaker</Navbar.Link>
       </Navbar.Content>
       <Navbar.Content>
         <Navbar.Item>
