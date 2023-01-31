@@ -1,0 +1,930 @@
+#pragma version 7
+intcblock 0 1 4 1000 10000000000
+bytecblock 0x61 0x62 0x70 0x67 0x72
+txn NumAppArgs
+intc_0 // 0
+==
+bnz main_l12
+txna ApplicationArgs 0
+pushbytes 0x08a956f7 // "set_governor(account)void"
+==
+bnz main_l11
+txna ApplicationArgs 0
+pushbytes 0x6b59d965 // "bootstrap(pay,asset,asset)uint64"
+==
+bnz main_l10
+txna ApplicationArgs 0
+pushbytes 0x5cbf1e2d // "mint(axfer,axfer,asset,asset,asset)void"
+==
+bnz main_l9
+txna ApplicationArgs 0
+pushbytes 0x1436c2ac // "burn(axfer,asset,asset,asset)void"
+==
+bnz main_l8
+txna ApplicationArgs 0
+pushbytes 0x4a88e055 // "swap(axfer,asset,asset)void"
+==
+bnz main_l7
+err
+main_l7:
+txn OnCompletion
+intc_0 // NoOp
+==
+txn ApplicationID
+intc_0 // 0
+!=
+&&
+assert
+txna ApplicationArgs 1
+intc_0 // 0
+getbyte
+store 27
+txna ApplicationArgs 2
+intc_0 // 0
+getbyte
+store 28
+txn GroupIndex
+intc_1 // 1
+-
+store 26
+load 26
+gtxns TypeEnum
+intc_2 // axfer
+==
+assert
+load 26
+load 27
+load 28
+callsub swap_7
+intc_1 // 1
+return
+main_l8:
+txn OnCompletion
+intc_0 // NoOp
+==
+txn ApplicationID
+intc_0 // 0
+!=
+&&
+assert
+txna ApplicationArgs 1
+intc_0 // 0
+getbyte
+store 23
+txna ApplicationArgs 2
+intc_0 // 0
+getbyte
+store 24
+txna ApplicationArgs 3
+intc_0 // 0
+getbyte
+store 25
+txn GroupIndex
+intc_1 // 1
+-
+store 22
+load 22
+gtxns TypeEnum
+intc_2 // axfer
+==
+assert
+load 22
+load 23
+load 24
+load 25
+callsub burn_6
+intc_1 // 1
+return
+main_l9:
+txn OnCompletion
+intc_0 // NoOp
+==
+txn ApplicationID
+intc_0 // 0
+!=
+&&
+assert
+txna ApplicationArgs 1
+intc_0 // 0
+getbyte
+store 19
+txna ApplicationArgs 2
+intc_0 // 0
+getbyte
+store 20
+txna ApplicationArgs 3
+intc_0 // 0
+getbyte
+store 21
+txn GroupIndex
+pushint 2 // 2
+-
+store 17
+load 17
+gtxns TypeEnum
+intc_2 // axfer
+==
+assert
+txn GroupIndex
+intc_1 // 1
+-
+store 18
+load 18
+gtxns TypeEnum
+intc_2 // axfer
+==
+assert
+load 17
+load 18
+load 19
+load 20
+load 21
+callsub mint_5
+intc_1 // 1
+return
+main_l10:
+txn OnCompletion
+intc_0 // NoOp
+==
+txn ApplicationID
+intc_0 // 0
+!=
+&&
+assert
+txna ApplicationArgs 1
+intc_0 // 0
+getbyte
+store 1
+txna ApplicationArgs 2
+intc_0 // 0
+getbyte
+store 2
+txn GroupIndex
+intc_1 // 1
+-
+store 0
+load 0
+gtxns TypeEnum
+intc_1 // pay
+==
+assert
+load 0
+load 1
+load 2
+callsub bootstrap_4
+store 3
+pushbytes 0x151f7c75 // 0x151f7c75
+load 3
+itob
+concat
+log
+intc_1 // 1
+return
+main_l11:
+txn OnCompletion
+intc_0 // NoOp
+==
+txn ApplicationID
+intc_0 // 0
+!=
+&&
+assert
+txna ApplicationArgs 1
+intc_0 // 0
+getbyte
+callsub setgovernor_3
+intc_1 // 1
+return
+main_l12:
+txn OnCompletion
+intc_0 // NoOp
+==
+bnz main_l14
+err
+main_l14:
+txn ApplicationID
+intc_0 // 0
+==
+assert
+callsub create_0
+intc_1 // 1
+return
+
+// create
+create_0:
+bytec_3 // "g"
+global CreatorAddress
+app_global_put
+bytec 4 // "r"
+intc_0 // 0
+app_global_put
+retsub
+
+// auth_only
+authonly_1:
+bytec_3 // "g"
+app_global_get
+==
+retsub
+
+// auth_only
+authonly_2:
+bytec_3 // "g"
+app_global_get
+==
+retsub
+
+// set_governor
+setgovernor_3:
+store 29
+txn Sender
+callsub authonly_1
+// unauthorized
+assert
+bytec_3 // "g"
+load 29
+txnas Accounts
+app_global_put
+retsub
+
+// bootstrap
+bootstrap_4:
+store 6
+store 5
+store 4
+txn Sender
+callsub authonly_2
+// unauthorized
+assert
+global GroupSize
+pushint 2 // 2
+==
+// group size not 2
+assert
+load 4
+gtxns Receiver
+global CurrentApplicationAddress
+==
+// receiver not app address
+assert
+load 4
+gtxns Amount
+pushint 300000 // 300000
+>=
+// amount minimum not met
+assert
+load 5
+txnas Assets
+load 6
+txnas Assets
+!=
+// Incorrect asset
+assert
+intc_0 // 0
+bytec_0 // "a"
+app_global_get_ex
+store 8
+store 7
+load 8
+!
+assert
+bytec_0 // "a"
+load 5
+txnas Assets
+app_global_put
+intc_0 // 0
+bytec_1 // "b"
+app_global_get_ex
+store 10
+store 9
+load 10
+!
+assert
+bytec_1 // "b"
+load 6
+txnas Assets
+app_global_put
+intc_0 // 0
+bytec_2 // "p"
+app_global_get_ex
+store 16
+store 15
+load 16
+!
+assert
+bytec_2 // "p"
+bytec_0 // "a"
+app_global_get
+asset_params_get AssetUnitName
+store 12
+store 11
+bytec_1 // "b"
+app_global_get
+asset_params_get AssetUnitName
+store 14
+store 13
+load 12
+assert
+load 14
+assert
+itxn_begin
+pushint 3 // acfg
+itxn_field TypeEnum
+pushbytes 0x4b4f4946492d56312d504f4e442d // "KOIFI-V1-POND-"
+load 11
+concat
+pushbytes 0x2d // "-"
+concat
+load 13
+concat
+itxn_field ConfigAssetName
+pushbytes 0x504f4e44 // "POND"
+itxn_field ConfigAssetUnitName
+intc 4 // 10000000000
+itxn_field ConfigAssetTotal
+pushint 3 // 3
+itxn_field ConfigAssetDecimals
+global CurrentApplicationAddress
+itxn_field ConfigAssetManager
+global CurrentApplicationAddress
+itxn_field ConfigAssetReserve
+intc_0 // 0
+itxn_field Fee
+itxn_submit
+itxn CreatedAssetID
+app_global_put
+itxn_begin
+intc_2 // axfer
+itxn_field TypeEnum
+bytec_0 // "a"
+app_global_get
+itxn_field XferAsset
+intc_0 // 0
+itxn_field AssetAmount
+global CurrentApplicationAddress
+itxn_field AssetReceiver
+intc_0 // 0
+itxn_field Fee
+itxn_submit
+itxn_begin
+intc_2 // axfer
+itxn_field TypeEnum
+bytec_1 // "b"
+app_global_get
+itxn_field XferAsset
+intc_0 // 0
+itxn_field AssetAmount
+global CurrentApplicationAddress
+itxn_field AssetReceiver
+intc_0 // 0
+itxn_field Fee
+itxn_submit
+bytec_2 // "p"
+app_global_get
+retsub
+
+// mint
+mint_5:
+store 34
+store 33
+store 32
+store 31
+store 30
+load 33
+txnas Assets
+bytec_0 // "a"
+app_global_get
+==
+// Asset A incorrect
+assert
+load 34
+txnas Assets
+bytec_1 // "b"
+app_global_get
+==
+// Asset B incorrect
+assert
+load 30
+gtxns Sender
+txn Sender
+==
+load 31
+gtxns Sender
+txn Sender
+==
+&&
+// invalid sender
+assert
+load 30
+gtxns AssetReceiver
+global CurrentApplicationAddress
+==
+// receiver not app address
+assert
+load 30
+gtxns XferAsset
+bytec_0 // "a"
+app_global_get
+==
+// Asset A incorrect
+assert
+load 30
+gtxns AssetAmount
+intc_0 // 0
+>
+// amount minimum not met
+assert
+load 31
+gtxns AssetReceiver
+global CurrentApplicationAddress
+==
+// receiver not app address
+assert
+load 31
+gtxns XferAsset
+bytec_1 // "b"
+app_global_get
+==
+// Asset A incorrect
+assert
+load 31
+gtxns AssetAmount
+intc_0 // 0
+>
+// amount minimum not met
+assert
+global CurrentApplicationAddress
+load 32
+asset_holding_get AssetBalance
+store 36
+store 35
+global CurrentApplicationAddress
+load 33
+asset_holding_get AssetBalance
+store 38
+store 37
+global CurrentApplicationAddress
+load 34
+asset_holding_get AssetBalance
+store 40
+store 39
+load 36
+assert
+load 38
+assert
+load 40
+assert
+load 37
+load 30
+gtxns AssetAmount
+==
+load 39
+load 31
+gtxns AssetAmount
+==
+&&
+bnz mint_5_l5
+load 30
+gtxns AssetAmount
+intc_3 // 1000
+mulw
+intc_0 // 0
+load 37
+load 30
+gtxns AssetAmount
+-
+divmodw
+pop
+pop
+swap
+!
+assert
+store 42
+load 31
+gtxns AssetAmount
+intc_3 // 1000
+mulw
+intc_0 // 0
+load 39
+load 31
+gtxns AssetAmount
+-
+divmodw
+pop
+pop
+swap
+!
+assert
+store 43
+load 42
+load 43
+<
+bnz mint_5_l4
+load 43
+mint_5_l3:
+intc 4 // 10000000000
+load 35
+-
+mulw
+intc_0 // 0
+intc_3 // 1000
+divmodw
+pop
+pop
+swap
+!
+assert
+b mint_5_l6
+mint_5_l4:
+load 42
+b mint_5_l3
+mint_5_l5:
+load 30
+gtxns AssetAmount
+load 31
+gtxns AssetAmount
+*
+sqrt
+intc_3 // 1000
+-
+mint_5_l6:
+store 41
+load 41
+intc_0 // 0
+>
+// outgoing amount too low
+assert
+itxn_begin
+intc_2 // axfer
+itxn_field TypeEnum
+bytec_2 // "p"
+app_global_get
+itxn_field XferAsset
+load 41
+itxn_field AssetAmount
+txn Sender
+itxn_field AssetReceiver
+intc_0 // 0
+itxn_field Fee
+itxn_submit
+bytec 4 // "r"
+global CurrentApplicationAddress
+bytec_0 // "a"
+app_global_get
+asset_holding_get AssetBalance
+store 45
+store 44
+global CurrentApplicationAddress
+bytec_1 // "b"
+app_global_get
+asset_holding_get AssetBalance
+store 47
+store 46
+load 45
+assert
+load 47
+assert
+load 44
+intc_3 // 1000
+mulw
+intc_0 // 0
+load 46
+divmodw
+pop
+pop
+swap
+!
+assert
+app_global_put
+retsub
+
+// burn
+burn_6:
+store 51
+store 50
+store 49
+store 48
+load 49
+txnas Assets
+bytec_2 // "p"
+app_global_get
+==
+// pond asset incorrect
+assert
+load 50
+txnas Assets
+bytec_0 // "a"
+app_global_get
+==
+// Asset A incorrect
+assert
+load 51
+txnas Assets
+bytec_1 // "b"
+app_global_get
+==
+// Asset B incorrect
+assert
+load 48
+gtxns AssetReceiver
+global CurrentApplicationAddress
+==
+// receiver not app address
+assert
+load 48
+gtxns AssetAmount
+intc_0 // 0
+>
+// amount minimum not met
+assert
+load 48
+gtxns XferAsset
+bytec_2 // "p"
+app_global_get
+==
+// pond asset incorrect
+assert
+load 48
+gtxns Sender
+txn Sender
+==
+// invalid sender
+assert
+global CurrentApplicationAddress
+load 49
+asset_holding_get AssetBalance
+store 53
+store 52
+global CurrentApplicationAddress
+load 50
+asset_holding_get AssetBalance
+store 55
+store 54
+global CurrentApplicationAddress
+load 51
+asset_holding_get AssetBalance
+store 57
+store 56
+load 53
+assert
+load 55
+assert
+load 57
+assert
+intc 4 // 10000000000
+load 52
+load 48
+gtxns AssetAmount
+-
+-
+store 58
+load 54
+load 48
+gtxns AssetAmount
+mulw
+intc_0 // 0
+load 58
+divmodw
+pop
+pop
+swap
+!
+assert
+store 59
+load 56
+load 48
+gtxns AssetAmount
+mulw
+intc_0 // 0
+load 58
+divmodw
+pop
+pop
+swap
+!
+assert
+store 60
+itxn_begin
+intc_2 // axfer
+itxn_field TypeEnum
+bytec_0 // "a"
+app_global_get
+itxn_field XferAsset
+load 59
+itxn_field AssetAmount
+txn Sender
+itxn_field AssetReceiver
+intc_0 // 0
+itxn_field Fee
+itxn_submit
+itxn_begin
+intc_2 // axfer
+itxn_field TypeEnum
+bytec_1 // "b"
+app_global_get
+itxn_field XferAsset
+load 60
+itxn_field AssetAmount
+txn Sender
+itxn_field AssetReceiver
+intc_0 // 0
+itxn_field Fee
+itxn_submit
+bytec 4 // "r"
+global CurrentApplicationAddress
+bytec_0 // "a"
+app_global_get
+asset_holding_get AssetBalance
+store 62
+store 61
+global CurrentApplicationAddress
+bytec_1 // "b"
+app_global_get
+asset_holding_get AssetBalance
+store 64
+store 63
+load 62
+assert
+load 64
+assert
+load 61
+intc_3 // 1000
+mulw
+intc_0 // 0
+load 63
+divmodw
+pop
+pop
+swap
+!
+assert
+app_global_put
+retsub
+
+// swap
+swap_7:
+store 67
+store 66
+store 65
+load 66
+txnas Assets
+bytec_0 // "a"
+app_global_get
+==
+// Asset A incorrect
+assert
+load 67
+txnas Assets
+bytec_1 // "b"
+app_global_get
+==
+// Asset B incorrect
+assert
+load 65
+gtxns XferAsset
+bytec_0 // "a"
+app_global_get
+==
+load 65
+gtxns XferAsset
+bytec_1 // "b"
+app_global_get
+==
+||
+// Incorrect asset
+assert
+load 65
+gtxns AssetAmount
+intc_0 // 0
+>
+// amount minimum not met
+assert
+load 65
+gtxns Sender
+txn Sender
+==
+// invalid sender
+assert
+global CurrentApplicationAddress
+load 65
+gtxns XferAsset
+asset_holding_get AssetBalance
+store 69
+store 68
+global CurrentApplicationAddress
+load 65
+gtxns XferAsset
+bytec_0 // "a"
+app_global_get
+==
+bnz swap_7_l5
+bytec_0 // "a"
+app_global_get
+swap_7_l2:
+asset_holding_get AssetBalance
+store 71
+store 70
+load 69
+assert
+load 71
+assert
+load 65
+gtxns AssetAmount
+intc_3 // 1000
+pushint 5 // 5
+-
+mulw
+load 70
+uncover 2
+dig 1
+*
+cover 2
+mulw
+cover 2
++
+swap
+intc_0 // 0
+load 68
+load 65
+gtxns AssetAmount
+-
+intc_3 // 1000
+*
+load 65
+gtxns AssetAmount
+intc_3 // 1000
+pushint 5 // 5
+-
+*
++
+divmodw
+pop
+pop
+swap
+!
+assert
+store 72
+load 72
+intc_0 // 0
+>
+// outgoing amount too low
+assert
+itxn_begin
+intc_2 // axfer
+itxn_field TypeEnum
+load 65
+gtxns XferAsset
+bytec_0 // "a"
+app_global_get
+==
+bnz swap_7_l4
+bytec_0 // "a"
+app_global_get
+b swap_7_l6
+swap_7_l4:
+bytec_1 // "b"
+app_global_get
+b swap_7_l6
+swap_7_l5:
+bytec_1 // "b"
+app_global_get
+b swap_7_l2
+swap_7_l6:
+itxn_field XferAsset
+load 72
+itxn_field AssetAmount
+txn Sender
+itxn_field AssetReceiver
+intc_0 // 0
+itxn_field Fee
+itxn_submit
+bytec 4 // "r"
+global CurrentApplicationAddress
+bytec_0 // "a"
+app_global_get
+asset_holding_get AssetBalance
+store 74
+store 73
+global CurrentApplicationAddress
+bytec_1 // "b"
+app_global_get
+asset_holding_get AssetBalance
+store 76
+store 75
+load 74
+assert
+load 76
+assert
+load 73
+intc_3 // 1000
+mulw
+intc_0 // 0
+load 75
+divmodw
+pop
+pop
+swap
+!
+assert
+app_global_put
+retsub

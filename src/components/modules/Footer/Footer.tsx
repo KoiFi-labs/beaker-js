@@ -10,7 +10,7 @@ const Footer = () => {
         target="_blank"
         rel="noopener noreferrer"
         >
-    Powered by KoiFi 0.0.0
+    Powered by Kondor 0.0.0
     </a>
 </footer>
   )

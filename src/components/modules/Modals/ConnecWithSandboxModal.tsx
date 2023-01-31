@@ -44,7 +44,7 @@ const ConnectWithSandboxModal = ({isVisible, onHide}: ConnectWithSandboxModalPro
             id="inputConnectWithSandboxModal"
             >
             </Input>
-          <Button size={"sm"} onClick={handleSubmit}>
+          <Button size={"sm"} onPress={handleSubmit}>
             Connect
           </Button>
         </Modal.Body>

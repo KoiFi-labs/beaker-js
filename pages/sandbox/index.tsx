@@ -1,18 +1,15 @@
 import styles from '../../styles/Home.module.css'
 import { Button,  Spacer, Text, Badge, Container } from '@nextui-org/react'
-import algosdk from "algosdk"
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import AccountCreatedModal from '../../src/components/modules/Modals/AccountCreatedModal';
 import { useSandbox } from '../../src/contexts/useSandbox';
-
-const token = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
-const server = 'http://127.0.0.1';
-const port = "4001";
-const client = new algosdk.Algodv2(token, server, port);
+import { algoService } from '../../src/services/algoService';
+import { useWallet } from '../../src/contexts/useWallet';
 
 
 export default function Sandbox() {
 
+    const {balances} = useWallet()
     const [sandboxStatus, setSanboxStatus] = useState('disconnected')
     const [account, setAccount] = useState('')
     const [seed, setSeed] = useState([])
@@ -27,7 +24,7 @@ export default function Sandbox() {
 
     const verifySanboxStatus = async() => {
         try{
-            await client.healthCheck().do()
+            await algoService.healthCheck()
             setSanboxStatus('success')
         }catch(error){
             setSanboxStatus('error')
@@ -44,10 +41,10 @@ export default function Sandbox() {
 
     const createAccount = function() {
         try {  
-            const myaccount = algosdk.generateAccount();
+            const myaccount = algoService.generateAccount();
             console.log("Account Address = " + myaccount.addr);
             setAccount(myaccount.addr)
-            let accountMnemonic = algosdk.secretKeyToMnemonic(myaccount.sk);
+            let accountMnemonic = algoService.secretKeyToMnemonic(myaccount.sk);
             console.log("Account Mnemonic = "+ accountMnemonic);
             setSeed(accountMnemonic.split(" ") as unknown as never[])
             return myaccount;
@@ -57,19 +54,11 @@ export default function Sandbox() {
         }
     };
 
-
-    const getBalance = async () => {
-        const res = await client.accountInformation(sandboxAccountAddress).do()
-        console.log(res)
-        return res
-    }
-    
-
     return (
         <div className={styles.container}>
         <main className={styles.main}>
             <Text h1 color="#ff4ecd"> Welcome to the Sandbox! </Text>
-            <Button onClick={verifySanboxStatus}>Verify sandbox connection status</Button>
+            <Button onPress={() => verifySanboxStatus()}>Verify sandbox connection status</Button>
             <Spacer/>
 
             <Text>Sandbox connection status:   
@@ -80,7 +69,7 @@ export default function Sandbox() {
             </Text>
             <Spacer/>
 
-            <Button onClick={handlerCreateWallet}>Create account</Button>
+            <Button onPress={handlerCreateWallet}>Create account</Button>
             <AccountCreatedModal isVisible={accountCreatedModalVisible} account={account} seed={seed} onHide={()=>{}} />
 
             {

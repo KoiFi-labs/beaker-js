@@ -1,9 +1,8 @@
 import '../styles/globals.css'
 import type { AppProps } from "next/app"
 import Head from "next/head"
-import { PeraProvider } from '../src/contexts/usePera'
-import { MyAlgoProvider } from '../src/contexts/useMyAlgo'
 import { SandboxProvider } from '../src/contexts/useSandbox'
+import { WalletProvider } from '../src/contexts/useWallet'
 import { NextUIProvider, createTheme } from '@nextui-org/react';
 import { Layout } from '../src/components/Layout/Layout'
 import { themeConfig } from '../styles/themeConfig'
@@ -17,17 +16,15 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <>
         <Head>
-          <title>KoiFi Protocol</title>
+          <title>Kondor Protocol</title>
         </Head>
         <NextUIProvider theme={theme}>
           <SandboxProvider>
-            <PeraProvider>
-              <MyAlgoProvider>
-                <Layout>
-                  <Component {...pageProps} />
-                </Layout>
-              </MyAlgoProvider>
-            </PeraProvider>
+                <WalletProvider>
+                  <Layout>
+                    <Component {...pageProps} />
+                  </Layout>
+                </WalletProvider>
           </SandboxProvider>
         </NextUIProvider>
     </>

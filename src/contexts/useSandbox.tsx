@@ -1,11 +1,5 @@
-import React, { createContext, useContext, useEffect, useState } from 'react'
-import algosdk from "algosdk"
+import React, { createContext, useContext, useState } from 'react'
 import ConnectWithSandboxModal from '../components/modules/Modals/ConnecWithSandboxModal';
-
-const token = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
-const server = 'http://127.0.0.1';
-const port = "4001";
-
 
 const SandboxContext = createContext({})
 
@@ -19,7 +13,6 @@ type Account = {
 }
 
 export const SandboxProvider: React.FC<Props> = ({ children }: Props): JSX.Element => {
-  const sandboxWallet = new algosdk.Algodv2(token, server, port);
   const [sandboxAccountAddress, setSandboxAccountAddress] = useState<Account | null>()
   const [connectWithSandboxModalIsVisble, setConnectWithSandboxModalIsVisible] = useState<boolean>(false)
   const [isConnectedToSandboxWallet, setIsConnectedToSandboxWallet] = useState<boolean>(false);
@@ -29,6 +22,9 @@ export const SandboxProvider: React.FC<Props> = ({ children }: Props): JSX.Eleme
     setSandboxAccountAddress(null);
     setIsConnectedToSandboxWallet(false)
   }
+
+  console.log('isConnectedToSandboxWallet2', isConnectedToSandboxWallet)
+  console.log('sandboxAccountAddress2', sandboxAccountAddress)
 
   const handleConnectSandboxWalletClick = () =>{
     setConnectWithSandboxModalIsVisible(true)

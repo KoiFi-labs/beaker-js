@@ -1,19 +1,14 @@
 import styles from '../../styles/Home.module.css'
 import { Container, Spacer, Text } from '@nextui-org/react'
-import { usePera } from '../../src/contexts/usePera';
-import { useMyAlgo } from '../../src/contexts/useMyAlgo';
+import { useWallet } from '../../src/contexts/useWallet';
 
 
 export default function Home() {
-    const {isConnectedToMyAlgoWallet, myAlgoAccountAddress } = useMyAlgo()
-    const {isConnectedToPeraWallet, peraAccountAddress} = usePera()
+    const {isConnected, account, walletProvider } = useWallet()
 
     const showWallet = () => {
-        if(isConnectedToMyAlgoWallet){
-            return (<Text h3 color="primary">Connected to MyAlgoWallet: {myAlgoAccountAddress}</Text>)
-        }
-        if(isConnectedToPeraWallet){
-            return (<Text h3 color="primary">Connected to PeraWallet: {peraAccountAddress}</Text>)
+        if(isConnected){
+            return (<Text h3 color="primary">Connected to {walletProvider}: {account.addr}</Text>)
         }
         return (<Text h3 color="error">Connect your wallet!</Text>)
     }
@@ -22,11 +17,11 @@ export default function Home() {
         <div className={styles.container}>
         <main className={styles.main}>
 
-            <Text h1 color="#ff4ecd"> KoiFi Protocol </Text>
+            <Text h1 color="#ff4ecd"> Kondor Protocol </Text>
 
             <Text> Swap on the leading decentralized crypto trading protocol. </Text>
             <Spacer/>
-            <code className={styles.code}>Hello KoiFi</code>
+            <code className={styles.code}>Hello Kondor</code>
             <Spacer/>
             {showWallet()}
 

@@ -1,33 +1,19 @@
 import React from 'react'
 import { Modal, Text, Button } from '@nextui-org/react'
-import { usePera } from '../../../contexts/usePera';
-import { useMyAlgo } from '../../../contexts/useMyAlgo';
-import { useSandbox } from '../../../contexts/useSandbox';
+import { useWallet, WALLET_PROVIDER } from '../../../contexts/useWallet';
 
 export type ConnectWalletModalProps = {
     isVisible: boolean,
     onHide: () => void
 }
+
 const ConnectWalletModal = ({isVisible, onHide}: ConnectWalletModalProps) => {
-    const {handleConnectMyAlgoWalletClick } = useMyAlgo()
-    const {handleConnectPeraWalletClick} = usePera()
-    const {handleConnectSandboxWalletClick} = useSandbox()
+    const { handleConnectWalletClick } = useWallet()
 
-    const handleButtonPera = () => {
-        handleConnectPeraWalletClick()
-        onHide()
-    }
-
-    const handleButtonMyAlgo = () => {
-        handleConnectMyAlgoWalletClick()
-        onHide()
-    }
-
-    const handleButtonSandbox = () => {
-      handleConnectSandboxWalletClick()
+    const handleButton = (walletProvider: WALLET_PROVIDER) => {
+      handleConnectWalletClick(walletProvider)
       onHide()
   }
-
   return (
     <Modal
         closeButton
@@ -38,35 +24,35 @@ const ConnectWalletModal = ({isVisible, onHide}: ConnectWalletModalProps) => {
       >
         <Modal.Header>
           <Text b id="modal-title" size={18}>
-            Connect a Wallet 
+            Connect a Wallet
           </Text>
         </Modal.Header>
         <Modal.Body>
-            <Button 
-                bordered 
+            <Button
+                bordered
                 color="primary"
-                onClick={handleButtonPera}
+                onPress={() => handleButton(WALLET_PROVIDER.PERA)}
             >
                 Connect with Pera
             </Button>
-            <Button 
-                bordered 
+            <Button
+                bordered
                 color="primary"
-                onClick={handleButtonMyAlgo}
+                onPress={() => handleButton(WALLET_PROVIDER.MY_ALGO)}
                 >
                 Connect with MyAlgo
             </Button>
-            <Button 
-                bordered 
+            <Button
+                bordered
                 color="primary"
-                onClick={handleButtonSandbox}
+                onPress={() => handleButton(WALLET_PROVIDER.SANDBOX)}
                 >
-                Connect with Sandox
+                Connect with Sandbox
             </Button>
         </Modal.Body>
         <Modal.Footer>
           <Text>
-            By connecting a wallet, you agree to the KoiFi Labs Terms of Service and agree to their Privacy Policy.
+            By connecting a wallet, you agree to the Kondor Labs Terms of Service and agree to their Privacy Policy.
           </Text>
         </Modal.Footer>
       </Modal>
