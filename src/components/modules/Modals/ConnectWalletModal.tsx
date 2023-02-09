@@ -30,21 +30,21 @@ const ConnectWalletModal = ({isVisible, onHide}: ConnectWalletModalProps) => {
         <Modal.Body>
             <Button
                 bordered
-                color="primary"
+                css={{color: "$gray900", borderColor: "$gray900"}}
                 onPress={() => handleButton(WALLET_PROVIDER.PERA)}
             >
                 Connect with Pera
             </Button>
             <Button
                 bordered
-                color="primary"
+                css={{color: "$gray900",borderColor: "$gray900"}}
                 onPress={() => handleButton(WALLET_PROVIDER.MY_ALGO)}
                 >
                 Connect with MyAlgo
             </Button>
             <Button
                 bordered
-                color="primary"
+                css={{color: "$gray900",borderColor: "$gray900"}}
                 onPress={() => handleButton(WALLET_PROVIDER.SANDBOX)}
                 >
                 Connect with Sandbox

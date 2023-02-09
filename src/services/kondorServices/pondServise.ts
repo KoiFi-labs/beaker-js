@@ -1,7 +1,6 @@
 import { contract } from './contract'
 import algosdk  from "algosdk";
 import { config } from '../../../config'
-import { Algodv2 } from 'algosdk/dist/types/main';
 const client = new algosdk.Algodv2(config.network.token, config.network.server, config.network.port);
 
 
@@ -21,7 +20,7 @@ export const swap = async (addr: string, sk: Uint8Array, amount: number, assetA:
             const assetTransferTxn = algosdk.makeAssetTransferTxnWithSuggestedParamsFromObject({
                 from: addr,
                 to: config.appAddress,
-                amount,
+                amount: amount * 1000 * 1000,
                 assetIndex: assetA,
                 suggestedParams: {...sp, fee: 3000, flatFee: true}, //todo: validate fee
             })
@@ -33,8 +32,8 @@ export const swap = async (addr: string, sk: Uint8Array, amount: number, assetA:
                     txn: assetTransferTxn,
                     signer: algosdk.makeBasicAccountTransactionSigner({addr, sk}),
                   },
-                    assetB,
-                    assetA,
+                    config.pondAssetIdA,
+                    config.pondAssetIdB,
                 ],
                 ...commonParams,
               });
@@ -44,6 +43,23 @@ export const swap = async (addr: string, sk: Uint8Array, amount: number, assetA:
                 txId: results.methodResults[0].txID,
             };
     }
+
+
+// Returns the amount of assetB that will be received for the given amount of assetA
+export const getSwapResult = async (amount: number, assetA: number, assetB: number) => {
+  const [assetASupply, assetBSupply] = await Promise.all([
+    getAssetSupply(assetA),
+    getAssetSupply(assetB),
+  ]);
+  const factor = config.pondScale - config.pondFee
+  return ( amount * factor * assetBSupply ) / (( assetASupply * config.pondScale ) + ( amount * factor ))
+}
+
+const getAssetSupply = async (assetId: number) => {
+    const accountInfo = await client.accountInformation(config.appAddress).do();
+    const assetInfo = accountInfo.assets.find((asset: any) => asset["asset-id"] === assetId);
+    return assetInfo.amount;
+}
 
 
   export const mint = async (addr: string, sk: Uint8Array, amount: number, assetA: number, assetB: number) => {

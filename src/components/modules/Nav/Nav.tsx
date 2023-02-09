@@ -7,16 +7,13 @@ import { ChevronIcon } from '../../../../public/icons/chevron-down';
 import { Balance } from '../../../services/algoService';
 import { microToStandard } from '../../../utils/math';
 import { config } from '../../../../config';
+import { abbreviateWallet } from '../../../utils/utils';
 
 const Nav: React.FC = (): JSX.Element => {
 
   const {isConnected, handleDisconnectWalletClick, account, balances } = useWallet()
   const [connectWalletModalVisible, setConnectWalletModalVisible] = useState<boolean>(false)
   const balancesToShow = balances.filter((b: Balance) => config.assetList.map(a => a.id).includes(b.assetId))
-
-  const abbreviateWallet = (wallet: string): string => {
-    return wallet.slice(0, 6) + "..." + wallet.slice(wallet.length - 4, wallet.length)
-  }
 
   const handlerConnect = (): void => {
     setConnectWalletModalVisible(true)
@@ -33,6 +30,7 @@ const Nav: React.FC = (): JSX.Element => {
           <Button 
             bordered
             onPress={handlerConnect}
+            css={{color: '$kondorPrimary', borderColor: "$kondorPrimary"}}
             >Connect
           </Button>
           <ConnectWalletModal isVisible={connectWalletModalVisible} onHide={() => setConnectWalletModalVisible(false)}/>
@@ -44,8 +42,9 @@ const Nav: React.FC = (): JSX.Element => {
           <Button 
             bordered
             onPress={handlerDisconnect}
+            css={{color: '$kondorPrimary', borderColor: "$kondorPrimary"}}
             >{account?.addr ? abbreviateWallet(account.addr) : null}
-              <ChevronIcon size={20} fill="#17C964" />
+              <ChevronIcon size={20} fill="#814350" />
           </Button>  
         </Popover.Trigger>
         <Popover.Content>
@@ -68,7 +67,7 @@ const Nav: React.FC = (): JSX.Element => {
               )
             })
             }
-            <Button  css={{minWidth: "120px"}} onPress={handlerDisconnect}>Disconnect</Button>
+            <Button  css={{minWidth: "120px", background:"$kondorPrimary"}} onPress={handlerDisconnect}>Disconnect</Button>
           </Card>
         </Popover.Content>
       </Popover>
@@ -78,11 +77,9 @@ const Nav: React.FC = (): JSX.Element => {
 
   return (
     <Navbar variant="sticky" maxWidth="fluid" isCompact >
-      <Navbar.Brand>
-        <Text b color="inherit" hideIn="xs">
-         Kondor Finance
-        </Text>
-      </Navbar.Brand>
+        <Link href="home">
+            Kondor Finance
+        </Link>
       <Navbar.Content hideIn="xs" >
         <Link  href="home">Home</Link>
         <Link  href="#">About</Link>

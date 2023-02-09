@@ -21,7 +21,6 @@ export type Balance = {
 
 const getBalances: (account: string) => Promise<Balance[]> = async (account) => {
     const accountInfo = await algoClient.accountInformation(account).do()
-    console.log("account",accountInfo)
     const algorandTokenInfo = config.assetList.find((assetItem) => assetItem.id === 0)
 
     return accountInfo.assets.map((asset: any) => {
@@ -52,9 +51,7 @@ const getBalances: (account: string) => Promise<Balance[]> = async (account) => 
     }
 
     const healthCheck = async () => {
-      console.log("healthCheck")
-     const hola = await algoClient.status().do()
-      console.log(hola)
+      await algoClient.status().do()
     }
 
     const generateAccount = () => {

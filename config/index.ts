@@ -9,4 +9,6 @@ export const config = {
     appAddress: "MO3YNFCL2LNWKX4K3LOG2GK62HAQBI6LVUXPNQMNGGRQY2UY7LLVFSNMFE",
     pondAssetIdA: 17,
     pondAssetIdB: 18,
+    pondScale: 1000,
+    pondFee: 5
 }

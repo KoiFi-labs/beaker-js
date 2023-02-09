@@ -23,8 +23,6 @@ export const SandboxProvider: React.FC<Props> = ({ children }: Props): JSX.Eleme
     setIsConnectedToSandboxWallet(false)
   }
 
-  console.log('isConnectedToSandboxWallet2', isConnectedToSandboxWallet)
-  console.log('sandboxAccountAddress2', sandboxAccountAddress)
 
   const handleConnectSandboxWalletClick = () =>{
     setConnectWithSandboxModalIsVisible(true)

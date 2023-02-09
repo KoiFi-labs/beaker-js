@@ -7,9 +7,7 @@ import { NextUIProvider, createTheme } from '@nextui-org/react';
 import { Layout } from '../src/components/Layout/Layout'
 import { themeConfig } from '../styles/themeConfig'
 
-
 const theme = createTheme(themeConfig)
-
 
 
 export default function App({ Component, pageProps }: AppProps) {

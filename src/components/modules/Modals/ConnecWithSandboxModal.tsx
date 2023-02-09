@@ -44,7 +44,7 @@ const ConnectWithSandboxModal = ({isVisible, onHide}: ConnectWithSandboxModalPro
             id="inputConnectWithSandboxModal"
             >
             </Input>
-          <Button size={"sm"} onPress={handleSubmit}>
+          <Button size={"sm"} onPress={handleSubmit} css={{background: "$kondorPrimary"}}>
             Connect
           </Button>
         </Modal.Body>

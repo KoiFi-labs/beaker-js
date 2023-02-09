@@ -6,9 +6,10 @@ import { useEffect, useState } from 'react'
 import { useWallet } from '../../src/contexts/useWallet'
 import { Balance } from '../../src/services/algoService'
 import { microToStandard } from '../../src/utils/math'
-import { swap } from '../../src/services/kondorServices/pondServise'
+import { swap, getSwapResult } from '../../src/services/kondorServices/pondServise'
 import { abbreviateTransactionHash, copyToClipboard } from '../../src/utils/utils'
 import { ClipboardIcon } from '../../public/icons/clipboard'
+import { DownArrowAltIcon } from '../../public/icons/down-arrow-alt'
 import { IconButton } from '../../src/components/IconButton/IconButton'
 
 export default function Swap() {
@@ -20,18 +21,26 @@ export default function Swap() {
     const [ balanceToBuy, setBalanceToBuy ] = useState<number>(0)
     const [ amountToSell, setAmountToSell ] = useState<number>(0)
     const [ swapTransactionId, setSwapTransactionId ] = useState<string>("")
-    const { isConnected, balances, account } = useWallet()
-    const fromInput = useInput("");
+    const [ swapResult, setSwapResult ] = useState<number>(0)
+    const { isConnected, balances, account, reloadBalances } = useWallet()
+    const fromInput = useInput("0");
     const toInput = useInput("");
 
+
     useEffect(() => {
-        if(fromInput.value !== ""){
-            const amount = Number(fromInput.value)
-            if(amount > 0){
-                setAmountToSell(amount)
-            }
+        const amount = Number(fromInput.value)
+        if(amount > 0){
+            setAmountToSell(amount)
+            getSwapResult(amount, assetToSell.id, assetToBuy.id).then(
+                (result: number) => {
+                    toInput.setValue(result.toFixed(4).toString())
+                }
+            )
+        }else{
+            setAmountToSell(0)
+            toInput.setValue("")
         }
-    }, [fromInput.value])
+    }, [fromInput.value, assetToSell, assetToBuy])
 
     const handleSellAssetSelect = (asset: Asset) => asset ===  assetToBuy ? 
         (setAssetToBuy(assetToSell), setAssetToSell(asset)) : 
@@ -48,7 +57,6 @@ export default function Swap() {
     }
 
     const openResultModal = (txId: string) => {
-        console.log("Entre al open result")
         setSwapTransactionId(txId)
         setSwapResultModalVisible(true)
     }
@@ -70,6 +78,7 @@ export default function Swap() {
                     if(result){
                         fromInput.setValue("")
                         toInput.setValue("")
+                        reloadBalances()
                         openResultModal(result.txId)
                     }
                 }
@@ -94,7 +103,7 @@ export default function Swap() {
             setBalanceToSell(0)
             setBalanceToBuy(0)
         }
-    }, [assetToSell, assetToBuy, isConnected])
+    }, [assetToSell, assetToBuy, isConnected, balances])
 
     return (
         <Container fluid display='flex' justify='center' alignItems='center' css={{minHeight: "85vh"}}>
@@ -113,21 +122,23 @@ export default function Swap() {
                                <AssetSelect asset={assetToSell} onPress={handleSellAssetSelect} />
                             </Grid>
                             <Container display='flex' justify='flex-start' css={{padding:0}}>
-                                <Text size={14} color={"$secondary"}>Balance {balanceToSell} {assetToSell.symbol}</Text>                                
+                                <Text size={14} css={{color: "$kondorGray"}}>Balance {balanceToSell.toFixed(4)} {assetToSell.symbol}</Text>                                
                             </Container>
                         </Grid.Container>
                         </Card.Body>
                     </Card>
                     <Button
                         onPress={() => {handleCentralButton()}}
-                        color={"secondary"}
                         css={{
                             margin:"20px", 
                             borderRadius: "50%", 
                             width: '40px', 
                             height: '40px', 
                             minWidth: "0px",
-                            }}><Image src="https://cdn-icons-png.flaticon.com/512/6367/6367663.png"/></Button>
+                            backgroundColor: "$kondorPrimary",
+                            }}>
+                         <DownArrowAltIcon fill="#454545"/>   
+                    </Button>
                     <Card css={{ $$cardColor: '$colors$gray100' }}>
                         <Card.Body>
                         <Grid.Container justify="center" css={{padding: "10px 0 0 0"}}>
@@ -138,7 +149,7 @@ export default function Swap() {
                                 <AssetSelect asset={assetToBuy} onPress={handleBuyAssetSelect}/>
                             </Grid>
                             <Container display='flex' justify='flex-start' css={{padding:0}}>
-                                <Text size={14} color={"$secondary"}>Balance {balanceToBuy} {assetToBuy.symbol}</Text>                                
+                                <Text size={14} css={{color: "$kondorGray"}}>Balance {balanceToBuy.toFixed(4)} {assetToBuy.symbol}</Text>                                
                             </Container>
                         </Grid.Container>
                         </Card.Body>
@@ -146,10 +157,10 @@ export default function Swap() {
                     <Spacer/>
                     {
                         !isConnected 
-                        ? <Button disabled size="xl" color="primary" css={{width:"100%"}}>Connect your wallet</Button> 
+                        ? <Button disabled size="xl" css={{width:"100%", background: "$kondorPrimary"}}>Connect your wallet</Button> 
                         : loading 
-                            ? <Button disabled size="xl" color="primary" css={{width:"100%"}} onPress={() => handleSwap()}><Loading/></Button>
-                            : <Button size="xl" color="primary" css={{width:"100%"}} onPress={() => handleSwap()}>Swap</Button>
+                            ? <Button disabled size="xl" css={{width:"100%"}} onPress={() => handleSwap()}><Loading css={{color: "$kondorGray"}}/></Button>
+                            : <Button size="xl" css={{width:"100%", background: "$kondorPrimary"}} onPress={() => handleSwap()}>Swap</Button>
                         }
                 </Container>
                 </Card>

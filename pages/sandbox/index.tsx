@@ -1,4 +1,3 @@
-import styles from '../../styles/Home.module.css'
 import { Button,  Spacer, Text, Badge, Container } from '@nextui-org/react'
 import { useState } from 'react';
 import AccountCreatedModal from '../../src/components/modules/Modals/AccountCreatedModal';
@@ -55,8 +54,7 @@ export default function Sandbox() {
     };
 
     return (
-        <div className={styles.container}>
-        <main className={styles.main}>
+        <Container>
             <Text h1 color="#ff4ecd"> Welcome to the Sandbox! </Text>
             <Button onPress={() => verifySanboxStatus()}>Verify sandbox connection status</Button>
             <Spacer/>
@@ -80,7 +78,6 @@ export default function Sandbox() {
                 null
             }
 
-        </main>
-        </div>
+        </Container>
     )
 }

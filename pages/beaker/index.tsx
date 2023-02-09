@@ -139,7 +139,7 @@ export default function Home() {
 
             <Text h2 color="secondary">{appResponse}</Text>
 
-            {txId ? <Text color="primary">TransactionId: {txId}</Text> : null}
+            {txId ? <Text color="KondorPrimary">TransactionId: {txId}</Text> : null}
 
         </Container>
     )

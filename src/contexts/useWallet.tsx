@@ -38,10 +38,18 @@ export const WalletProvider: React.FC<Props> = ({ children }: Props): JSX.Elemen
         })
     }
     setBalances([])
-  }, [account])
+  }, [isConnected])
 
   
   const { handleConnectSandboxWalletClick, handleDisconnectSandboxWalletClick, sandboxAccountAddress } = useSandbox()
+
+  const reloadBalances = () => {
+    if(account){
+      algoService.getBalances(account.addr).then((balances) => {
+        setBalances(balances)
+      })
+    }
+  }
 
   useEffect(() => {
     if(sandboxAccountAddress){
@@ -72,20 +80,20 @@ export const WalletProvider: React.FC<Props> = ({ children }: Props): JSX.Elemen
             case WALLET_PROVIDER.PERA:
                 const peraAccount = await peraService.connect()
                 setWalletProvider(walletProvider)
-                setIsConnected(true)
                 setAccount(peraAccount)
+                setIsConnected(true)
             case WALLET_PROVIDER.MY_ALGO:
                 const myAlgoAccount = await myAlgoService.connect()
                 setWalletProvider(walletProvider)
-                setIsConnected(true)
                 setAccount(myAlgoAccount)
+                setIsConnected(true)
             case WALLET_PROVIDER.SANDBOX:
               handleConnectSandboxWalletClick()
         }
   }
 
   return (
-    <WalletContext.Provider value={{ account, handleConnectWalletClick, handleDisconnectWalletClick, isConnected, balances }}>
+    <WalletContext.Provider value={{ account, handleConnectWalletClick, handleDisconnectWalletClick, isConnected, balances, reloadBalances }}>
     {children}
     </WalletContext.Provider>
   )
