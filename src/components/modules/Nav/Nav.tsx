@@ -81,11 +81,10 @@ const Nav: React.FC = (): JSX.Element => {
             Kondor Finance
         </Link>
       <Navbar.Content hideIn="xs" >
-        <Link  href="home">Home</Link>
-        <Link  href="#">About</Link>
-        <Link  href="sandbox">Sandbox</Link>
-        <Link  href="beaker">Beaker</Link>
-        <Link  href="swap">Swap</Link>
+      <Link  href="/swap">Swap</Link>
+        <Link  href="/pool">Pool</Link>
+        <Link  href="/myPool">MyPools</Link>
+        <Link  href="/product">MyProducts</Link>
       </Navbar.Content>
       <Navbar.Content >
         <Navbar.Item >

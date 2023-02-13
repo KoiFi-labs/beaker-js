@@ -107,18 +107,18 @@ export default function Swap() {
 
     return (
         <Container fluid display='flex' justify='center' alignItems='center' css={{minHeight: "85vh"}}>
-                <Card css={{ mw: "330px", margin: "20px" }}>
+            <Card css={{ mw: "330px", maxWidth: "500px"}}>
                 <Card.Header>
                     <Text b>Swap</Text>
                 </Card.Header>
                 <Container display='flex' justify='center' css={{padding:"10px"}}>
                     <Card css={{ $$cardColor: '$colors$gray100' }}>
                         <Card.Body>
-                        <Grid.Container justify="center" css={{padding: "12px 0 0 0"}}>
+                        <Grid.Container justify="center" css={{padding: "10px 0 0 0"}}>
                             <Grid xs={8}>
                                 <Input {...fromInput.bindings} label="From" underlined placeholder='0.00' />
                             </Grid>
-                            <Grid>
+                            <Grid xs={4}>
                                <AssetSelect asset={assetToSell} onPress={handleSellAssetSelect} />
                             </Grid>
                             <Container display='flex' justify='flex-start' css={{padding:0}}>
@@ -173,7 +173,7 @@ export default function Swap() {
                         <Divider/>
                         <Spacer y={0.1}/>
                         <Container display='flex' justify='flex-start' alignItems="center"  css={{padding: 0}}>
-                            <IconButton onPress={() => copyToClipboard(swapTransactionId)}><ClipboardIcon/></IconButton>
+                            <IconButton onClick={() => copyToClipboard(swapTransactionId)}><ClipboardIcon/></IconButton>
                             <Text>Transaction ID: {abbreviateTransactionHash(swapTransactionId)}</Text>
                         </Container>
                     </Modal.Body>
