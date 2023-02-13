@@ -1,7 +1,7 @@
-import React, {useState} from 'react'
-import { Button, Grid, Image, Text, Container, Avatar } from '@nextui-org/react'
-import { Asset } from '../../../config/Assets'
-import AssetSelectModal from '../modules/Modals/AssetSelectModal'
+import React, {useState} from "react"
+import { Button, Grid, Image, Text, Container, Avatar } from "@nextui-org/react"
+import { Asset } from "../../../config/Assets"
+import AssetSelectModal from "../modules/Modals/AssetSelectModal"
 
 export type AssetSelectProps = {
     asset: Asset,
@@ -17,7 +17,7 @@ const AssetSelect = ({asset, onPress}: AssetSelectProps ) => {
 
   return (
     <>
-        <Button onPress={handlerButton} rounded css={{minWidth:"40px", width:"100px", background:'$gray300', maxWidth: "95px", padding:0}}>
+        <Button onPress={handlerButton} rounded css={{minWidth:"40px", width:"100px", background:"$gray300", maxWidth: "95px", padding:0}}>
             <Grid.Container css={{padding:0, width: "100%"}}>
                 <Grid xs={3} css={{padding:"8px 0px 0px 0px"}}>
                         <Avatar size={"xs"} src={asset.icon} />

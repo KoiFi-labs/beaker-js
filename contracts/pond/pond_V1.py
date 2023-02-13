@@ -10,7 +10,7 @@ from .utils.helpers import Helpers
 class Pond(Application):
 
     # Declare Application state, marking `Final` here so the python class var 
-    # doesn't get changed
+    # doesn"t get changed
     # Marking a var `Final` does _not_ change anything at the AVM level
     governor: Final[ApplicationStateValue] = ApplicationStateValue(
         stack_type=TealType.bytes,
@@ -143,7 +143,7 @@ class Pond(Application):
         on commit.
 
         Given some amount of stable assets in the transfer, mint some number of 
-        pond tokens calculated with the pond's current balance and 
+        pond tokens calculated with the pond"s current balance and 
         circulating supply of pond tokens.
 
         Args:
@@ -223,7 +223,7 @@ class Pond(Application):
 
                     # We calculate minting amt:
 
-                    # If it is the first time we've been called
+                    # If it is the first time we"ve been called
                     # we use a different formula to mint tokens
                     Mathemagic.tokens_to_mint_initial(
                         self,

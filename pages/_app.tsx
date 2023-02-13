@@ -1,11 +1,11 @@
-import '../styles/globals.css'
+import "../styles/globals.css"
 import type { AppProps } from "next/app"
 import Head from "next/head"
-import { SandboxProvider } from '../src/contexts/useSandbox'
-import { WalletProvider } from '../src/contexts/useWallet'
-import { NextUIProvider, createTheme } from '@nextui-org/react';
-import { Layout } from '../src/components/Layout/Layout'
-import { themeConfig } from '../styles/themeConfig'
+import { SandboxProvider } from "../src/contexts/useSandbox"
+import { WalletProvider } from "../src/contexts/useWallet"
+import { NextUIProvider, createTheme } from "@nextui-org/react";
+import { Layout } from "../src/components/Layout/Layout"
+import { themeConfig } from "../styles/themeConfig"
 
 const theme = createTheme(themeConfig)
 

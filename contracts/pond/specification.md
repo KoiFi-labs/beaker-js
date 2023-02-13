@@ -24,16 +24,16 @@ Some interfaces (additional contracts) the Pond may use:
 2. Pond should only be called from a txn group that includes an App call to the Validator.
 3. The App Call transaction for calling the Pond should be `NoOp`
 4. When called, it most receive a string indicating the **action** as first txn arg:
-   1. `'commit'`
-   2. `'redeem'`
-   3. `'swap'`
+   1. `"commit"`
+   2. `"redeem"`
+   3. `"swap"`
 5. Other txn args will vary according to the action being validated.
 6. After comparing the first txn arg with the available values, the code should be branched (`bnz`) accordingly.
 
    Example (pseudocode):
 
    ```
-   txn appArgs[0] == 'bootstrap'
+   txn appArgs[0] == "bootstrap"
    bnz bootstrap
    ...
    ...

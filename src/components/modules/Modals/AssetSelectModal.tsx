@@ -1,7 +1,7 @@
-import React from 'react'
-import { Modal, Text, Button, Divider } from '@nextui-org/react'
-import { Asset } from '../../../../config/Assets'
-import { config } from '../../../../config'
+import React from "react"
+import { Modal, Text, Button, Divider } from "@nextui-org/react"
+import { Asset } from "../../../../config/Assets"
+import { config } from "../../../../config"
 
 export type AssetSelectModalProps = {
     isVisible: boolean,

@@ -1,16 +1,17 @@
-import { Button,  Spacer, Text, Container, Card, Grid, Input, Image, useInput, Loading, Modal, Divider} from '@nextui-org/react'
-import { Asset } from '../../config/Assets'
-import { config } from '../../config'
-import AssetSelect from '../../src/components/AssetSelect/AssetSelect'
-import { useEffect, useState } from 'react'
-import { useWallet } from '../../src/contexts/useWallet'
-import { Balance } from '../../src/services/algoService'
-import { microToStandard } from '../../src/utils/math'
-import { swap, getSwapResult } from '../../src/services/kondorServices/pondServise'
-import { abbreviateTransactionHash, copyToClipboard } from '../../src/utils/utils'
-import { ClipboardIcon } from '../../public/icons/clipboard'
-import { DownArrowAltIcon } from '../../public/icons/down-arrow-alt'
-import { IconButton } from '../../src/components/IconButton/IconButton'
+import React from "react"
+import { Button,  Spacer, Text, Container, Card, Grid, Input, Image, useInput, Loading, Modal, Divider} from "@nextui-org/react"
+import { Asset } from "../../config/Assets"
+import { config } from "../../config"
+import AssetSelect from "../../src/components/AssetSelect/AssetSelect"
+import { useEffect, useState } from "react"
+import { useWallet } from "../../src/contexts/useWallet"
+import { Balance } from "../../src/services/algoService"
+import { microToStandard } from "../../src/utils/math"
+import { swap, getSwapResult } from "../../src/services/kondorServices/pondServise"
+import { abbreviateTransactionHash, copyToClipboard } from "../../src/utils/utils"
+import { ClipboardIcon } from "../../public/icons/clipboard"
+import { DownArrowAltIcon } from "../../public/icons/down-arrow-alt"
+import { IconButton } from "../../src/components/IconButton/IconButton"
 
 export default function Swap() {
     const [ assetToSell, setAssetToSell ] = useState<Asset>(config.assetList[0])
@@ -106,22 +107,22 @@ export default function Swap() {
     }, [assetToSell, assetToBuy, isConnected, balances])
 
     return (
-        <Container fluid display='flex' justify='center' alignItems='center' css={{minHeight: "85vh"}}>
+        <Container fluid display="flex" justify="center" alignItems="center" css={{minHeight: "85vh"}}>
             <Card css={{ mw: "330px", maxWidth: "500px"}}>
                 <Card.Header>
                     <Text b>Swap</Text>
                 </Card.Header>
-                <Container display='flex' justify='center' css={{padding:"10px"}}>
-                    <Card css={{ $$cardColor: '$colors$gray100' }}>
+                <Container display="flex" justify="center" css={{padding:"10px"}}>
+                    <Card css={{ $$cardColor: "$colors$gray100" }}>
                         <Card.Body>
                         <Grid.Container justify="center" css={{padding: "10px 0 0 0"}}>
                             <Grid xs={8}>
-                                <Input {...fromInput.bindings} label="From" underlined placeholder='0.00' />
+                                <Input {...fromInput.bindings} label="From" underlined placeholder="0.00" />
                             </Grid>
                             <Grid xs={4}>
                                <AssetSelect asset={assetToSell} onPress={handleSellAssetSelect} />
                             </Grid>
-                            <Container display='flex' justify='flex-start' css={{padding:0}}>
+                            <Container display="flex" justify="flex-start" css={{padding:0}}>
                                 <Text size={14} css={{color: "$kondorGray"}}>Balance {balanceToSell.toFixed(4)} {assetToSell.symbol}</Text>                                
                             </Container>
                         </Grid.Container>
@@ -132,23 +133,23 @@ export default function Swap() {
                         css={{
                             margin:"20px", 
                             borderRadius: "50%", 
-                            width: '40px', 
-                            height: '40px', 
+                            width: "40px", 
+                            height: "40px", 
                             minWidth: "0px",
                             backgroundColor: "$kondorPrimary",
                             }}>
                          <DownArrowAltIcon fill="#454545"/>   
                     </Button>
-                    <Card css={{ $$cardColor: '$colors$gray100' }}>
+                    <Card css={{ $$cardColor: "$colors$gray100" }}>
                         <Card.Body>
                         <Grid.Container justify="center" css={{padding: "10px 0 0 0"}}>
                             <Grid xs={8}>
-                                <Input {...toInput.bindings} label="To" underlined placeholder='0.00' />
+                                <Input {...toInput.bindings} label="To" underlined placeholder="0.00" />
                             </Grid>
                             <Grid xs={4}>
                                 <AssetSelect asset={assetToBuy} onPress={handleBuyAssetSelect}/>
                             </Grid>
-                            <Container display='flex' justify='flex-start' css={{padding:0}}>
+                            <Container display="flex" justify="flex-start" css={{padding:0}}>
                                 <Text size={14} css={{color: "$kondorGray"}}>Balance {balanceToBuy.toFixed(4)} {assetToBuy.symbol}</Text>                                
                             </Container>
                         </Grid.Container>
@@ -172,7 +173,7 @@ export default function Swap() {
                         <Text>Swap completed successfully</Text>
                         <Divider/>
                         <Spacer y={0.1}/>
-                        <Container display='flex' justify='flex-start' alignItems="center"  css={{padding: 0}}>
+                        <Container display="flex" justify="flex-start" alignItems="center"  css={{padding: 0}}>
                             <IconButton onClick={() => copyToClipboard(swapTransactionId)}><ClipboardIcon/></IconButton>
                             <Text>Transaction ID: {abbreviateTransactionHash(swapTransactionId)}</Text>
                         </Container>

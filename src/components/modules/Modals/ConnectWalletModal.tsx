@@ -1,6 +1,6 @@
-import React from 'react'
-import { Modal, Text, Button } from '@nextui-org/react'
-import { useWallet, WALLET_PROVIDER } from '../../../contexts/useWallet';
+import React from "react"
+import { Modal, Text, Button } from "@nextui-org/react"
+import { useWallet, WALLET_PROVIDER } from "../../../contexts/useWallet";
 
 export type ConnectWalletModalProps = {
     isVisible: boolean,

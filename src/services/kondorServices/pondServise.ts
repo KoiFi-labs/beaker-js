@@ -1,6 +1,6 @@
-import { contract } from './contract'
+import { contract } from "./contract"
 import algosdk  from "algosdk";
-import { config } from '../../../config'
+import { config } from "../../../config"
 const client = new algosdk.Algodv2(config.network.token, config.network.server, config.network.port);
 
 

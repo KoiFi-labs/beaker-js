@@ -1,12 +1,12 @@
-import { Table, Text, Container, Row, Col, Tooltip, Button} from '@nextui-org/react'
-import React from 'react';
-import { IconButton } from '../../src/components/IconButton/IconButton'
+import { Table, Text, Container, Row, Col, Tooltip, Button} from "@nextui-org/react"
+import React from "react";
+import { IconButton } from "../../src/components/IconButton/IconButton"
 import { PlusCircleIcon } from "../../public/icons/PlusCircleIcon";
 import { DeleteIcon } from "../../public/icons/DeleteIcon";
-import { ChartIcon } from '../../public/icons/ChartIcon';
-import Link from 'next/link'
-import { getMyProducts, MyProductType } from '../../src/services/productService'
-import { LinkButton } from '../../src/components/LinkButton/LinkButton';
+import { ChartIcon } from "../../public/icons/ChartIcon";
+import Link from "next/link"
+import { getMyProducts, MyProductType } from "../../src/services/productService"
+import { LinkButton } from "../../src/components/LinkButton/LinkButton";
 
   
 export default function MyProducts() {

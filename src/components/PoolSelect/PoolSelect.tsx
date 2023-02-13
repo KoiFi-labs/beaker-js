@@ -1,8 +1,8 @@
-import React, {useState} from 'react'
-import { Button, Grid, Image, Text, Avatar } from '@nextui-org/react'
-import { Asset } from '../../../config/Assets'
-import PoolSelectModal from '../modules/Modals/PoolSelectModal'
-import { PoolType } from '../../services/poolService'
+import React, {useState} from "react"
+import { Button, Grid, Image, Text, Avatar } from "@nextui-org/react"
+import { Asset } from "../../../config/Assets"
+import PoolSelectModal from "../modules/Modals/PoolSelectModal"
+import { PoolType } from "../../services/poolService"
 
 export type PoolSelectProps = {
     pool: PoolType,
@@ -18,7 +18,7 @@ const PoolSelect = ({pool, onPress}: PoolSelectProps ) => {
 
   return (
     <>
-        <Button onPress={handlerButton} rounded css={{minWidth:"40px", width:"100px", background:'$gray300', maxWidth: "95px", padding:0}}>
+        <Button onPress={handlerButton} rounded css={{minWidth:"40px", width:"100px", background:"$gray300", maxWidth: "95px", padding:0}}>
             <Grid.Container css={{padding:0, width: "100%"}}>
                 <Grid xs={3} css={{padding:"8px 0px 0px 0px"}}>
                         <Avatar size={"xs"} src={pool.icon} />

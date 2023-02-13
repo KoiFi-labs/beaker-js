@@ -1,6 +1,6 @@
-import React, {useState} from 'react'
-import { Modal, Text, Button, Input, useInput } from '@nextui-org/react'
-import { useSandbox } from '../../../contexts/useSandbox'
+import React, {useState} from "react"
+import { Modal, Text, Button, Input, useInput } from "@nextui-org/react"
+import { useSandbox } from "../../../contexts/useSandbox"
 import algoSdk from "algosdk"
 
 export type ConnectWithSandboxModalProps = {
@@ -40,7 +40,7 @@ const ConnectWithSandboxModal = ({isVisible, onHide}: ConnectWithSandboxModalPro
             {...bindings}
             bordered 
             label="Mnemonic"
-            placeholder='Enter the 25 words separated by a space'
+            placeholder="Enter the 25 words separated by a space"
             id="inputConnectWithSandboxModal"
             >
             </Input>

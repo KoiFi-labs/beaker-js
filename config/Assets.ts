@@ -16,7 +16,7 @@ export const assetsConfig: AssetsConfig = {
         {
             id: 312769, 
             name: "Theter USDt",
-            symbol: 'USDT',
+            symbol: "USDT",
             icon: "https://www.creativefabrica.com/wp-content/uploads/2021/06/14/Cryptocurrency-Tether-Usdt-Logo-Graphics-13393983-1-1-580x435.jpg",
         },
         {
@@ -48,7 +48,7 @@ export const assetsConfig: AssetsConfig = {
         {
             id: 312769, 
             name: "Theter USDt",
-            symbol: 'USDT',
+            symbol: "USDT",
             icon: "https://www.creativefabrica.com/wp-content/uploads/2021/06/14/Cryptocurrency-Tether-Usdt-Logo-Graphics-13393983-1-1-580x435.jpg",
         },
         {
@@ -80,7 +80,7 @@ export const assetsConfig: AssetsConfig = {
         {
             id: 17, 
             name: "Theter USDt",
-            symbol: 'USDT',
+            symbol: "USDT",
             icon: "https://www.creativefabrica.com/wp-content/uploads/2021/06/14/Cryptocurrency-Tether-Usdt-Logo-Graphics-13393983-1-1-580x435.jpg",
         },
         {

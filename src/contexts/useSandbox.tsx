@@ -1,5 +1,5 @@
-import React, { createContext, useContext, useState } from 'react'
-import ConnectWithSandboxModal from '../components/modules/Modals/ConnecWithSandboxModal';
+import React, { createContext, useContext, useState } from "react"
+import ConnectWithSandboxModal from "../components/modules/Modals/ConnecWithSandboxModal";
 
 const SandboxContext = createContext({})
 

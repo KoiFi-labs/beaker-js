@@ -1,4 +1,4 @@
-import { Container, Spacer, Text } from '@nextui-org/react'
+import { Container, Spacer, Text } from "@nextui-org/react"
 
 
 export default function Home() {
@@ -8,8 +8,8 @@ export default function Home() {
             fluid 
             display="flex" 
             direction="column" 
-            justify='center' 
-            alignItems='center' 
+            justify="center" 
+            alignItems="center" 
             css={{
                 minHeight: "92vh",
                 position: "relative"

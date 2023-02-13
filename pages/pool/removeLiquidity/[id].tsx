@@ -1,11 +1,11 @@
-import { Text, Container, Row, Col, Tooltip, Card, Input, Grid, Button, Spacer, Modal} from '@nextui-org/react'
-import { useRouter } from 'next/router'
-import { getPoolById } from '../../../src/services/poolService'
-import { IconButton } from '../../../src/components/IconButton/IconButton'
+import { Text, Container, Row, Col, Tooltip, Card, Input, Grid, Button, Spacer, Modal} from "@nextui-org/react"
+import { useRouter } from "next/router"
+import { getPoolById } from "../../../src/services/poolService"
+import { IconButton } from "../../../src/components/IconButton/IconButton"
 import { InfoIcon } from "../../../public/icons/InfoIcon";
-import { useState } from 'react';
-import ConfirmModal from '../../../src/components/modules/Modals/ConfirmModal';
-import SuccessfulTransactionModal from '../../../src/components/modules/Modals/SuccessfulTransactionModal';
+import { useState } from "react";
+import ConfirmModal from "../../../src/components/modules/Modals/ConfirmModal";
+import SuccessfulTransactionModal from "../../../src/components/modules/Modals/SuccessfulTransactionModal";
 
 
   
@@ -21,9 +21,9 @@ export default function RemoveLiquidity() {
   }
 
   return (
-    <Container display="flex" justify='center' alignContent="flex-start"  css={{minHeight: "85vh", p: "16px"}}>
+    <Container display="flex" justify="center" alignContent="flex-start"  css={{minHeight: "85vh", p: "16px"}}>
       <Card css={{p: "8px", maxWidth: "500px", minHeight: "200px"}}>
-        <Container display='flex' justify='space-between' css={{p:0}}>
+        <Container display="flex" justify="space-between" css={{p:0}}>
           <Text size={20} css={{color: "$kondorLight"}}>Remove liquidity {pool?.pool} Pool</Text> 
           <Tooltip content="Details">
             <IconButton>
@@ -31,27 +31,27 @@ export default function RemoveLiquidity() {
             </IconButton>
           </Tooltip>
         </Container>
-        <Card css={{ $$cardColor: '$colors$gray100', m: "8px 0", p: "8px" }}>
+        <Card css={{ $$cardColor: "$colors$gray100", m: "8px 0", p: "8px" }}>
           <Grid.Container>
             <Grid xs={7}>
-              <Input label="Amount" underlined placeholder='0.00' css={{width: "100%"}} />
+              <Input label="Amount" underlined placeholder="0.00" css={{width: "100%"}} />
             </Grid>
-            <Grid xs={5} css={{display:'flex', alignItems:'end', p: '0 8px'}}>
+            <Grid xs={5} css={{display:"flex", alignItems:"end", p: "0 8px"}}>
               <Text size={16}>{pool?.pool} KONDOR TOKEN</Text>
             </Grid>
           </Grid.Container>
           <Text size={16}>Balance 51300.4521 {pool?.pool} KONDOR TOKEN</Text>
 
         </Card>
-        <Container css={{p:0}} display='flex' justify='space-between'>
+        <Container css={{p:0}} display="flex" justify="space-between">
           <Text size={16} css={{color: "$kondorGray"}}>Total value looked</Text>
           <Text>{pool?.total}</Text>
         </Container>
-        <Container css={{p:0}} display='flex' justify='space-between'>
+        <Container css={{p:0}} display="flex" justify="space-between">
           <Text size={16} css={{color: "$kondorGray"}}>Share of pool</Text>
           <Text>0.003%</Text>
         </Container>
-        <Container css={{p:0}} display='flex' justify='space-between'>
+        <Container css={{p:0}} display="flex" justify="space-between">
           <Text size={16} css={{color: "$kondorGray"}}>You will receive</Text>
           <Text>0.00 {pool?.pool}</Text>
         </Container>
@@ -67,19 +67,19 @@ export default function RemoveLiquidity() {
         title="Confirm remove liquidity" 
         >
           <>
-            <Container css={{p:0}} display='flex' justify='space-between'>
+            <Container css={{p:0}} display="flex" justify="space-between">
               <Text size={16} css={{color: "$kondorGray"}}>Amount</Text>
               <Text>0.00 {pool?.pool} KONDOR TOKEN</Text>
             </Container>
-            <Container css={{p:0}} display='flex' justify='space-between'>
+            <Container css={{p:0}} display="flex" justify="space-between">
               <Text size={16} css={{color: "$kondorGray"}}>Share of pool</Text>
               <Text>0.00%</Text>
             </Container>
-            <Container css={{p:0}} display='flex' justify='space-between'>
+            <Container css={{p:0}} display="flex" justify="space-between">
               <Text size={16} css={{color: "$kondorGray"}}>New share of pool</Text>
               <Text>0.00%</Text>
             </Container>
-            <Container css={{p:0}} display='flex' justify='space-between'>
+            <Container css={{p:0}} display="flex" justify="space-between">
               <Text size={16} css={{color: "$kondorGray"}}>You will receive a minimun of</Text>
               <Text>0.00 {pool?.pool}</Text>
             </Container>
@@ -92,19 +92,19 @@ export default function RemoveLiquidity() {
         onPress={() => {}} 
         >
           <>
-            <Container css={{p:0}} display='flex' justify='space-between'>
+            <Container css={{p:0}} display="flex" justify="space-between">
               <Text size={16} css={{color: "$kondorGray"}}>Amount</Text>
               <Text>0.00 {pool?.pool}</Text>
             </Container>
-            <Container css={{p:0}} display='flex' justify='space-between'>
+            <Container css={{p:0}} display="flex" justify="space-between">
               <Text size={16} css={{color: "$kondorGray"}}>You will receive</Text>
               <Text>0.00 {pool?.pool}</Text>
             </Container>
-            <Container css={{p:0}} display='flex' justify='space-between'>
+            <Container css={{p:0}} display="flex" justify="space-between">
               <Text size={16} css={{color: "$kondorGray"}}>Share of pool</Text>
               <Text>0.00%</Text>
             </Container>
-            <Container css={{p:0}} display='flex' justify='space-between'>
+            <Container css={{p:0}} display="flex" justify="space-between">
               <Text size={16} css={{color: "$kondorGray"}}>You will receive</Text>
               <Text>0.00 {pool?.pool}</Text>
             </Container>

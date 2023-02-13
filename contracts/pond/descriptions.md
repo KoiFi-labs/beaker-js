@@ -6,14 +6,14 @@ validaciones:
 
 + El destinatario de la tx seed debe ser la address del contrato.
 
-+ Los assets 'a' y 'b' no deben ser iguales.
++ Los assets "a" y "b" no deben ser iguales.
 
 
-1. Seteamos los assets 'a' y 'b' como estados locales (estáticos)
+1. Seteamos los assets "a" y "b" como estados locales (estáticos)
 
-2. Creamos un pond token, para esto creamos una tx de tipo 'assetConfig'.
+2. Creamos un pond token, para esto creamos una tx de tipo "assetConfig".
 
-3. Hacemos un opt in del asset 'a' y del asset 'b'
+3. Hacemos un opt in del asset "a" y del asset "b"
 
 4. retornamos el pond token
 
@@ -22,7 +22,7 @@ validaciones:
 
 validaciones:
 
-+ El asset que el param 'asset_a' sea el mismo que tenemos en el estado global como asset_a
++ El asset que el param "asset_a" sea el mismo que tenemos en el estado global como asset_a
 
 + El sender que hace la app_call debe ser el mismo sender que hace las transferencias del asset.
 
@@ -35,7 +35,7 @@ validaciones:
 
 1. Verificamos que tenemos los balances (a, b, pond) de la address de quien llama al contrato. 
 
-2. Calculamos la cantidad a mintear dependiendo e la cantidad de 'a' y de 'b'.
+2. Calculamos la cantidad a mintear dependiendo e la cantidad de "a" y de "b".
     Si es la primera vez que se realiza el minteo se sigue la formula token_to_mint_initial().
 Si no es el caso se usa la formula tokens_to_mint()
 

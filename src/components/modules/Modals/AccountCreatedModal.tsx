@@ -1,5 +1,5 @@
-import React from 'react'
-import { Modal, Text, Card, Badge, Container } from '@nextui-org/react'
+import React from "react"
+import { Modal, Text, Card, Badge, Container } from "@nextui-org/react"
 
 export type AccountCreatedModalProps = {
     isVisible: boolean,

@@ -1,13 +1,13 @@
-import React, {useState} from 'react'
-import { Button, Navbar, Popover, Text, Card, Avatar, Container, Divider, Spacer, Grid } from '@nextui-org/react'
-import ConnectWalletModal from '../Modals/ConnectWalletModal';
-import { useWallet } from '../../../contexts/useWallet';
-import Link from 'next/link'
-import { ChevronIcon } from '../../../../public/icons/chevron-down';
-import { Balance } from '../../../services/algoService';
-import { microToStandard } from '../../../utils/math';
-import { config } from '../../../../config';
-import { abbreviateWallet } from '../../../utils/utils';
+import React, {useState} from "react"
+import { Button, Navbar, Popover, Text, Card, Avatar, Container, Divider, Spacer, Grid } from "@nextui-org/react"
+import ConnectWalletModal from "../Modals/ConnectWalletModal";
+import { useWallet } from "../../../contexts/useWallet";
+import Link from "next/link"
+import { ChevronIcon } from "../../../../public/icons/chevron-down";
+import { Balance } from "../../../services/algoService";
+import { microToStandard } from "../../../utils/math";
+import { config } from "../../../../config";
+import { abbreviateWallet } from "../../../utils/utils";
 
 const Nav: React.FC = (): JSX.Element => {
 
@@ -30,7 +30,7 @@ const Nav: React.FC = (): JSX.Element => {
           <Button 
             bordered
             onPress={handlerConnect}
-            css={{color: '$kondorPrimary', borderColor: "$kondorPrimary"}}
+            css={{color: "$kondorPrimary", borderColor: "$kondorPrimary"}}
             >Connect
           </Button>
           <ConnectWalletModal isVisible={connectWalletModalVisible} onHide={() => setConnectWalletModalVisible(false)}/>
@@ -42,7 +42,7 @@ const Nav: React.FC = (): JSX.Element => {
           <Button 
             bordered
             onPress={handlerDisconnect}
-            css={{color: '$kondorPrimary', borderColor: "$kondorPrimary"}}
+            css={{color: "$kondorPrimary", borderColor: "$kondorPrimary"}}
             >{account?.addr ? abbreviateWallet(account.addr) : null}
               <ChevronIcon size={20} fill="#814350" />
           </Button>  
@@ -57,7 +57,7 @@ const Nav: React.FC = (): JSX.Element => {
                     <Text >{balance.symbol || `id: ${balance.assetId}`}</Text>
                   </Grid>
                   <Grid xs={4}>
-                    <Container display='flex' justify='flex-end' css={{padding:0}}>
+                    <Container display="flex" justify="flex-end" css={{padding:0}}>
                       <Text b>{microToStandard(balance.amount)}</Text>
                     </Container>
                   </Grid>

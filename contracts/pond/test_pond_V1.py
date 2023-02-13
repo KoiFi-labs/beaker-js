@@ -124,7 +124,7 @@ def creator_app_client(creator_acct: AcctInfo) -> client.ApplicationClient:
 
 
 def test_app_create(creator_app_client: client.ApplicationClient):
-    print('creation')
+    print("creation")
     creator_app_client.create()
     app_state = creator_app_client.get_application_state()
     sender = creator_app_client.get_sender()
@@ -137,7 +137,7 @@ def test_app_create(creator_app_client: client.ApplicationClient):
 def minimum_fee_for_txn_count(
     sp: transaction.SuggestedParams, txn_count: int
 ) -> transaction.SuggestedParams:
-    print('minimum fee')
+    print("minimum fee")
     """
     Configures transaction fee _without_ considering network congestion.
 
@@ -150,9 +150,9 @@ def minimum_fee_for_txn_count(
 
 
 def assert_app_algo_balance(c: client.ApplicationClient, expected_algos: int):
-    print('balance')
+    print("balance")
     """
-    Verifies the app's algo balance is not unexpectedly drained during app interaction (e.g. paying inner transaction fees).
+    Verifies the app"s algo balance is not unexpectedly drained during app interaction (e.g. paying inner transaction fees).
 
     Due to the presence of rewards, the assertion tolerates actual > expected for small positive differences.
     """
@@ -268,7 +268,7 @@ def test_app_bootstrap(
     assert token_info["params"]["manager"] == app_addr
     assert token_info["params"]["creator"] == app_addr
 
-    # Make sure we're opted in
+    # Make sure we"re opted in
     ai = creator_app_client.get_application_account_info()
     assert len(ai["assets"]) == 3, "Should have 3 assets, A/B/Pool"
 

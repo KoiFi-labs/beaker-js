@@ -1,4 +1,4 @@
-import { PeraWalletConnect } from '@perawallet/connect';
+import { PeraWalletConnect } from "@perawallet/connect";
 const peraWallet = new PeraWalletConnect();
 
 export const peraService = {

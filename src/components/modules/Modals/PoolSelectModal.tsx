@@ -1,6 +1,6 @@
-import React from 'react'
-import { Modal, Button, Divider } from '@nextui-org/react'
-import { getPools, PoolType } from '../../../services/poolService'
+import React from "react"
+import { Modal, Button, Divider } from "@nextui-org/react"
+import { getPools, PoolType } from "../../../services/poolService"
 
 export type PoolSelectModalProps = {
     isVisible: boolean,

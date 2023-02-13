@@ -9,12 +9,12 @@ def approval():
   )
 
   commit = Seq(
-    # ['str:commit', 'int:asset_id', 'int:asset_amt', 'int:lp_token_amt', 'int:slippage*', 'int:lp_token_id*']
+    # ["str:commit", "int:asset_id", "int:asset_amt", "int:lp_token_amt", "int:slippage*", "int:lp_token_id*"]
 
   )
 
   redeem = Seq(
-    # ['str:redeem', 'int:asset_id', 'int:asset_amt', 'int:lp_token_amt', 'int:slippage*', 'int:lp_token_id*']
+    # ["str:redeem", "int:asset_id", "int:asset_amt", "int:lp_token_amt", "int:slippage*", "int:lp_token_id*"]
   )
 
   return program.event(

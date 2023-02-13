@@ -1,4 +1,4 @@
-import algosdk, { mnemonicFromSeed, mnemonicToSecretKey } from 'algosdk'
+import algosdk, { mnemonicFromSeed, mnemonicToSecretKey } from "algosdk"
 
 const kmd_token = "a".repeat(64)
 const kmd_host = "http://localhost"
@@ -12,23 +12,23 @@ export async function getAccounts(): Promise<algosdk.Account[]> {
     const wallets = await kmdClient.listWallets()
 
     let walletId;
-    for(const wallet of wallets['wallets']){
-        if(wallet['name'] === kmd_wallet) walletId = wallet['id']
+    for(const wallet of wallets["wallets"]){
+        if(wallet["name"] === kmd_wallet) walletId = wallet["id"]
     }
 
     if (walletId===undefined) throw Error("No wallet named: "+kmd_wallet)
 
     const handleResp = await kmdClient.initWalletHandle(walletId, kmd_password)
-    const handle = handleResp['wallet_handle_token']
+    const handle = handleResp["wallet_handle_token"]
 
     const addresses = await kmdClient.listKeys(handle)
     const acctPromises = []
-    for(const addr of addresses['addresses']){
+    for(const addr of addresses["addresses"]){
         acctPromises.push(kmdClient.exportKey(handle, kmd_password, addr))
     }
     const keys = await Promise.all(acctPromises)
 
-    // Don't need to wait for it
+    // Don"t need to wait for it
     kmdClient.releaseWalletHandle(handle)
 
     return keys.map((k)=>{

@@ -1,10 +1,10 @@
-import { useState } from 'react'
-import { Button, Container, Text, Loading, Spacer } from '@nextui-org/react'
-import { useSandbox } from '../../src/contexts/useSandbox'
+import { useState } from "react"
+import { Button, Container, Text, Loading, Spacer } from "@nextui-org/react"
+import { useSandbox } from "../../src/contexts/useSandbox"
 import algosdk  from "algosdk";
 import fs from "fs"
-import { config } from '../../config'
-import { getAccounts } from './sandbox';
+import { config } from "../../config"
+import { getAccounts } from "../../src/services/sandbox";
 
 
 export default function Home() {
@@ -124,7 +124,7 @@ export default function Home() {
         <Container fluid display="flex" direction="column" alignItems="center" css={{height: "80vh"}}>
             <Spacer y={5}/>
             <Text h2>
-            Let's test an app call to a local network
+            Let s test an app call to a local network
             </Text>
             {isConnectedToSandboxWallet ? <Text>Address:  {sandboxAccountAddress?.addr}</Text> : null }
             <Spacer y={3}/>

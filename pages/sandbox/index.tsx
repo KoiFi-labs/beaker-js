@@ -1,16 +1,16 @@
-import { Button,  Spacer, Text, Badge, Container } from '@nextui-org/react'
-import { useState } from 'react';
-import AccountCreatedModal from '../../src/components/modules/Modals/AccountCreatedModal';
-import { useSandbox } from '../../src/contexts/useSandbox';
-import { algoService } from '../../src/services/algoService';
-import { useWallet } from '../../src/contexts/useWallet';
+import { Button,  Spacer, Text, Badge, Container } from "@nextui-org/react"
+import React, { useState } from "react";
+import AccountCreatedModal from "../../src/components/modules/Modals/AccountCreatedModal";
+import { useSandbox } from "../../src/contexts/useSandbox";
+import { algoService } from "../../src/services/algoService";
+import { useWallet } from "../../src/contexts/useWallet";
 
 
 export default function Sandbox() {
 
     const {balances} = useWallet()
-    const [sandboxStatus, setSanboxStatus] = useState('disconnected')
-    const [account, setAccount] = useState('')
+    const [sandboxStatus, setSanboxStatus] = useState("disconnected")
+    const [account, setAccount] = useState("")
     const [seed, setSeed] = useState([])
     const [accountCreatedModalVisible, setAccountCreatedModalVisible] = useState<boolean>(false)
     const { sandboxAccountAddress } = useSandbox()
@@ -24,9 +24,9 @@ export default function Sandbox() {
     const verifySanboxStatus = async() => {
         try{
             await algoService.healthCheck()
-            setSanboxStatus('success')
+            setSanboxStatus("success")
         }catch(error){
-            setSanboxStatus('error')
+            setSanboxStatus("error")
         }
     }
 
@@ -72,7 +72,7 @@ export default function Sandbox() {
 
             {
                 sandboxAccountAddress?.length ?  
-                <Container fluid justify='center' display='flex'>
+                <Container fluid justify="center" display="flex">
                     <Text h4 color="secondary">Connected to: {sandboxAccountAddress}</Text>
                 </Container>: 
                 null

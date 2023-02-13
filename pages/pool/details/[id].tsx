@@ -1,13 +1,13 @@
-import { Text, Container, Row, Col, Tooltip, Card, Input, Grid, Button, Spacer, Modal} from '@nextui-org/react'
-import { useRouter } from 'next/router'
-import { getPoolById } from '../../../src/services/poolService'
-import { IconButton } from '../../../src/components/IconButton/IconButton'
+import { Text, Container, Row, Col, Tooltip, Card, Input, Grid, Button, Spacer, Modal} from "@nextui-org/react"
+import { useRouter } from "next/router"
+import { getPoolById } from "../../../src/services/poolService"
+import { IconButton } from "../../../src/components/IconButton/IconButton"
 import { InfoIcon } from "../../../public/icons/InfoIcon";
-import { useState } from 'react';
-import Link from 'next/link'
-import ConfirmModal from '../../../src/components/modules/Modals/ConfirmModal';
-import SuccessfulTransactionModal from '../../../src/components/modules/Modals/SuccessfulTransactionModal';
-import { LinkButton } from '../../../src/components/LinkButton/LinkButton';
+import { useState } from "react";
+import Link from "next/link"
+import ConfirmModal from "../../../src/components/modules/Modals/ConfirmModal";
+import SuccessfulTransactionModal from "../../../src/components/modules/Modals/SuccessfulTransactionModal";
+import { LinkButton } from "../../../src/components/LinkButton/LinkButton";
 
 
   
@@ -27,9 +27,9 @@ export default function Details() {
   }
 
   return (
-    <Container display="flex" justify='center' alignContent="flex-start"  css={{minHeight: "85vh", p: "16px"}}>
+    <Container display="flex" justify="center" alignContent="flex-start"  css={{minHeight: "85vh", p: "16px"}}>
       <Card css={{p: "8px", maxWidth: "500px", minHeight: "200px"}}>
-        <Container display='flex' justify='space-between' css={{p:0}}>
+        <Container display="flex" justify="space-between" css={{p:0}}>
           <Text size={20} css={{color: "$kondorLight"}}>{pool?.pool} Pool</Text> 
           <Tooltip content="Details">
             <IconButton>
@@ -37,23 +37,23 @@ export default function Details() {
             </IconButton>
           </Tooltip>
         </Container>
-        <Container css={{p:0}} display='flex' justify='space-between'>
+        <Container css={{p:0}} display="flex" justify="space-between">
           <Text size={16} css={{color: "$kondorGray"}}>Total value looked</Text>
           <Text>${pool?.total}</Text>
         </Container>
-        <Container css={{p:0}} display='flex' justify='space-between'>
+        <Container css={{p:0}} display="flex" justify="space-between">
           <Text size={16} css={{color: "$kondorGray"}}>Volume 24H</Text>
           <Text>${pool?.volume}</Text>
         </Container>
-        <Container css={{p:0}} display='flex' justify='space-between'>
+        <Container css={{p:0}} display="flex" justify="space-between">
           <Text size={16} css={{color: "$kondorGray"}}>Fees 24H</Text>
           <Text>$9.25k</Text>
         </Container>
-        <Container css={{p:0}} display='flex' justify='space-between'>
+        <Container css={{p:0}} display="flex" justify="space-between">
           <Text size={16} css={{color: "$kondorGray"}}>Transactions 24H</Text>
           <Text>$1.2k</Text>
         </Container>
-        <Container css={{p:0}} display='flex' justify='space-between'>
+        <Container css={{p:0}} display="flex" justify="space-between">
           <Text size={16} css={{color: "$kondorGray"}}>APR</Text>
           <Text>15.93%</Text>
         </Container>

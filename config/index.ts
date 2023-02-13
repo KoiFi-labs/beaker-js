@@ -1,5 +1,5 @@
-import { networks } from './Networks';
-import { assetsConfig } from './Assets';
+import { networks } from "./Networks";
+import { assetsConfig } from "./Assets";
 
 
 export const config = {

@@ -1,11 +1,11 @@
-import { Table, Text, Container, Row, Col, Tooltip} from '@nextui-org/react'
-import React from 'react';
-import { IconButton } from '../../src/components/IconButton/IconButton'
+import { Table, Text, Container, Row, Col, Tooltip} from "@nextui-org/react"
+import React from "react";
+import { IconButton } from "../../src/components/IconButton/IconButton"
 import { PlusCircleIcon } from "../../public/icons/PlusCircleIcon";
 import { DeleteIcon } from "../../public/icons/DeleteIcon";
-import { ChartIcon } from '../../public/icons/ChartIcon';
-import Link from 'next/link'
-import { getMyPools, MyPoolType } from '../../src/services/poolService'
+import { ChartIcon } from "../../public/icons/ChartIcon";
+import Link from "next/link"
+import { getMyPools, MyPoolType } from "../../src/services/poolService"
 
   
 export default function MyPool() {

@@ -1,8 +1,8 @@
-import React, { createContext, useContext, useEffect, useState } from 'react'
-import { peraService } from '../services/walletServices/peraService'
-import { myAlgoService } from '../services/walletServices/myAlgoService'
-import { useSandbox } from './useSandbox'
-import { algoService, Balance } from '../services/algoService'
+import React, { createContext, useContext, useEffect, useState } from "react"
+import { peraService } from "../services/walletServices/peraService"
+import { myAlgoService } from "../services/walletServices/myAlgoService"
+import { useSandbox } from "./useSandbox"
+import { algoService, Balance } from "../services/algoService"
 
 const WalletContext = createContext({})
 
@@ -11,9 +11,9 @@ type Props = {
 };
 
 export enum WALLET_PROVIDER {
-    PERA = 'pera',
-    MY_ALGO = 'myAlgo',
-    SANDBOX = 'sandbox'
+    PERA = "pera",
+    MY_ALGO = "myAlgo",
+    SANDBOX = "sandbox"
 }
 
 export type Account = {
