@@ -6,7 +6,8 @@ import { InfoIcon } from "../../../public/icons/InfoIcon";
 import { useState } from "react";
 import ConfirmModal from "../../../src/components/modules/Modals/ConfirmModal";
 import SuccessfulTransactionModal from "../../../src/components/modules/Modals/SuccessfulTransactionModal";
-
+import { copyToClipboard, abbreviateTransactionHash } from "../../../src/utils/utils";
+import { ClipboardIcon } from "../../../public/icons/clipboard";
 
   
 export default function RemoveLiquidity() {
@@ -43,16 +44,23 @@ export default function RemoveLiquidity() {
           <Text size={16}>Balance 51300.4521 {pool?.pool} KONDOR TOKEN</Text>
 
         </Card>
+        <Container css={{p:"24px 0"}} display='flex' justify='space-between'>
+          <Text size={16} css={{color: "$kondorGray"}}>Output is estimated. If the price changes by more than 0.5% your transaction will revert.</Text>
+        </Container>
         <Container css={{p:0}} display="flex" justify="space-between">
-          <Text size={16} css={{color: "$kondorGray"}}>Total value looked</Text>
-          <Text>{pool?.total}</Text>
+              <Text size={16} css={{color: "$kondorGray"}}>Amount</Text>
+              <Text>0.00 {pool?.pool} KONDOR TOKEN</Text>
+        </Container>
+        <Container css={{p:0}} display="flex" justify="space-between">
+              <Text size={16} css={{color: "$kondorGray"}}>Total value</Text>
+              <Text>≈ $1500</Text>
         </Container>
         <Container css={{p:0}} display="flex" justify="space-between">
           <Text size={16} css={{color: "$kondorGray"}}>Share of pool</Text>
           <Text>0.003%</Text>
         </Container>
         <Container css={{p:0}} display="flex" justify="space-between">
-          <Text size={16} css={{color: "$kondorGray"}}>You will receive</Text>
+          <Text size={16} css={{color: "$kondorGray"}}>You will receive a minimun of</Text>
           <Text>0.00 {pool?.pool}</Text>
         </Container>
         <Spacer/>
@@ -92,23 +100,10 @@ export default function RemoveLiquidity() {
         onPress={() => {}} 
         >
           <>
-            <Container css={{p:0}} display="flex" justify="space-between">
-              <Text size={16} css={{color: "$kondorGray"}}>Amount</Text>
-              <Text>0.00 {pool?.pool}</Text>
+            <Container display='flex' justify='flex-start' alignItems="center"  css={{padding: "8px"}}>
+              <IconButton onClick={() => copyToClipboard("DSWX3GJBH3665JK3HI55NRM5R4UKCWDWGBHU6D2MHYJX5RVWEOSA")}><ClipboardIcon/></IconButton>
+              <Text>Transaction ID: {abbreviateTransactionHash("DSWX3GJBH3665JK3HI55NRM5R4UKCWDWGBHU6D2MHYJX5RVWEOSA")}</Text>
             </Container>
-            <Container css={{p:0}} display="flex" justify="space-between">
-              <Text size={16} css={{color: "$kondorGray"}}>You will receive</Text>
-              <Text>0.00 {pool?.pool}</Text>
-            </Container>
-            <Container css={{p:0}} display="flex" justify="space-between">
-              <Text size={16} css={{color: "$kondorGray"}}>Share of pool</Text>
-              <Text>0.00%</Text>
-            </Container>
-            <Container css={{p:0}} display="flex" justify="space-between">
-              <Text size={16} css={{color: "$kondorGray"}}>You will receive</Text>
-              <Text>0.00 {pool?.pool}</Text>
-            </Container>
-
           </>
       </SuccessfulTransactionModal>
     </Container>

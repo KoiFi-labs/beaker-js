@@ -76,7 +76,6 @@ const getAssetSupply = async (assetId: number) => {
 
           const comp = new algosdk.AtomicTransactionComposer();
 
-          console.log("Creating asset transfer transaction")
           const assetTransferTxnA = algosdk.makeAssetTransferTxnWithSuggestedParamsFromObject({
               from: addr,
               to: config.appAddress,

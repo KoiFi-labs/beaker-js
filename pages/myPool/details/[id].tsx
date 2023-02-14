@@ -39,33 +39,37 @@ export default function Details() {
           </Tooltip>
         </Container>
         <Container css={{p:0}} display="flex" justify="space-between">
-          <Text size={16} css={{color: "$kondorGray"}}>Total value looked</Text>
-          <Text>{pool?.total}</Text>
+          <Text size={16} css={{color: "$kondorGray"}}>Amount</Text>
+          <Text>4500 {pool?.pool} KONDOR TOKEN</Text>
         </Container>
         <Container css={{p:0}} display="flex" justify="space-between">
           <Text size={16} css={{color: "$kondorGray"}}>Share of pool</Text>
           <Text>0.003%</Text>
         </Container>
         <Container css={{p:0}} display="flex" justify="space-between">
-          <Text size={16} css={{color: "$kondorGray"}}>You will receive</Text>
-          <Text>0.00 {pool?.pool}</Text>
+          <Text size={16} css={{color: "$kondorGray"}}>Value</Text>
+          <Text>≈ $500</Text>
         </Container>
         <Spacer/>
-        <Grid.Container css={{p: "8px"}}>
-            <Grid xs={6}>
+        <Grid.Container>
+          <Grid xs={6}>
+            <Container css={{p:"0px 4px 0px 0px", m:0}}>
               <Link href={"/pool/removeLiquidity/" + pool?.id} >
                 <LinkButton>
                   Remove
                 </LinkButton>
               </Link>
-            </Grid>
-            <Grid xs={6}>    
-                <Link href={"/pool/addLiquidity/" + pool?.id}>
-                  <LinkButton>
-                    Add
-                  </LinkButton>
-                </Link>
-            </Grid>
+            </Container>
+          </Grid>
+          <Grid xs={6}>
+            <Container css={{p:"0px 0px 0px 4px"}}>
+              <Link href={"/pool/addLiquidity/" + pool?.id}>
+                <LinkButton>
+                  Add
+                </LinkButton>
+              </Link>
+            </Container>
+          </Grid>
         </Grid.Container>
       </Card>
     </Container>

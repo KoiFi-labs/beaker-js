@@ -10,7 +10,7 @@ export const LinkButton = styled("button", {
   width: "100%",
   minWidth: "140px",
   padding: "0",
-  margin: "4px",
+  margin: "0",
   bg: "$kondorPrimary",
   transition: "$default",
   "&:hover": {

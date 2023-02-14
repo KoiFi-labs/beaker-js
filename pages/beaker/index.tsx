@@ -50,8 +50,6 @@ export default function Home() {
         let assetID = null;
         const ptx = await algosdk.waitForConfirmation(client, tx.txId, 2);
         assetID = ptx["asset-index"];
-        console.log("AssetID = " + assetID);
-        console.log("Transaction " + tx.txId + " confirmed in round " + ptx["confirmed-round"]);
         return assetID;
     }
 
@@ -62,7 +60,6 @@ export default function Home() {
           setAppResponse(null)
           setTxId(null)
 
-          console.log(await getAccounts())
 
         // const sp = await client.getTransactionParams().do();
 

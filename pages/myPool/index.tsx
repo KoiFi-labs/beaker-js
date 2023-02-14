@@ -35,7 +35,7 @@ const columns = [
         return (
                 <Row justify="center" align="center">
                   <Col css={{ d: "flex" }}>
-                    <Link href={"/myPool/details/" + myPool.id}>
+                    <Link href={"/myPool/details/" + myPool.id } legacyBehavior>
                       <a onClick={() => {}}>
                         <Tooltip content="Details">
                           <IconButton>
@@ -46,7 +46,7 @@ const columns = [
                     </Link>
                   </Col>
                   <Col css={{ d: "flex" }}>
-                  <Link href={"/pool/addLiquidity/" + myPool.id}>
+                  <Link href={"/pool/addLiquidity/" + myPool.id} legacyBehavior>
                     <a onClick={() => {}}>
                       <Tooltip content="Add liquidity">
                         <IconButton>
@@ -57,7 +57,7 @@ const columns = [
                     </Link>
                   </Col>
                   <Col css={{ d: "flex" }}>
-                  <Link href={"/pool/removeLiquidity/" + myPool.id}>
+                  <Link href={"/pool/removeLiquidity/" + myPool.id} legacyBehavior>
                     <a onClick={() => {}}>
                       <Tooltip content="Remove liquidity">
                         <IconButton>

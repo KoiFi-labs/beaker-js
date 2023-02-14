@@ -34,7 +34,7 @@ const columns = [
         return (
                 <Row justify="center" align="center">
                   <Col css={{ d: "flex" }}>
-                  <Link href={"/pool/details/" + pool.id}>
+                  <Link href={"/pool/details/" + pool.id} legacyBehavior>
                     <a onClick={() => {}}>
                       <Tooltip content="Details">
                         <IconButton>
@@ -45,7 +45,7 @@ const columns = [
                     </Link>
                   </Col>
                   <Col css={{ d: "flex" }}>
-                  <Link href={"/pool/addLiquidity/" + pool.id}>
+                  <Link href={"/pool/addLiquidity/" + pool.id} legacyBehavior>
                     <a onClick={() => {}}>
                       <Tooltip content="Add liquidity">
                         <IconButton>

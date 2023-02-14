@@ -51,7 +51,7 @@ export default function Details() {
           })
         }
         <Spacer/>
-        <Link href={"/product/addLiquidity/" + product?.id}>
+        <Link href={"/product/addLiquidity/" + product?.id} legacyBehavior>
           <a onClick={() => {}}>
           <Button
             css={{backgroundColor: "$kondorPrimary", minWidth: "136px", width: "100%", m: "4px" }}
