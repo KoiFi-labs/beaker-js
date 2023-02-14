@@ -1,11 +1,5 @@
 import algoSdk from "algosdk"
 import { config } from "../../config"
-import process from "process"
-
-console.log(config.network.token, config.network.server, config.network.port)
-
-
-console.log(config.network.token, config.network.server, config.network.port)
 
 const algoClient = new algoSdk.Algodv2(config.network.token, config.network.server, config.network.port)
 

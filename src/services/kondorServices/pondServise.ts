@@ -91,7 +91,6 @@ const getAssetSupply = async (assetId: number) => {
             assetIndex: assetB,
             suggestedParams: {...sp, fee: 3000}, //todo: validate fee
         })
-        console.log("Created asset transfer transaction", assetTransferTxnA, assetTransferTxnB)
 
           comp.addMethodCall({
               method: abiContract.getMethodByName("mint"),
