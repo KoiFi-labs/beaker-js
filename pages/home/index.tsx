@@ -15,9 +15,9 @@ export default function Home() {
                 position: "relative"
             }}>
 
-            <Text h1 css={{color: "$kondorPrimary"}}> Where TradFi meets DeFi</Text>
+            <Text h1 css={{color: "$kondorGray"}}> Where TradFi meets DeFi</Text>
 
-            <Text> KONDOR FINANCE</Text>
+            <Text css={{color: "$kondorGray"}}> KONDOR FINANCE</Text>
         </Container>
     )
 }

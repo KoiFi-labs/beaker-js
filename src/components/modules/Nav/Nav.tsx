@@ -1,19 +1,43 @@
 import React, {useState} from "react"
-import { Button, Navbar, Popover, Text, Card, Avatar, Container, Divider, Spacer, Grid } from "@nextui-org/react"
+import { Button, Navbar, Popover, Text, Card, Avatar, Container, Divider, Spacer, Grid, Dropdown } from "@nextui-org/react"
 import ConnectWalletModal from "../Modals/ConnectWalletModal";
 import { useWallet } from "../../../contexts/useWallet";
-import Link from "next/link"
 import { ChevronIcon } from "../../../../public/icons/chevron-down";
 import { Balance } from "../../../services/algoService";
 import { microToStandard } from "../../../utils/math";
 import { config } from "../../../../config";
 import { abbreviateWallet } from "../../../utils/utils";
+import Link from "next/link";
 
 const Nav: React.FC = (): JSX.Element => {
 
   const {isConnected, handleDisconnectWalletClick, account, balances } = useWallet()
   const [connectWalletModalVisible, setConnectWalletModalVisible] = useState<boolean>(false)
   const balancesToShow = balances.filter((b: Balance) => config.assetList.map(a => a.id).includes(b.assetId))
+
+  type Page = {
+    label: string;
+    href: string;
+  };
+
+  const pages: Page[] = [
+    {
+      label: "Home",
+      href: "/home",
+    },
+    {
+      label: "Pools",
+      href: "/pool",
+    },
+    {
+      label: "MyPools",
+      href: "/myPool",
+    },
+    {
+      label: "MyProducts",
+      href: "/product",
+    }
+  ];
 
   const handlerConnect = (): void => {
     setConnectWalletModalVisible(true)
@@ -77,22 +101,43 @@ const Nav: React.FC = (): JSX.Element => {
 
   return (
     <Navbar variant="sticky" maxWidth="fluid" isCompact >
+      <Navbar.Toggle showIn="xs" />
+      <Navbar.Brand
+          css={{
+            "@xs": {
+              w: "12%",
+            },
+          }}
+        >
         <Link href="home">
             Kondor Finance
         </Link>
+        </Navbar.Brand>
       <Navbar.Content hideIn="xs" >
-      <Link  href="/swap">Swap</Link>
-        <Link  href="/pool">Pool</Link>
-        <Link  href="/myPool">MyPools</Link>
-        <Link  href="/product">MyProducts</Link>
+        {pages.map((page) => (
+            <Link href={page.href} key={page.label}>{page.label}</Link>
+        ))}
       </Navbar.Content>
+
+
       <Navbar.Content >
         <Navbar.Item >
           <div>
           {getNavbarButton()}
           </div>
         </Navbar.Item>
-    </Navbar.Content >
+      </Navbar.Content >
+
+
+      <Navbar.Collapse >
+          {pages.map((item, index) => (
+            <Navbar.CollapseItem key={item.label}>
+              <Link href={item.href}>
+                {item.label}
+              </Link>
+            </Navbar.CollapseItem>
+          ))}
+        </Navbar.Collapse>
   </Navbar>
 )}
 
