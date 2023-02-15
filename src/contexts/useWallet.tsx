@@ -82,13 +82,16 @@ export const WalletProvider: React.FC<Props> = ({ children }: Props): JSX.Elemen
                 setWalletProvider(walletProvider)
                 setAccount(peraAccount)
                 setIsConnected(true)
+                break;
             case WALLET_PROVIDER.MY_ALGO:
                 const myAlgoAccount = await myAlgoService.connect()
                 setWalletProvider(walletProvider)
                 setAccount(myAlgoAccount)
                 setIsConnected(true)
+                break;
             case WALLET_PROVIDER.SANDBOX:
               handleConnectSandboxWalletClick()
+              break;
         }
   }
 

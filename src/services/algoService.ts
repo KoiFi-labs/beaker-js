@@ -12,7 +12,6 @@ export type Balance = {
 }
 
 
-
 const getBalances: (account: string) => Promise<Balance[]> = async (account) => {
     const accountInfo = await algoClient.accountInformation(account).do()
     const algorandTokenInfo = config.assetList.find((assetItem) => assetItem.id === 0)

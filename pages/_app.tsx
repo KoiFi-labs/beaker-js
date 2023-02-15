@@ -6,6 +6,7 @@ import { WalletProvider } from "../src/contexts/useWallet"
 import { NextUIProvider, createTheme } from "@nextui-org/react";
 import { Layout } from "../src/components/Layout/Layout"
 import { themeConfig } from "../styles/themeConfig"
+import { SSRProvider } from "@react-aria/ssr"
 
 const theme = createTheme(themeConfig)
 
@@ -16,15 +17,17 @@ export default function App({ Component, pageProps }: AppProps) {
         <Head>
           <title>Kondor Protocol</title>
         </Head>
+      <SSRProvider>
         <NextUIProvider theme={theme}>
           <SandboxProvider>
                 <WalletProvider>
-                  <Layout>
-                    <Component {...pageProps} />
-                  </Layout>
+                    <Layout>
+                      <Component {...pageProps} />
+                    </Layout>
                 </WalletProvider>
           </SandboxProvider>
         </NextUIProvider>
+      </SSRProvider>
     </>
 )}
 

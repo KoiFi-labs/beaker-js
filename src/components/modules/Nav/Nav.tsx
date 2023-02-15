@@ -22,8 +22,8 @@ const Nav: React.FC = (): JSX.Element => {
 
   const pages: Page[] = [
     {
-      label: "Home",
-      href: "/home",
+      label: "Swap",
+      href: "/swap",
     },
     {
       label: "Pools",

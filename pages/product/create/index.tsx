@@ -34,7 +34,7 @@ export default function CreateProduct() {
 
 
     const PoolInput = (pool: PoolType) => (
-            <Card css={{ $$cardColor: "$colors$gray100", m: "4px 0px" }}>
+            <Card key={pool.pool} css={{ $$cardColor: "$colors$gray100", m: "4px 0px" }}>
               <Grid.Container justify="center"css={{p:"8px"}}>
                 <Grid xs={8}>
                   <Input label="From" underlined placeholder="0.00" />

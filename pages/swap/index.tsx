@@ -108,7 +108,12 @@ export default function Swap() {
 
     return (
         <Container fluid display="flex" justify="center" alignItems="center" css={{minHeight: "85vh"}}>
-            <Card css={{ mw: "330px", maxWidth: "500px"}}>
+            <Card css={{ 
+                mw: "330px", 
+                maxWidth: "500px",
+                bg: "rgb(0, 0, 0, 0.6)",
+                backdropFilter: "saturate(180%) blur(10px);",
+                }}>
                 <Card.Header>
                     <Text b>Swap</Text>
                 </Card.Header>
