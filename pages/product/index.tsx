@@ -105,7 +105,8 @@ const columns = [
         css={{
             height: "auto",
             minWidth: "100%",
-            backdropFilter: "blur(4px)",
+            bg: "rgb(0, 0, 0, 0.6)",
+            backdropFilter: "saturate(180%) blur(10px);",
             m: "16px 0",
             borderRadius: "16px",
         }}
