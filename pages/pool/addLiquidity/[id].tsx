@@ -7,16 +7,30 @@ import { ClipboardIcon } from '../../../public/icons/clipboard'
 import { useState } from 'react'
 import ConfirmModal from '../../../src/components/modules/Modals/ConfirmModal'
 import SuccessfulTransactionModal from '../../../src/components/modules/Modals/SuccessfulTransactionModal'
-import { copyToClipboard, abbreviateTransactionHash } from '../../../src/utils/utils'
+import SendingTransactionModal from '../../../src/components/modules/Modals/SendingTransaction'
+import { copyToClipboard, abbreviateTransactionHash, sleep } from '../../../src/utils/utils'
 
 export default function AddLiquidity () {
   const [confirmModalVisible, setConfirmModalVisible] = useState<boolean>(false)
   const [successfulTransactionModalVisible, setSuccessfulTransactionModalVisible] = useState<boolean>(false)
+  const [sendingTransactionModalVisible, setSendingTransactionModalVisible] = useState<boolean>(false)
   const router = useRouter()
   const { id } = router.query
   const pool = getPoolById(id as string)
 
-  const handleConfirmButton = () => {
+  const addLiquidity = async () => {
+    await sleep(3000)
+  }
+
+  const handleOkButton = () => {
+    setSuccessfulTransactionModalVisible(false)
+    router.push('/myPool')
+  }
+
+  const handleConfirmButton = async () => {
+    setSendingTransactionModalVisible(true)
+    await addLiquidity()
+    setSendingTransactionModalVisible(false)
     setSuccessfulTransactionModalVisible(true)
   }
 
@@ -92,10 +106,16 @@ export default function AddLiquidity () {
           </Container>
         </>
       </ConfirmModal>
+
+      <SendingTransactionModal
+        isVisible={sendingTransactionModalVisible}
+        onHide={() => setSendingTransactionModalVisible(false)}
+        onPress={() => { setSuccessfulTransactionModalVisible(true) }}
+      />
       <SuccessfulTransactionModal
         isVisible={successfulTransactionModalVisible}
         onHide={() => setSuccessfulTransactionModalVisible(false)}
-        onPress={() => {}}
+        onPress={() => { handleOkButton() }}
       >
         <>
           <Container display='flex' justify='flex-start' alignItems='center' css={{ padding: '8px' }}>

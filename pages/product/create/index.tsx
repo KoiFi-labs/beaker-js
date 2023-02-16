@@ -2,12 +2,21 @@ import { Button, Text, Container, Card, Grid, Input } from '@nextui-org/react'
 import PoolSelect from '../../../src/components/PoolSelect/PoolSelect'
 import { getPools, PoolType } from '../../../src/services/poolService'
 import { useState } from 'react'
+import { IconButton } from '../../../src/components/IconButton/IconButton'
+import { ClipboardIcon } from '../../../public/icons/clipboard'
 import ConfirmModal from '../../../src/components/modules/Modals/ConfirmModal'
+import SuccessfulTransactionModal from '../../../src/components/modules/Modals/SuccessfulTransactionModal'
+import SendingTransactionModal from '../../../src/components/modules/Modals/SendingTransaction'
+import { sleep, copyToClipboard, abbreviateTransactionHash } from '../../../src/utils/utils'
+import { useRouter } from 'next/router'
 
 export default function CreateProduct () {
   const pools = getPools()
   const [inputsAmount, setInputsAmount] = useState<number>(2)
-  const [modalConfirmIsvisible, setModalConfirmIsvisible] = useState<boolean>(false)
+  const [confirmModalIsvisible, setConfirmModalIsVisible] = useState<boolean>(false)
+  const [successfulTransactionModalIsVisible, setSuccessfulTransactionModalIsVisible] = useState<boolean>(false)
+  const [sendingTransactionModalIsVisible, setSendingTransactionModalIsVisible] = useState<boolean>(false)
+  const router = useRouter()
 
   const handleRemoveInputButton = () => {
     if (inputsAmount === 2) return
@@ -22,12 +31,24 @@ export default function CreateProduct () {
     console.log(pool)
   }
 
-  const handleConfirmButton = () => {
-    setModalConfirmIsvisible(false)
+  const addLiquidity = async () => {
+    await sleep(3000)
+  }
+
+  const handleOkButton = () => {
+    setSuccessfulTransactionModalIsVisible(false)
+    router.push('/product')
+  }
+
+  const handleConfirmButton = async () => {
+    setSendingTransactionModalIsVisible(true)
+    await addLiquidity()
+    setSendingTransactionModalIsVisible(false)
+    setSuccessfulTransactionModalIsVisible(true)
   }
 
   const handleCreateButton = () => {
-    setModalConfirmIsvisible(true)
+    setConfirmModalIsVisible(true)
   }
 
   const PoolInput = (pool: PoolType) => (
@@ -64,13 +85,48 @@ export default function CreateProduct () {
 
       </Card>
       <ConfirmModal
-        title='Confirm create product'
-        isVisible={modalConfirmIsvisible}
+        isVisible={confirmModalIsvisible}
+        onHide={() => setConfirmModalIsVisible(false)}
         onPress={handleConfirmButton}
-        onHide={() => { setModalConfirmIsvisible(false) }}
+        title='Confirm add liquidity'
       >
-        <Text size={16} css={{ color: '$kondorGray' }}>Are you sure you want to create this product?</Text>
+        <>
+          <Container css={{ p: 0 }} display='flex' justify='space-between'>
+            <Text size={16} css={{ color: '$kondorGray' }}>{pools[0]?.pool} to be added</Text>
+            <Text>500 {pools[0]?.pool}</Text>
+          </Container>
+          <Container css={{ p: 0 }} display='flex' justify='space-between'>
+            <Text size={16} css={{ color: '$kondorGray' }}>Total value</Text>
+            <Text>≈ $500</Text>
+          </Container>
+          <Container css={{ p: 0 }} display='flex' justify='space-between'>
+            <Text size={16} css={{ color: '$kondorGray' }}>Share of pool</Text>
+            <Text>0.01%</Text>
+          </Container>
+          <Container css={{ p: 0 }} display='flex' justify='space-between'>
+            <Text size={16} css={{ color: '$kondorGray' }}>You will receive a minimun of</Text>
+            <Text>15400 {pools[0]?.pool} KONDOR TOKEN</Text>
+          </Container>
+        </>
       </ConfirmModal>
+
+      <SendingTransactionModal
+        isVisible={sendingTransactionModalIsVisible}
+        onHide={() => setSendingTransactionModalIsVisible(false)}
+        onPress={() => { setSuccessfulTransactionModalIsVisible(true) }}
+      />
+      <SuccessfulTransactionModal
+        isVisible={successfulTransactionModalIsVisible}
+        onHide={() => setSuccessfulTransactionModalIsVisible(false)}
+        onPress={() => { handleOkButton() }}
+      >
+        <>
+          <Container display='flex' justify='flex-start' alignItems='center' css={{ padding: '8px' }}>
+            <IconButton onClick={() => copyToClipboard('DSWX3GJBH3665JK3HI55NRM5R4UKCWDWGBHU6D2MHYJX5RVWEOSA')}><ClipboardIcon /></IconButton>
+            <Text>Transaction ID: {abbreviateTransactionHash('DSWX3GJBH3665JK3HI55NRM5R4UKCWDWGBHU6D2MHYJX5RVWEOSA')}</Text>
+          </Container>
+        </>
+      </SuccessfulTransactionModal>
     </Container>
   )
 }

@@ -14,3 +14,7 @@ export const copyToClipboard = (text: string) => {
   document.execCommand('copy')
   document.body.removeChild(el)
 }
+
+export const sleep = (ms: number) => {
+  return new Promise((resolve) => setTimeout(resolve, ms))
+}
