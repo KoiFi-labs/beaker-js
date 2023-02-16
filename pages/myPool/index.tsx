@@ -76,8 +76,8 @@ export default function MyPool () {
     <Container css={{ p: '8px', mw: '992px' }}>
       <Container css={{ m: 0, p: 0 }}>
         <Container css={{ m: 0, p: 0, d: 'flex', flexDirection: 'column' }}>
-          <Text h1 css={{ color: '$kondorLight' }}>MyPools</Text>
-          <Text h4 css={{ color: '$kondorLight' }}>Manage your pools</Text>
+          <Text h1 css={{ color: '$kondorGray' }}>MyPools</Text>
+          <Text h4 css={{ color: '$kondorGray' }}>Manage your pools</Text>
         </Container>
       </Container>
       <Table

@@ -64,8 +64,8 @@ export default function Pool () {
     <Container css={{ p: '8px', mw: '992px' }}>
       <Container css={{ m: 0, p: 0 }}>
         <Container css={{ m: 0, p: 0, d: 'flex', flexDirection: 'column' }}>
-          <Text h1 css={{ color: '$kondorLight' }}>Pool</Text>
-          <Text h4 css={{ color: '$kondorLight' }}>Earn fees by providing liquidity.</Text>
+          <Text h1 css={{ color: '$kondorGray' }}>Pool</Text>
+          <Text h4 css={{ color: '$kondorGray' }}>Earn fees by providing liquidity.</Text>
         </Container>
       </Container>
       <Table

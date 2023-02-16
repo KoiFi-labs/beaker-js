@@ -70,7 +70,7 @@ export default function MyProducts () {
   }
 
   return (
-    <Container css={{ p: '8px', mw: '992px' }}>
+    <Container css={{ p: '0', mw: '992px' }}>
       <Grid.Container css={{ p: '8px' }}>
         <Grid
           xs={12} md={8} css={{
@@ -82,8 +82,8 @@ export default function MyProducts () {
             }
           }}
         >
-          <Text h1 css={{ color: '$kondorLight' }}>MyProducts</Text>
-          <Text h4 css={{ color: '$kondorLight' }}>Manage your products</Text>
+          <Text h1 css={{ color: '$kondorGray' }}>MyProducts</Text>
+          <Text h4 css={{ color: '$kondorGray' }}>Manage your products</Text>
         </Grid>
         <Grid
           xs={12} md={4} css={{
