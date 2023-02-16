@@ -1,5 +1,5 @@
-import React, { createContext, useContext, useState } from "react"
-import ConnectWithSandboxModal from "../components/modules/Modals/ConnecWithSandboxModal";
+import React, { createContext, useContext, useState } from 'react'
+import ConnectWithSandboxModal from '../components/modules/Modals/ConnecWithSandboxModal'
 
 const SandboxContext = createContext({})
 
@@ -15,23 +15,21 @@ type Account = {
 export const SandboxProvider: React.FC<Props> = ({ children }: Props): JSX.Element => {
   const [sandboxAccountAddress, setSandboxAccountAddress] = useState<Account | null>()
   const [connectWithSandboxModalIsVisble, setConnectWithSandboxModalIsVisible] = useState<boolean>(false)
-  const [isConnectedToSandboxWallet, setIsConnectedToSandboxWallet] = useState<boolean>(false);
-
+  const [isConnectedToSandboxWallet, setIsConnectedToSandboxWallet] = useState<boolean>(false)
 
   const handleDisconnectSandboxWalletClick = () => {
-    setSandboxAccountAddress(null);
+    setSandboxAccountAddress(null)
     setIsConnectedToSandboxWallet(false)
   }
 
-
-  const handleConnectSandboxWalletClick = () =>{
+  const handleConnectSandboxWalletClick = () => {
     setConnectWithSandboxModalIsVisible(true)
   }
 
   return (
     <SandboxContext.Provider value={{ sandboxAccountAddress, handleConnectSandboxWalletClick, handleDisconnectSandboxWalletClick, isConnectedToSandboxWallet, setSandboxAccountAddress, setIsConnectedToSandboxWallet }}>
-      <ConnectWithSandboxModal isVisible={connectWithSandboxModalIsVisble} onHide={() => setConnectWithSandboxModalIsVisible(false)}/>
-    {children}
+      <ConnectWithSandboxModal isVisible={connectWithSandboxModalIsVisble} onHide={() => setConnectWithSandboxModalIsVisible(false)} />
+      {children}
     </SandboxContext.Provider>
   )
 }
