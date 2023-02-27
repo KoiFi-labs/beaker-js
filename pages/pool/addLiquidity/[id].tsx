@@ -3,12 +3,11 @@ import { useRouter } from 'next/router'
 import { getPoolById } from '../../../src/services/poolService'
 import { IconButton } from '../../../src/components/IconButton/IconButton'
 import { InfoIcon } from '../../../public/icons/InfoIcon'
-import { ClipboardIcon } from '../../../public/icons/clipboard'
 import { useState } from 'react'
 import ConfirmModal from '../../../src/components/modules/Modals/ConfirmModal'
 import SuccessfulTransactionModal from '../../../src/components/modules/Modals/SuccessfulTransactionModal'
 import SendingTransactionModal from '../../../src/components/modules/Modals/SendingTransaction'
-import { copyToClipboard, abbreviateTransactionHash, sleep } from '../../../src/utils/utils'
+import { sleep } from '../../../src/utils/utils'
 
 export default function AddLiquidity () {
   const [confirmModalVisible, setConfirmModalVisible] = useState<boolean>(false)
@@ -116,14 +115,8 @@ export default function AddLiquidity () {
         isVisible={successfulTransactionModalVisible}
         onHide={() => setSuccessfulTransactionModalVisible(false)}
         onPress={() => { handleOkButton() }}
-      >
-        <>
-          <Container display='flex' justify='flex-start' alignItems='center' css={{ padding: '8px' }}>
-            <IconButton onClick={() => copyToClipboard('DSWX3GJBH3665JK3HI55NRM5R4UKCWDWGBHU6D2MHYJX5RVWEOSA')}><ClipboardIcon /></IconButton>
-            <Text>Transaction ID: {abbreviateTransactionHash('DSWX3GJBH3665JK3HI55NRM5R4UKCWDWGBHU6D2MHYJX5RVWEOSA')}</Text>
-          </Container>
-        </>
-      </SuccessfulTransactionModal>
+        transactionId='4UEKQ5H2YBDPW3FFXM36QDFT2AR6I7X4ZIPW7P32X3YHPTXVOHZQ'
+      />
     </Container>
   )
 }

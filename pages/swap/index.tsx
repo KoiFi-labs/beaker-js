@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Button, Spacer, Text, Container, Card, Grid, Input, useInput, Loading, Modal, Divider } from '@nextui-org/react'
+import { Button, Text, Container, Card, Grid, Input, useInput, Loading, Spacer } from '@nextui-org/react'
 import { Asset } from '../../config/Assets'
 import { config } from '../../config'
 import AssetSelect from '../../src/components/AssetSelect/AssetSelect'
@@ -8,22 +8,23 @@ import { useWallet } from '../../src/contexts/useWallet'
 import { Balance } from '../../src/services/algoService'
 import { microToStandard } from '../../src/utils/math'
 import { getSwapResult, swap } from '../../src/services/kondorServices/pondServise'
-import { abbreviateTransactionHash, copyToClipboard } from '../../src/utils/utils'
-import { ClipboardIcon } from '../../public/icons/clipboard'
 import { DownArrowAltIcon } from '../../public/icons/down-arrow-alt'
-import { IconButton } from '../../src/components/IconButton/IconButton'
+import ConfirmModal from '../../src/components/modules/Modals/ConfirmModal'
+import SuccessfulTransactionModal from '../../src/components/modules/Modals/SuccessfulTransactionModal'
 
 export default function Swap () {
   const [outAsset, setOutAsset] = useState<Asset>(config.assetList[0])
   const [inAsset, setInAsset] = useState<Asset>(config.assetList[1])
-  const [loading, setLoading] = useState<boolean>(false)
-  const [swapResultModalVisible, setSwapResultModalVisible] = useState<boolean>(false)
+  const [confirmModalVisible, setConfirmModalVisible] = useState<boolean>(false)
   const [balanceToSell, setBalanceToSell] = useState<number>(0)
   const [balanceToBuy, setBalanceToBuy] = useState<number>(0)
-  const [swapTransactionId, setSwapTransactionId] = useState<string>('')
+  const [successfulTransactionModalVisible, setSuccessfulTransactionModalVisible] = useState<boolean>(false)
+  const [transactionId, setTransactionId] = useState<string>('')
+  const [loading, setLoading] = useState<boolean>(false)
   const { isConnected, balances, account, reloadBalances } = useWallet()
   const outInput = useInput('0')
   const inInput = useInput('0')
+  const slippageText = 'If the price changes by more than your slippage tolerance your transaction will revert.'
 
   useEffect(() => {
     const outAmount = Number(outInput.value)
@@ -48,34 +49,28 @@ export default function Swap () {
     setOutAsset(inAssetTemp)
   }
 
-  const openResultModal = (txId: string) => {
-    setSwapTransactionId(txId)
-    setSwapResultModalVisible(true)
-  }
-
-  const closeModalHandler = () => {
-    setSwapResultModalVisible(false)
-  }
-
-  const handleSwap = async () => {
-    if (outInput.value !== '') {
+  const handleConfirmButton = async () => {
+    try {
+      setConfirmModalVisible(false)
+      setLoading(true)
       const amount = Number(outInput.value)
-      if (amount > 0) {
-        setLoading(true)
-        try {
-          const result = await swap(account.addr, amount, outAsset.id)
-          setLoading(false)
-          if (result) {
-            outInput.setValue('')
-            inInput.setValue('')
-            reloadBalances()
-            openResultModal(result.txId)
-          }
-        } catch (e) {
-          setLoading(false)
-          console.log(e)
-        }
-      }
+      const result = await swap(account.addr, amount, outAsset.id)
+      setTransactionId(result.txId)
+      outInput.setValue('')
+      inInput.setValue('')
+      reloadBalances()
+    } catch (e) {
+      console.log(e)
+    }
+    setLoading(false)
+    setSuccessfulTransactionModalVisible(true)
+  }
+
+  const handleSwapButton = () => {
+    console.log('outInput.value', outInput.value)
+    if (Number(outInput.value) > 0) {
+      console.log('outInput.value!!!!', outInput.value)
+      setConfirmModalVisible(true)
     }
   }
 
@@ -92,6 +87,10 @@ export default function Swap () {
       setBalanceToBuy(0)
     }
   }, [outAsset, inAsset, isConnected, balances])
+
+  const handleOkButton = () => {
+    setSuccessfulTransactionModalVisible(false)
+  }
 
   return (
     <Container fluid display='flex' justify='center' alignItems='center' css={{ minHeight: '85vh' }}>
@@ -154,32 +153,53 @@ export default function Swap () {
               You will receive a minumum of
             </Text>
             <Text size={16} css={{ color: '$kondorGray' }}>
-              {inInput.value || 0} {inAsset.symbol}
+              {(Number(inInput.value) * 0.995).toFixed(4)} {inAsset.symbol}
             </Text>
           </Container>
           {
                         !isConnected
                           ? <Button disabled size='xl' css={{ width: '100%', background: '$kondorPrimary' }}>Connect your wallet</Button>
                           : loading
-                            ? <Button disabled size='xl' css={{ width: '100%' }} onPress={() => handleSwap()}><Loading css={{ color: '$kondorGray' }} /></Button>
-                            : <Button size='xl' css={{ width: '100%', background: '$kondorPrimary' }} onPress={() => handleSwap()}>Swap</Button>
+                            ? <Button disabled size='xl' css={{ width: '100%' }}><Loading css={{ color: '$kondorGray' }} /></Button>
+                            : <Button size='xl' css={{ width: '100%', background: '$kondorPrimary' }} onPress={() => handleSwapButton()}>Swap</Button>
                         }
         </Container>
       </Card>
-      <Modal open={swapResultModalVisible} closeButton onClose={closeModalHandler}>
-        <Modal.Header>
-          <Text size='$xl' color='$primary'>Swap completed</Text>
-        </Modal.Header>
-        <Modal.Body>
-          <Text>Swap completed successfully</Text>
-          <Divider />
-          <Spacer y={0.1} />
-          <Container display='flex' justify='flex-start' alignItems='center' css={{ p: 0 }}>
-            <IconButton onClick={() => copyToClipboard(swapTransactionId)}><ClipboardIcon /></IconButton>
-            <Text>Transaction ID: {abbreviateTransactionHash(swapTransactionId)}</Text>
+      <ConfirmModal
+        isVisible={confirmModalVisible}
+        onHide={() => setConfirmModalVisible(false)}
+        onPress={handleConfirmButton}
+        title='Confirm add liquidity'
+      >
+        <>
+          <Container css={{ p: 0 }} display='flex' justify='space-between'>
+            <Text size={16} css={{ color: '$kondorGray' }}>Out</Text>
+            <Text>{outInput.value} {outAsset.symbol}</Text>
           </Container>
-        </Modal.Body>
-      </Modal>
+          <Container css={{ p: 0 }} display='flex' justify='space-between'>
+            <Text size={16} css={{ color: '$kondorGray' }}>In</Text>
+            <Text>≈ {inInput.value} {inAsset.symbol}</Text>
+          </Container>
+          <Container css={{ p: 0 }} display='flex' justify='space-between'>
+            <Text size={16} css={{ color: '$kondorGray' }}>Slippage Tolerance</Text>
+            <Text>0.05%</Text>
+          </Container>
+          <Container css={{ p: 0 }} display='flex' justify='space-between'>
+            <Text size={16} css={{ color: '$kondorGray' }}>You will receive a minimun of</Text>
+            <Text>{(Number(inInput.value) * 0.995).toFixed(4)} {inAsset.symbol}</Text>
+          </Container>
+          <Spacer y={1} />
+          <Container css={{ p: 0 }}>
+            <Text size={12} css={{ color: '$kondorGray' }}>{slippageText}</Text>
+          </Container>
+        </>
+      </ConfirmModal>
+      <SuccessfulTransactionModal
+        isVisible={successfulTransactionModalVisible}
+        onHide={() => setSuccessfulTransactionModalVisible(false)}
+        onPress={() => { handleOkButton() }}
+        transactionId={transactionId}
+      />
     </Container>
   )
 }

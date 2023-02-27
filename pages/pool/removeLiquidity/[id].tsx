@@ -6,8 +6,6 @@ import { InfoIcon } from '../../../public/icons/InfoIcon'
 import { useState } from 'react'
 import ConfirmModal from '../../../src/components/modules/Modals/ConfirmModal'
 import SuccessfulTransactionModal from '../../../src/components/modules/Modals/SuccessfulTransactionModal'
-import { copyToClipboard, abbreviateTransactionHash } from '../../../src/utils/utils'
-import { ClipboardIcon } from '../../../public/icons/clipboard'
 
 export default function RemoveLiquidity () {
   const [confirmModalVisible, setConfirmModalVisible] = useState<boolean>(false)
@@ -97,14 +95,8 @@ export default function RemoveLiquidity () {
         isVisible={successfulTransactionModalVisible}
         onHide={() => setSuccessfulTransactionModalVisible(false)}
         onPress={() => {}}
-      >
-        <>
-          <Container display='flex' justify='flex-start' alignItems='center' css={{ padding: '8px' }}>
-            <IconButton onClick={() => copyToClipboard('DSWX3GJBH3665JK3HI55NRM5R4UKCWDWGBHU6D2MHYJX5RVWEOSA')}><ClipboardIcon /></IconButton>
-            <Text>Transaction ID: {abbreviateTransactionHash('DSWX3GJBH3665JK3HI55NRM5R4UKCWDWGBHU6D2MHYJX5RVWEOSA')}</Text>
-          </Container>
-        </>
-      </SuccessfulTransactionModal>
+        transactionId='4UEKQ5H2YBDPW3FFXM36QDFT2AR6I7X4ZIPW7P32X3YHPTXVOHZQ'
+      />
     </Container>
   )
 }

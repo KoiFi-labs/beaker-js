@@ -2,12 +2,10 @@ import { Button, Text, Container, Card, Grid, Input } from '@nextui-org/react'
 import PoolSelect from '../../../src/components/PoolSelect/PoolSelect'
 import { getPools, PoolType } from '../../../src/services/poolService'
 import { useState } from 'react'
-import { IconButton } from '../../../src/components/IconButton/IconButton'
-import { ClipboardIcon } from '../../../public/icons/clipboard'
 import ConfirmModal from '../../../src/components/modules/Modals/ConfirmModal'
 import SuccessfulTransactionModal from '../../../src/components/modules/Modals/SuccessfulTransactionModal'
 import SendingTransactionModal from '../../../src/components/modules/Modals/SendingTransaction'
-import { sleep, copyToClipboard, abbreviateTransactionHash } from '../../../src/utils/utils'
+import { sleep } from '../../../src/utils/utils'
 import { useRouter } from 'next/router'
 
 export default function CreateProduct () {
@@ -119,14 +117,8 @@ export default function CreateProduct () {
         isVisible={successfulTransactionModalIsVisible}
         onHide={() => setSuccessfulTransactionModalIsVisible(false)}
         onPress={() => { handleOkButton() }}
-      >
-        <>
-          <Container display='flex' justify='flex-start' alignItems='center' css={{ padding: '8px' }}>
-            <IconButton onClick={() => copyToClipboard('DSWX3GJBH3665JK3HI55NRM5R4UKCWDWGBHU6D2MHYJX5RVWEOSA')}><ClipboardIcon /></IconButton>
-            <Text>Transaction ID: {abbreviateTransactionHash('DSWX3GJBH3665JK3HI55NRM5R4UKCWDWGBHU6D2MHYJX5RVWEOSA')}</Text>
-          </Container>
-        </>
-      </SuccessfulTransactionModal>
+        transactionId='4UEKQ5H2YBDPW3FFXM36QDFT2AR6I7X4ZIPW7P32X3YHPTXVOHZQ'
+      />
     </Container>
   )
 }

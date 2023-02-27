@@ -1,5 +1,5 @@
 import React from 'react'
-import { Modal, Text, Button, Container, Grid } from '@nextui-org/react'
+import { Modal, Text, Button, Container, Grid, Spacer } from '@nextui-org/react'
 
 export type ConfirmModalProps = {
     isVisible: boolean,
@@ -30,6 +30,7 @@ const ConfirmModal = ({ isVisible, onHide, title, onPress, children }: ConfirmMo
       <Text b size={20}>
         {title}
       </Text>
+      <Spacer y={1} />
       <Container>
         {children}
       </Container>
