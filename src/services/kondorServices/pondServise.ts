@@ -1,27 +1,31 @@
 import { contract } from './contract'
 import algosdk from 'algosdk'
 import { config } from '../../../config'
+import { mySigner } from '../signer'
+
 const client = new algosdk.Algodv2(config.network.token, config.network.server, config.network.port)
 
-export const swap = async (addr: string, sk: Uint8Array, amount: number, assetA: number, assetB: number) => {
+export const swap = async (addr: string, amount: number, assetOutput: number) => {
   const sp = await client.getTransactionParams().do()
   const abiContract = new algosdk.ABIContract(contract)
 
+  const signer = await mySigner(addr)
+
   const commonParams = {
-    appID: config.appId,
+    appID: config.pond.appId,
     sender: addr,
     suggestedParams: sp,
-    signer: algosdk.makeBasicAccountTransactionSigner({ addr, sk })
+    signer
   }
 
   const comp = new algosdk.AtomicTransactionComposer()
 
   const assetTransferTxn = algosdk.makeAssetTransferTxnWithSuggestedParamsFromObject({
     from: addr,
-    to: config.appAddress,
+    to: config.pond.appAddress,
     amount: amount * 1000 * 1000,
-    assetIndex: assetA,
-    suggestedParams: { ...sp, fee: 3000, flatFee: true } // todo: validate fee
+    assetIndex: assetOutput,
+    suggestedParams: { ...sp, fee: 3000, flatFee: true }
   })
 
   comp.addMethodCall({
@@ -29,13 +33,14 @@ export const swap = async (addr: string, sk: Uint8Array, amount: number, assetA:
     methodArgs: [
       {
         txn: assetTransferTxn,
-        signer: algosdk.makeBasicAccountTransactionSigner({ addr, sk })
+        signer
       },
-      config.pondAssetIdA,
-      config.pondAssetIdB
+      config.pond.assetIdA,
+      config.pond.assetIdB
     ],
     ...commonParams
   })
+
   const results = await comp.execute(client, 2)
   return {
     result: results.methodResults[0].returnValue,
@@ -43,66 +48,50 @@ export const swap = async (addr: string, sk: Uint8Array, amount: number, assetA:
   }
 }
 
-// Returns the amount of assetB that will be received for the given amount of assetA
-export const getSwapResult = async (amount: number, assetA: number, assetB: number) => {
-  const [assetASupply, assetBSupply] = await Promise.all([
-    getAssetSupply(assetA),
-    getAssetSupply(assetB)
-  ])
-  const factor = config.pondScale - config.pondFee
-  return (amount * factor * assetBSupply) / ((assetASupply * config.pondScale) + (amount * factor))
-}
-
-const getAssetSupply = async (assetId: number) => {
-  const accountInfo = await client.accountInformation(config.appAddress).do()
-  const assetInfo = accountInfo.assets.find((asset: any) => asset['asset-id'] === assetId)
-  return assetInfo.amount
-}
-
-export const mint = async (addr: string, sk: Uint8Array, amount: number, assetA: number, assetB: number) => {
+export const mint = async (addr: string, amount: number, assetA: number, assetB: number) => {
   const sp = await client.getTransactionParams().do()
   const abiContract = new algosdk.ABIContract(contract)
+  const signer = await mySigner(addr)
 
   const commonParams = {
-    appID: config.appId,
+    appID: config.pond.appId,
     sender: addr,
     suggestedParams: sp,
-    signer: algosdk.makeBasicAccountTransactionSigner({ addr, sk })
+    signer
   }
 
   const comp = new algosdk.AtomicTransactionComposer()
 
   const assetTransferTxnA = algosdk.makeAssetTransferTxnWithSuggestedParamsFromObject({
     from: addr,
-    to: config.appAddress,
-    amount: 1000,
-    assetIndex: assetA,
-    suggestedParams: { ...sp, fee: 3000 } // todo: validate fee
+    to: config.pond.appAddress,
+    amount: amount * 1000,
+    assetIndex: config.pond.assetIdA,
+    suggestedParams: { ...sp, fee: 3000 }
   })
 
   const assetTransferTxnB = algosdk.makeAssetTransferTxnWithSuggestedParamsFromObject({
     from: addr,
-    to: config.appAddress,
-    amount: 1000,
-    assetIndex: assetB,
-    suggestedParams: { ...sp, fee: 3000 } // todo: validate fee
+    to: config.pond.appAddress,
+    amount: amount * 1000,
+    assetIndex: config.pond.assetIdB,
+    suggestedParams: { ...sp, fee: 3000 }
   })
-  console.log('Created asset transfer transaction', assetTransferTxnA, assetTransferTxnB)
 
   comp.addMethodCall({
     method: abiContract.getMethodByName('mint'),
     methodArgs: [
       {
         txn: assetTransferTxnA,
-        signer: algosdk.makeBasicAccountTransactionSigner({ addr, sk })
+        signer
       },
       {
         txn: assetTransferTxnB,
-        signer: algosdk.makeBasicAccountTransactionSigner({ addr, sk })
+        signer
       },
-      assetA,
-      assetB,
-      127
+      config.pond.pondAssetId,
+      config.pond.assetIdA,
+      config.pond.assetIdB
     ],
     ...commonParams
   })
@@ -111,4 +100,98 @@ export const mint = async (addr: string, sk: Uint8Array, amount: number, assetA:
     result: results.methodResults[0].returnValue,
     txId: results.methodResults[0].txID
   }
+}
+
+export const optin = async (addr: string, amount: number, assetA: number, assetB: number) => {
+  const sp = await client.getTransactionParams().do()
+  const signer = await mySigner(addr)
+
+  const commonParams = {
+    appID: config.pond.appId,
+    sender: addr,
+    suggestedParams: sp,
+    signer
+  }
+
+  const comp = new algosdk.AtomicTransactionComposer()
+
+  const optinTransfer = algosdk.makeAssetTransferTxnWithSuggestedParamsFromObject({
+    from: addr,
+    to: addr,
+    amount: 0,
+    assetIndex: config.pond.pondAssetId,
+    suggestedParams: sp
+  })
+
+  comp.addTransaction({
+    txn: optinTransfer,
+    ...commonParams
+  })
+
+  const results = await comp.execute(client, 2)
+  return {
+    result: results.methodResults[0].returnValue,
+    txId: results.methodResults[0].txID
+  }
+}
+
+export const bootstrap = async (addr: string, amount: number, assetA: number, assetB: number) => {
+  try {
+    const sp = await client.getTransactionParams().do()
+    const abiContract = new algosdk.ABIContract(contract)
+    const signer = await mySigner(addr)
+
+    const commonParams = {
+      appID: config.pond.appId,
+      sender: addr,
+      suggestedParams: sp,
+      signer
+    }
+
+    const comp = new algosdk.AtomicTransactionComposer()
+
+    const seed = algosdk.makePaymentTxnWithSuggestedParamsFromObject({
+      from: addr,
+      to: config.pond.appAddress,
+      amount: 1000000,
+      suggestedParams: { ...sp, fee: 5000 }
+    })
+
+    comp.addMethodCall({
+      method: abiContract.getMethodByName('bootstrap'),
+      methodArgs: [
+        {
+          txn: seed,
+          signer
+        },
+        config.pond.assetIdA,
+        config.pond.assetIdB
+      ],
+      ...commonParams
+    })
+    const results = await comp.execute(client, 2)
+
+    console.log('results', results)
+    return {
+      result: results.methodResults[0].returnValue,
+      txId: results.methodResults[0].txID
+    }
+  } catch (e) {
+    console.log('error', e)
+  }
+}
+
+export const getSwapResult = async (amountAssetOut: number, assetOut: number, assetIn: number) => {
+  const [assetOutSupply, assetInSupply] = await Promise.all([
+    getAssetSupply(assetOut),
+    getAssetSupply(assetIn)
+  ])
+  const factor = config.pond.scale - config.pond.fee
+  return (amountAssetOut * factor * assetInSupply) / ((assetOutSupply * config.pond.scale) + (amountAssetOut * factor))
+}
+
+const getAssetSupply = async (assetId: number) => {
+  const accountInfo = await client.accountInformation(config.pond.appAddress).do()
+  const assetInfo = accountInfo.assets.find((asset: any) => asset['asset-id'] === assetId)
+  return assetInfo.amount
 }

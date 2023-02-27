@@ -57,7 +57,8 @@ export const WalletProvider: React.FC<Props> = ({ children }: Props): JSX.Elemen
       setIsConnected(false)
       setWalletProvider(null)
     }
-  }, [walletProvider, sandboxAccountAddress])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sandboxAccountAddress])
 
   const handleDisconnectWalletClick = () => {
     switch (walletProvider) {
@@ -76,7 +77,7 @@ export const WalletProvider: React.FC<Props> = ({ children }: Props): JSX.Elemen
   const handleConnectWalletClick = async (walletProvider: WALLET_PROVIDER) => {
     switch (walletProvider) {
       case WALLET_PROVIDER.PERA: {
-        const peraAccount = await peraService.connect()
+        const peraAccount = await peraService.connect(handleDisconnectWalletClick)
         setWalletProvider(walletProvider)
         setAccount(peraAccount)
         setIsConnected(true)

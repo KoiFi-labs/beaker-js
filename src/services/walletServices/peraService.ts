@@ -1,14 +1,20 @@
 import { PeraWalletConnect } from '@perawallet/connect'
+import { SignerTransaction } from '@perawallet/connect/dist/util/model/peraWalletModels'
 const peraWallet = new PeraWalletConnect()
 
 export const peraService = {
-  connect: async () => {
+  connect: async (handleDisconect: () => void) => {
     return peraWallet
       .connect()
-      .then(a => { console.log(a); return a })
-      .then((accounts) => ({
-        addr: accounts[0]
-      }))
+      .then((accounts) => {
+        peraWallet.connector?.on('disconnect', () => {
+          handleDisconect()
+        })
+        return { addr: accounts[0] }
+      })
+  },
+  signTransaction: async (txs: SignerTransaction[][], signerAddress?: string | undefined) => {
+    return peraWallet.signTransaction(txs, signerAddress)
   },
   disconnect: async () => {
     peraWallet.disconnect()
