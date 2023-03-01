@@ -20,7 +20,14 @@ export default function RemoveLiquidity () {
 
   return (
     <Container display='flex' justify='center' alignContent='flex-start' css={{ minHeight: '85vh', p: '16px' }}>
-      <Card css={{ p: '8px', maxWidth: '500px', minHeight: '200px' }}>
+      <Card css={{
+        p: '8px',
+        maxWidth: '500px',
+        minHeight: '200px',
+        bg: 'rgb(0, 0, 0, 0.6)',
+        backdropFilter: 'saturate(180%) blur(10px);'
+      }}
+      >
         <Container display='flex' justify='space-between' css={{ p: 0 }}>
           <Text size={20} css={{ color: '$kondorLight' }}>Remove liquidity {pool?.pool} Pool</Text>
           <Tooltip content='Details'>

@@ -26,7 +26,14 @@ export default function Details () {
 
   return (
     <Container display='flex' justify='center' alignContent='flex-start' css={{ minHeight: '85vh', p: '32px' }}>
-      <Card css={{ p: '16px', maxWidth: '500px', minHeight: '200px' }}>
+      <Card css={{
+        p: '16px',
+        maxWidth: '500px',
+        minHeight: '200px',
+        bg: 'rgb(0, 0, 0, 0.6)',
+        backdropFilter: 'saturate(180%) blur(10px);'
+      }}
+      >
         <Container display='flex' justify='space-between' css={{ p: 0 }}>
           <Text size={20} css={{ color: '$kondorLight' }}>{product.name} Product</Text>
           <Tooltip content='Details'>

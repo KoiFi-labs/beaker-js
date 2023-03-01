@@ -151,7 +151,14 @@ export default function CreateProduct () {
 
   return (
     <Container display='flex' justify='center' alignContent='flex-start' css={{ minHeight: '85vh', p: '16px' }}>
-      <Card css={{ p: '8px', maxWidth: '500px', minHeight: '200px' }}>
+      <Card css={{
+        p: '8px',
+        maxWidth: '500px',
+        minHeight: '200px',
+        bg: 'rgb(0, 0, 0, 0.6)',
+        backdropFilter: 'saturate(180%) blur(10px);'
+      }}
+      >
         <Text size={20} css={{ color: '$kondorLight' }}>Create Product</Text>
         {PoolInput(assetInput1, input1.bindings.value, input1.bindings.onChange, handlePoolSelectButton1)}
         {PoolInput(assetInput2, input2.bindings.value, input2.bindings.onChange, handlePoolSelectButton2)}
