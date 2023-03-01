@@ -9,7 +9,7 @@ const BalanceSchema = new Schema(
     },
     assetSymbol: {
       type: String,
-      required: [true, 'Asset symbol is required'],
+      required: [true, 'AssetSymbol is required'],
       trim: true
     },
     amount: {
