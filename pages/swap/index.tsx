@@ -150,7 +150,7 @@ export default function Swap () {
           </Card>
           <Container display='flex' justify='space-between' css={{ p: '16px 8px', m: 0 }}>
             <Text size={16} css={{ color: '$kondorGray' }}>
-              You will receive a minumum of
+              You will receive a minimun of
             </Text>
             <Text size={16} css={{ color: '$kondorGray' }}>
               {(Number(inInput.value) * 0.995).toFixed(4)} {inAsset.symbol}
@@ -169,7 +169,7 @@ export default function Swap () {
         isVisible={confirmModalVisible}
         onHide={() => setConfirmModalVisible(false)}
         onPress={handleConfirmButton}
-        title='Confirm add liquidity'
+        title='Confirm swap'
       >
         <>
           <Container css={{ p: 0 }} display='flex' justify='space-between'>

@@ -1,9 +1,20 @@
 export type Product = {
-    id: string
+    id: number
     name: string,
     assets: {
-        simbol: string,
-        amount: number,
-        price: number
-    }
+        symbol: string,
+        amount: number
+    }[],
+    value: number
+}
+
+export type Balance = {
+    assetId: string,
+    assetSymbol: string,
+    amount: number
+}
+
+export type Price = {
+    assetSymbol: string,
+    price: number
 }

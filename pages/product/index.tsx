@@ -1,30 +1,38 @@
 import { Table, Text, Container, Row, Col, Tooltip, Grid } from '@nextui-org/react'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { IconButton } from '../../src/components/IconButton/IconButton'
-import { PlusCircleIcon } from '../../public/icons/PlusCircleIcon'
 import { DeleteIcon } from '../../public/icons/DeleteIcon'
 import { ChartIcon } from '../../public/icons/ChartIcon'
 import Link from 'next/link'
-import { getMyProducts, MyProductType } from '../../src/services/productService'
+import { getProducts } from '../../src/services/mock'
 import { LinkButton } from '../../src/components/LinkButton/LinkButton'
+import { Product } from '../../interfaces'
 
 export default function MyProducts () {
-  const myProducts: MyProductType[] = getMyProducts()
+  const [myProducts, setMyProducts] = React.useState<Product[]>([])
+
+  useEffect(() => {
+    const fetchMyProducts = async () => {
+      const myProducts = await getProducts()
+      setMyProducts(myProducts)
+    }
+    fetchMyProducts()
+  }, [])
 
   const columns = [
-    { name: 'POOLS', uid: 'pools' },
-    { name: 'MY STAKE', uid: 'total' },
+    { name: 'PRODUCT', uid: 'name' },
+    { name: 'MY STAKE', uid: 'value' },
     { name: 'ACTIONS', uid: 'actions' }
   ]
 
-  const renderCell = (myProduct: MyProductType, columnKey: React.Key) => {
-    const cellValue = myProduct[columnKey as keyof MyProductType]
+  const renderCell = (myProduct: Product, columnKey: React.Key) => {
+    const cellValue = myProduct[columnKey as keyof Product]
     switch (columnKey) {
-      case 'pools':
-      case 'total':
+      case 'name':
+      case 'value':
         return (
           <Text b size={14} css={{ tt: 'capitalize' }}>
-            {Array.isArray(cellValue) ? cellValue.map(p => p.namePool).join(' / ') : cellValue}
+            {Array.isArray(cellValue) ? cellValue.map(p => p.symbol).join(' / ') : cellValue}
           </Text>
         )
 
@@ -43,20 +51,9 @@ export default function MyProducts () {
               </Link>
             </Col>
             <Col css={{ d: 'flex' }}>
-              <Link href={'/pool/addLiquidity/' + myProduct.id} legacyBehavior>
+              <Link href={'/product/delete/' + myProduct.id} legacyBehavior>
                 <a onClick={() => {}}>
-                  <Tooltip content='Add liquidity'>
-                    <IconButton>
-                      <PlusCircleIcon size={20} fill='#979797' />
-                    </IconButton>
-                  </Tooltip>
-                </a>
-              </Link>
-            </Col>
-            <Col css={{ d: 'flex' }}>
-              <Link href={'/pool/removeLiquidity/' + myProduct.id} legacyBehavior>
-                <a onClick={() => {}}>
-                  <Tooltip content='Remove liquidity'>
+                  <Tooltip content='Remove NFT product liquidity'>
                     <IconButton>
                       <DeleteIcon size={20} fill='#FF0080' />
                     </IconButton>
@@ -128,7 +125,7 @@ export default function MyProducts () {
           )}
         </Table.Header>
         <Table.Body items={myProducts}>
-          {(item: MyProductType) => (
+          {(item: Product) => (
             <Table.Row>
               {(columnKey) => (
                 <Table.Cell>{renderCell(item, columnKey)}</Table.Cell>

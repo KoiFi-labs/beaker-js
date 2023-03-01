@@ -22,7 +22,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         res.status(200).json({
           id: p._id,
           name: p.name,
-          assets: p.assets
+          assets: p.assets,
+          value: p.value
         })
       } catch (error) {
         console.log(error)
@@ -34,13 +35,25 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         console.log('PUT REQUEST')
         const product = await Product.findOneAndUpdate({ _id: id }, {
           assets: req.body.assets,
-          name: req.body.name
+          name: req.body.namem,
+          value: req.body.value
         })
         res.status(200).json({
           id: product._id,
           assets: product.assets,
-          name: product.name
+          name: product.name,
+          value: product.value
         })
+      } catch (error) {
+        console.log(error)
+        res.status(400).json({ error: 'No Response for This Request' })
+      }
+      break
+    case 'DELETE':
+      try {
+        console.log('DELETE REQUEST')
+        await Product.findOneAndDelete({ _id: id })
+        res.status(200).json({ productDelected: id })
       } catch (error) {
         console.log(error)
         res.status(400).json({ error: 'No Response for This Request' })

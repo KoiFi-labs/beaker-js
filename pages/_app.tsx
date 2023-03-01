@@ -14,7 +14,7 @@ export default function App ({ Component, pageProps }: AppProps) {
   return (
     <>
       <Head>
-        <title>Kondor Protocol</title>
+        <title>Kondor</title>
       </Head>
       <SSRProvider>
         <NextUIProvider theme={theme}>

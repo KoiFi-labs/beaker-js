@@ -16,9 +16,12 @@ const ProductSchema = new Schema(
     assets: [{
       id: Number,
       symbol: String,
-      amount: Number,
-      price: Number
-    }]
+      amount: Number
+    }],
+    value: {
+      type: Number,
+      required: [true, 'The value is required']
+    }
   },
   {
     timestamps: true,

@@ -95,3 +95,7 @@ export const getPoolById = (id: string) => {
 export const getMyPools = () => {
   return myPools
 }
+
+export const getPoolBySymbol = (symbol: string) => {
+  return pools.find(pool => pool.pool === symbol)
+}
