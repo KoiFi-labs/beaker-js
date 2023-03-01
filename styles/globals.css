@@ -34,7 +34,7 @@ a {
   position: relative;
   display: grid;
   place-items: center;
-  background-color: #191919;
+  background-color: #fff;
   overflow: hidden;
   border-radius: 10px;
 }
@@ -55,7 +55,8 @@ a {
 .nft::after{
   content:'';
   position: absolute;
-  background: linear-gradient(#0e0e0e,#000000);
+  background-image: url("../public/background.jpg");
+  height: 80%;
   inset: 5px;
   border-radius: 5px;
 }

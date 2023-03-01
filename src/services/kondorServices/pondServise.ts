@@ -102,7 +102,8 @@ export const mint = async (addr: string, amount: number, assetA: number, assetB:
   }
 }
 
-export const optin = async (addr: string, amount: number, assetA: number, assetB: number) => {
+export const optin = async (addr: string, amount: number, assetA: number) => {
+  console.log('optin')
   const sp = await client.getTransactionParams().do()
   const signer = await mySigner(addr)
 
@@ -129,6 +130,8 @@ export const optin = async (addr: string, amount: number, assetA: number, assetB
   })
 
   const results = await comp.execute(client, 2)
+
+  console.log('results', results)
   return {
     result: results.methodResults[0].returnValue,
     txId: results.methodResults[0].txID
