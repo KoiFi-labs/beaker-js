@@ -29,10 +29,15 @@ export default function MyProducts () {
     const cellValue = myProduct[columnKey as keyof Product]
     switch (columnKey) {
       case 'name':
+        return (
+          <Text b size={14} css={{ tt: 'capitalize' }}>
+            {cellValue.toString()}
+          </Text>
+        )
       case 'value':
         return (
           <Text b size={14} css={{ tt: 'capitalize' }}>
-            {Array.isArray(cellValue) ? cellValue.map(p => p.symbol).join(' / ') : cellValue}
+            {Number(cellValue).toFixed(4).toString()}
           </Text>
         )
 
