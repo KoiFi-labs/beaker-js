@@ -1,10 +1,12 @@
 import axios from 'axios'
 import { Product } from '../../interfaces'
 
+const CLIENT_NAME: string = process.env.BACKEND_URL ?? ''
+
 export const getBalances = async () => {
   const config = {
     method: 'GET',
-    url: 'https://kondor.vercel.app/api/balance',
+    url: `${CLIENT_NAME}/api/balance`,
     headers: {
       'Content-Type': 'application/json'
     }
@@ -16,7 +18,7 @@ export const getBalances = async () => {
 export const getPrices = async () => {
   const config = {
     method: 'GET',
-    url: 'https://kondor.vercel.app/api/price',
+    url: `${CLIENT_NAME}/api/price`,
     headers: {
       'Content-Type': 'application/json'
     }
@@ -28,7 +30,7 @@ export const getPrices = async () => {
 export const getProducts = async () => {
   const config = {
     method: 'GET',
-    url: 'https://kondor.vercel.app/api/product',
+    url: `${CLIENT_NAME}/api/product`,
     headers: {
       'Content-Type': 'application/json'
     }
@@ -40,7 +42,7 @@ export const getProducts = async () => {
 export const createProduct = async (product: Product) => {
   const config = {
     method: 'POST',
-    url: 'https://kondor.vercel.app/api/product',
+    url: `${CLIENT_NAME}/api/product`,
     headers: {
       'Content-Type': 'application/json'
     },
@@ -53,7 +55,7 @@ export const createProduct = async (product: Product) => {
 export const getProductById = async (id: number) => {
   const config = {
     method: 'GET',
-    url: 'https://kondor.vercel.app/api/product/' + id,
+    url: `${CLIENT_NAME}/api/product/${id}`,
     headers: {
       'Content-Type': 'application/json'
     }
@@ -65,7 +67,7 @@ export const getProductById = async (id: number) => {
 export const removeProduct = async (id: number) => {
   const config = {
     method: 'DELETE',
-    url: 'https://kondor.vercel.app/api/product/' + id,
+    url: `${CLIENT_NAME}/api/product/${id}`,
     headers: {
       'Content-Type': 'application/json'
     }
