@@ -14,9 +14,19 @@ export const peraService = {
       })
   },
   signTransaction: async (txs: SignerTransaction[][], signerAddress?: string | undefined) => {
-    return peraWallet.signTransaction(txs, signerAddress)
+    return await peraWallet.signTransaction(txs, signerAddress)
   },
   disconnect: async () => {
     peraWallet.disconnect()
+  },
+  reconnectSession: async (handleDisconect: () => void) => {
+    return peraWallet
+      .reconnectSession()
+      .then((accounts) => {
+        peraWallet.connector?.on('disconnect', () => {
+          handleDisconect()
+        })
+        return { addr: accounts[0] }
+      })
   }
 }

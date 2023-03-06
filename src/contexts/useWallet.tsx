@@ -60,6 +60,16 @@ export const WalletProvider: React.FC<Props> = ({ children }: Props): JSX.Elemen
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sandboxAccountAddress])
 
+  useEffect(() => {
+    peraService
+      .reconnectSession(handleDisconnectWalletClick)
+      .then((acc) => {
+        setWalletProvider(walletProvider)
+        setAccount({ addr: acc.addr })
+        setIsConnected(true)
+      })
+  }, [])
+
   const handleDisconnectWalletClick = () => {
     switch (walletProvider) {
       case WALLET_PROVIDER.PERA:
