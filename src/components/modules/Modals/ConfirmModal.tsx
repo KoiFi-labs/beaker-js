@@ -37,10 +37,11 @@ const ConfirmModal = ({ isVisible, onHide, title, onPress, children }: ConfirmMo
       <Grid.Container css={{ p: '8px' }}>
         <Grid xs={6}>
           <Button
+            rounded
             bordered
             css={{
               borderColor: '$kondorPrimary',
-              color: '$kondorPrimary',
+              color: '$kondorLigth',
               minWidth: '136px',
               width: '100%',
               m: '4px'
@@ -52,7 +53,9 @@ const ConfirmModal = ({ isVisible, onHide, title, onPress, children }: ConfirmMo
         </Grid>
         <Grid xs={6}>
           <Button
-            css={{ backgroundColor: '$kondorPrimary', minWidth: '136px', width: '100%', m: '4px' }}
+            bordered
+            rounded
+            css={{ borderColor: '$kondorPrimary', color: '$kondorLigth', backgroundColor: '$kondorPrimary', minWidth: '136px', width: '100%', m: '4px' }}
             onPress={() => handleConfirmButton()}
           >
             Confirm

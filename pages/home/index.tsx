@@ -1,4 +1,5 @@
-import { Container, Text } from '@nextui-org/react'
+import { Container } from '@nextui-org/react'
+import Image from 'next/image'
 
 export default function Home () {
   return (
@@ -13,10 +14,8 @@ export default function Home () {
         position: 'relative'
       }}
     >
+      <Image alt='Kondor Finance logo' src='/Kondor_Logo_01.png' width={500} height={190} />
 
-      <Text h1 css={{ color: '$kondorGray' }}> Where TradFi meets DeFi</Text>
-
-      <Text css={{ color: '$kondorGray' }}> KONDOR FINANCE</Text>
     </Container>
   )
 }

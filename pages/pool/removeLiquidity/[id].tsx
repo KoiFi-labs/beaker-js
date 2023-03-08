@@ -22,7 +22,7 @@ export default function RemoveLiquidity () {
     <Container display='flex' justify='center' alignContent='flex-start' css={{ minHeight: '85vh', p: '16px' }}>
       <Card css={{
         p: '8px',
-        maxWidth: '500px',
+        maxWidth: '400px',
         minHeight: '200px',
         bg: 'rgb(0, 0, 0, 0.6)',
         backdropFilter: 'saturate(180%) blur(10px);'
@@ -68,7 +68,7 @@ export default function RemoveLiquidity () {
           <Text>0.00 {pool?.pool}</Text>
         </Container>
         <Spacer />
-        <Button css={{ backgroundColor: '$kondorPrimary' }} onPress={() => { setConfirmModalVisible(true) }}>
+        <Button bordered rounded css={{ borderColor: '$kondorPrimary', color: '$kondorLigth' }} onPress={() => { setConfirmModalVisible(true) }}>
           Remove liquidity
         </Button>
       </Card>

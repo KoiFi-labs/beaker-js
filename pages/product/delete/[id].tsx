@@ -39,7 +39,7 @@ export default function RemoveNftProductLiquidity () {
     <Container display='flex' justify='center' alignContent='flex-start' css={{ minHeight: '85vh', p: '16px' }}>
       <Card css={{
         p: '8px',
-        maxWidth: '500px',
+        maxWidth: '400px',
         minHeight: '200px',
         bg: 'rgb(0, 0, 0, 0.6)',
         backdropFilter: 'saturate(180%) blur(10px);'
@@ -68,7 +68,7 @@ export default function RemoveNftProductLiquidity () {
         <Container css={{ p: '24px 0' }} display='flex' justify='space-between'>
           <Text size={14} css={{ color: '$kondorGray' }}>Output is estimated. If the price changes by more than 0.5% your transaction will revert.</Text>
         </Container>
-        <Button css={{ backgroundColor: '$kondorPrimary' }} onPress={() => { setConfirmModalVisible(true) }}>
+        <Button bordered rounded css={{ borderColor: '$kondorPrimary', color: '$kondorLigth' }} onPress={() => { setConfirmModalVisible(true) }}>
           Remove liquidity
         </Button>
       </Card>

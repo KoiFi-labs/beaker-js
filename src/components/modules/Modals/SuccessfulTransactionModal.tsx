@@ -43,7 +43,9 @@ const SuccessfulTransactionModal = ({ isVisible, onHide, onPress, transactionId 
       </Container>
       <Spacer y={0.5} />
       <Button
-        css={{ backgroundColor: '$kondorPrimary', minWidth: '136px', width: '100%' }}
+        bordered
+        rounded
+        css={{ borderColor: '$kondorPrimary', color: '$kondorLigth', minWidth: '136px', width: '100%' }}
         onPress={() => handleOkButton()}
       >
         Ok

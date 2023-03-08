@@ -37,7 +37,7 @@ export default function AddLiquidity () {
     <Container display='flex' justify='center' alignContent='flex-start' css={{ minHeight: '85vh', p: '16px' }}>
       <Card css={{
         p: '8px',
-        maxWidth: '500px',
+        maxWidth: '400px',
         minHeight: '200px',
         bg: 'rgb(0, 0, 0, 0.6)',
         backdropFilter: 'saturate(180%) blur(10px);'
@@ -51,7 +51,7 @@ export default function AddLiquidity () {
             </IconButton>
           </Tooltip>
         </Container>
-        <Card css={{ $$cardColor: '$colors$gray100', m: '8px 0', p: '8px' }}>
+        <Card css={{ m: '8px 0', p: '8px' }}>
           <Grid.Container>
             <Grid xs={10}>
               <Input label='Amount' underlined placeholder='0.00' css={{ width: '100%' }} />
@@ -83,7 +83,7 @@ export default function AddLiquidity () {
           <Text>15400 {pool?.pool} KONDOR TOKEN</Text>
         </Container>
         <Spacer />
-        <Button css={{ backgroundColor: '$kondorPrimary' }} onPress={() => { setConfirmModalVisible(true) }}>
+        <Button bordered rounded css={{ borderColor: '$kondorPrimary', color: '$kondorLigth' }} onPress={() => { setConfirmModalVisible(true) }}>
           Add liquidity
         </Button>
       </Card>

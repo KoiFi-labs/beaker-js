@@ -28,7 +28,7 @@ export default function Details () {
     <Container display='flex' justify='center' alignContent='flex-start' css={{ minHeight: '85vh', p: '32px' }}>
       <Card css={{
         p: '16px',
-        maxWidth: '500px',
+        maxWidth: '400px',
         minHeight: '200px',
         bg: 'rgb(0, 0, 0, 0.6)',
         backdropFilter: 'saturate(180%) blur(10px);'

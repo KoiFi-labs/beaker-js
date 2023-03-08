@@ -52,8 +52,15 @@ const Nav: React.FC = (): JSX.Element => {
         <>
           <Button
             bordered
+            rounded
             onPress={handlerConnect}
-            css={{ color: '$kondorPrimary', borderColor: '$kondorPrimary' }}
+            css={{
+              height: '36px',
+              minWidth: '128px',
+              w: '128px',
+              color: '$kondorLigth',
+              borderColor: '$kondorPrimary'
+            }}
           >Connect
           </Button>
           <ConnectWalletModal isVisible={connectWalletModalVisible} onHide={() => setConnectWalletModalVisible(false)} />
@@ -64,11 +71,26 @@ const Nav: React.FC = (): JSX.Element => {
       <Popover placement='bottom-right'>
         <Popover.Trigger>
           <Button
+            rounded
             bordered
             onPress={handlerDisconnect}
-            css={{ color: '$kondorPrimary', borderColor: '$kondorPrimary' }}
-          >{account?.addr ? abbreviateWallet(account.addr) : null}
-            <ChevronIcon size={20} fill='#814350' />
+            css={{
+              height: '36px',
+              minWidth: '120px',
+              w: '120px',
+              color: '$kondorLigth',
+              borderColor: '$kondorPrimary'
+            }}
+          >
+            <Container
+              display='flex'
+              justify='space-between'
+              alignItems='center'
+              css={{ p: 0, m: 0, width: '120px' }}
+            >
+              <Text>{account?.addr ? abbreviateWallet(account.addr) : null}</Text>
+              <ChevronIcon size={20} fill='#DAD9D9' />
+            </Container>
           </Button>
         </Popover.Trigger>
         <Popover.Content>
