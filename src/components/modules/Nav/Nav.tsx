@@ -112,7 +112,7 @@ const Nav: React.FC = (): JSX.Element => {
                 </Grid.Container>
               )
             })}
-            <Button css={{ minWidth: '120px', background: '$kondorPrimary' }} onPress={handlerDisconnect}>Disconnect</Button>
+            <Button rounded bordered css={{ minWidth: '120px', borderColor: '$kondorPrimary', color: '$white' }} onPress={handlerDisconnect}>Disconnect</Button>
           </Card>
         </Popover.Content>
       </Popover>

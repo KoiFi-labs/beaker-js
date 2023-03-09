@@ -25,7 +25,7 @@ const SuccessfulTransactionModal = ({ isVisible, onHide, onPress, transactionId 
       aria-labelledby='modal-title'
       open={isVisible}
       onClose={() => onHide()}
-      css={{ minWidth: '300px', m: '16px', p: '8px' }}
+      css={{ minWidth: '300px', m: '16px', p: '8px', bc: '$black' }}
     >
       <Text b size={20}>
         Successful Transaction
@@ -45,7 +45,7 @@ const SuccessfulTransactionModal = ({ isVisible, onHide, onPress, transactionId 
       <Button
         bordered
         rounded
-        css={{ borderColor: '$kondorPrimary', color: '$kondorLigth', minWidth: '136px', width: '100%' }}
+        css={{ borderColor: '$kondorPrimary', color: '$kondorLigth', minWidth: '136px', width: '100%', bc: '$black' }}
         onPress={() => handleOkButton()}
       >
         Ok

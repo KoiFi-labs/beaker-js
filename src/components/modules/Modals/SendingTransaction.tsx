@@ -16,7 +16,7 @@ const SendingTransactionModal = ({ isVisible, onHide, onPress, children }: Sendi
       preventClose
       aria-labelledby='modal-title'
       open={isVisible}
-      css={{ minWidth: '300px', m: '16px', p: '8px' }}
+      css={{ minWidth: '300px', m: '16px', p: '8px', bc: '$black' }}
     >
       <Text b size={20}>
         Sending transaction...

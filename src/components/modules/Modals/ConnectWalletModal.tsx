@@ -47,7 +47,7 @@ const ConnectWalletModal = ({ isVisible, onHide }: ConnectWalletModalProps) => {
         <Button
           bordered
           rounded
-          css={{ borderColor: '$kondorPrimary', color: '$kondorLigth' }}
+          css={{ borderColor: '$kondorPrimary', color: '$kondorLigth', bc: '$black' }}
           onPress={() => handleButton(WALLET_PROVIDER.SANDBOX)}
         >
           Connect with Sandbox

@@ -2,16 +2,16 @@ import { styled } from '@nextui-org/react'
 
 export const LinkButton = styled('button', {
   dflex: 'center',
-  border: 'none',
+  border: '2px solid $kondorPrimary',
   outline: 'none',
   cursor: 'pointer',
-  borderRadius: '12px',
+  borderRadius: '48px',
   height: '40px',
   width: '100%',
   minWidth: '140px',
   padding: '0',
   margin: '0',
-  bg: '$kondorPrimary',
+  bg: '$black',
   transition: '$default',
   '&:hover': {
     opacity: '0.8'
