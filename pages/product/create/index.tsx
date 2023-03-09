@@ -166,13 +166,15 @@ export default function CreateProduct () {
         {inputsAmount > 3 ? PoolInput(assetInput4, input4.bindings.value, input4.bindings.onChange, handlePoolSelectButton4) : null}
         <Container display='flex' justify='center' css={{ p: 0 }}>
           {inputsAmount > 2
-            ? <Button bordered onPress={() => handleRemoveInputButton()} css={{ minWidth: '50px', width: '50px', m: '4px', borderColor: '$kondorPrimary', color: '$kondorPrimary' }}>-</Button>
+            ? <Button bordered rounded onPress={() => handleRemoveInputButton()} css={{ minWidth: '40px', width: '40px', m: '4px', borderColor: '$kondorPrimary', color: '$kondorPrimary' }}>-</Button>
             : null}
-          <Button bordered onPress={() => handleAddInputButton()} css={{ minWidth: '50px', width: '50px', m: '4px', borderColor: '$kondorPrimary', color: '$kondorPrimary' }}>+</Button>
+          <Button bordered rounded onPress={() => handleAddInputButton()} css={{ minWidth: '40px', width: '40px', m: '4px', borderColor: '$kondorPrimary', color: '$kondorPrimary' }}>+</Button>
         </Container>
         <Button
           onPress={() => handleCreateButton()}
-          css={{ withd: '100%', m: '4px 0', backgroundColor: '$kondorPrimary' }}
+          bordered
+          rounded
+          css={{ withd: '100%', m: '4px 0', borderColor: '$kondorPrimary', color: '$white' }}
         >Create
         </Button>
 
