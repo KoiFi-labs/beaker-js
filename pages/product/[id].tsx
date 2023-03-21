@@ -1,13 +1,13 @@
 import { Text, Container, Tooltip, Card, Spacer } from '@nextui-org/react'
 import { useRouter } from 'next/router'
-import { getProductById } from '../../../src/services/mock'
-import { IconButton } from '../../../src/components/IconButton/IconButton'
-import { InfoIcon } from '../../../public/icons/InfoIcon'
+import { getProductById } from '../../src/services/mock'
+import { IconButton } from '../../src/components/IconButton/IconButton'
+import { InfoIcon } from '../../public/icons/InfoIcon'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
-import { Product } from '../../../interfaces'
-import Nft from '../../../src/components/Nft/Nft'
-import { LinkButton } from '../../../src/components/LinkButton/LinkButton'
+import { Product } from '../../interfaces'
+import Nft from '../../src/components/Nft/Nft'
+import { LinkButton } from '../../src/components/LinkButton/LinkButton'
 
 export default function Details () {
   const router = useRouter()
