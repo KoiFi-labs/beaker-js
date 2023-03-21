@@ -51,7 +51,7 @@ export default function Details () {
             title='Total value locked'
             value={`≈$ ${abbreviateNumber(product.value)}`}
             icon={<CiLock size={40} />}
-            m='8px 8px 8px 0px'
+            m={8}
           />
           <ItemDetailCard
             title='Total rewards'

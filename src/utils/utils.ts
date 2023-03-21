@@ -7,8 +7,13 @@ export const abbreviateWallet = (wallet: string): string => {
 }
 
 export const abbreviateNumber = (num: number, precision?: number): string => {
-  const abbreviations = ['', 'K', 'M', 'B', 'T']
+  // If the number is less than 1000, just return it as a string with the specified number of decimal places
   const precisionToUse = precision || 2
+  if (Math.abs(num) < 1000) {
+    return num.toFixed(precisionToUse)
+  }
+  const abbreviations = ['', 'K', 'M', 'B', 'T']
+
   const isNegative = num < 0
   const absoluteValue = Math.abs(num)
   const index = Math.floor(Math.log10(absoluteValue) / 3)

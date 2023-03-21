@@ -1,8 +1,8 @@
 export type PoolType = {
     id: string,
     pool: string,
-    volume: string,
-    total: string,
+    volume: number,
+    total: number,
     icon?: string,
     apr: number,
     myStake?: number
@@ -12,60 +12,60 @@ const pools: PoolType[] = [
   {
     id: '1',
     pool: 'USDC',
-    volume: '475.65K',
-    total: '4.23M',
+    volume: 475504,
+    total: 451154177,
     apr: 20.4,
     icon: 'https://cdn.vectorstock.com/i/1000x1000/12/51/algorand-algo-coin-icon-vector-39911251.webp'
   },
   {
     id: '2',
     pool: 'USDT',
-    volume: '269.74K',
-    total: '3.52M',
+    volume: 269740,
+    total: 3520000,
     apr: 10.70,
     myStake: 4854
   },
   {
     id: '3',
     pool: 'PLANET',
-    volume: '102.03K',
-    total: '1.43M',
+    volume: 102037,
+    total: 1430451,
     apr: 7.30,
     myStake: 740955
   },
   {
     id: '4',
     pool: 'ALGO',
-    volume: '23.74M',
-    total: '1.23M',
+    volume: 237441,
+    total: 1237332,
     apr: 16.02
   },
   {
     id: '5',
     pool: 'OPUL',
-    volume: '1500K',
-    total: '0.9M',
+    volume: 1500451,
+    total: 900420,
     apr: 3.23
   },
   {
     id: '6',
     pool: 'XET',
-    volume: '1500K',
-    total: '0.9M',
+    volume: 150000,
+    total: 9500047,
     apr: 6.55
   },
   {
     id: '7',
     pool: 'ARCC',
-    volume: '1500K',
-    total: '0.9M',
+    volume: 15000,
+    total: 7844266,
     apr: 9.53
   },
   {
     id: '8',
     pool: 'OBA',
-    volume: '1500K',
-    total: '0.9M',
+    volume: 174100,
+    total: 8555620,
     apr: 7.96
   }
 ]
