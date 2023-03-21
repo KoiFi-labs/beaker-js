@@ -8,6 +8,9 @@ import { useEffect, useState } from 'react'
 import { Product } from '../../interfaces'
 import Nft from '../../src/components/Nft/Nft'
 import { LinkButton } from '../../src/components/LinkButton/LinkButton'
+import { CiBadgeDollar, CiLock } from 'react-icons/ci'
+import ItemDetailCard from '../../src/components/ItemDetailCard/ItemDetailCard'
+import { abbreviateNumber } from '../../src/utils/utils'
 
 export default function Details () {
   const router = useRouter()
@@ -43,9 +46,19 @@ export default function Details () {
           </Tooltip>
         </Container>
         <Spacer y={1} />
-        <Container css={{ p: 0 }} display='flex' justify='space-between'>
-          <Text size={16} css={{ color: '$kondorGray' }}>Total value looked</Text>
-          <Text>≈ $ {product.value}</Text>
+        <Container display='flex' justify='flex-start' css={{ p: 0 }}>
+          <ItemDetailCard
+            title='Total value locked'
+            value={`≈$ ${abbreviateNumber(product.value)}`}
+            icon={<CiLock size={40} />}
+            m='8px 8px 8px 0px'
+          />
+          <ItemDetailCard
+            title='Total rewards'
+            value={`≈$ ${abbreviateNumber(product.value * 0.001)}`}
+            icon={<CiBadgeDollar size={40} />}
+            m={8}
+          />
         </Container>
         {
           product.assets.map((a, index) => {
@@ -57,10 +70,6 @@ export default function Details () {
             )
           })
         }
-        <Container css={{ p: 0 }} display='flex' justify='space-between'>
-          <Text size={16} css={{ color: '$kondorGray' }}>Rewards</Text>
-          <Text>≈ $ {(product.value * 0.001).toFixed(2)}</Text>
-        </Container>
         <Spacer />
         <Container css={{ p: '16px 0' }} display='flex' justify='center'>
           <Nft id={product.id} name={product.name} />
