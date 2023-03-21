@@ -1,10 +1,10 @@
 import { Text, Container, Tooltip, Card, Spacer } from '@nextui-org/react'
 import { useRouter } from 'next/router'
-import { getPoolById } from '../../../src/services/poolService'
-import { IconButton } from '../../../src/components/IconButton/IconButton'
-import { InfoIcon } from '../../../public/icons/InfoIcon'
+import { getPoolById } from '../../src/services/poolService'
+import { IconButton } from '../../src/components/IconButton/IconButton'
+import { InfoIcon } from '../../public/icons/InfoIcon'
 import Link from 'next/link'
-import { LinkButton } from '../../../src/components/LinkButton/LinkButton'
+import { LinkButton } from '../../src/components/LinkButton/LinkButton'
 
 export default function Details () {
   const router = useRouter()

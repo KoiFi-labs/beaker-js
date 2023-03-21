@@ -6,7 +6,7 @@ import { LinkButton } from '../../../src/components/LinkButton/LinkButton'
 import { InfoIcon } from '../../../public/icons/InfoIcon'
 import Link from 'next/link'
 
-export default function Details () {
+export default function MyPosition () {
   const router = useRouter()
   const { id } = router.query
   const pool = getPoolById(id as string)

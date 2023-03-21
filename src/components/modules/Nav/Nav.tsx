@@ -29,11 +29,7 @@ const Nav: React.FC = (): JSX.Element => {
       href: '/pool'
     },
     {
-      label: 'MyPools',
-      href: '/myPool'
-    },
-    {
-      label: 'MyProducts',
+      label: 'Products',
       href: '/product'
     }
   ]
