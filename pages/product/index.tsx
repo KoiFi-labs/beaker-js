@@ -33,8 +33,8 @@ export default function MyProducts () {
             }
           }}
         >
-          <Text h1 css={{ color: '$kondorGray' }}>Investment Products</Text>
-          <Text h4 css={{ color: '$kondorGray' }}>Manage your products</Text>
+          <Text h1>Investment Products</Text>
+          <Text h4>Manage your products</Text>
         </Grid>
         <Grid
           xs={12} md={4} css={{

@@ -1,4 +1,4 @@
-import { Text, Container, Tooltip, Card, Spacer } from '@nextui-org/react'
+import { Text, Container, Tooltip, Card, Spacer, Grid } from '@nextui-org/react'
 import { useRouter } from 'next/router'
 import { getProductById } from '../../src/services/mock'
 import { IconButton } from '../../src/components/IconButton/IconButton'
@@ -28,9 +28,9 @@ export default function Details () {
   if (!product) return <Container><Text>Product not found</Text></Container>
 
   return (
-    <Container display='flex' justify='center' alignContent='flex-start' css={{ minHeight: '85vh', p: '32px' }}>
+    <Container display='flex' justify='center' alignContent='flex-start' css={{ minHeight: '85vh', p: '16px' }}>
       <Card css={{
-        p: '16px',
+        p: '8px',
         maxWidth: '400px',
         minHeight: '200px',
         bg: 'rgb(0, 0, 0, 0.6)',
@@ -46,32 +46,37 @@ export default function Details () {
           </Tooltip>
         </Container>
         <Spacer y={1} />
-        <Container display='flex' justify='flex-start' css={{ p: 0 }}>
-          <ItemDetailCard
-            title='Total value locked'
-            value={`≈$ ${abbreviateNumber(product.value)}`}
-            icon={<CiLock size={40} />}
-            m={8}
-          />
-          <ItemDetailCard
-            title='Total rewards'
-            value={`≈$ ${abbreviateNumber(product.value * 0.001)}`}
-            icon={<CiBadgeDollar size={40} />}
-            m={8}
-          />
-        </Container>
-        {
-          product.assets.map((a, index) => {
-            return (
-              <Container key={index} css={{ p: 0 }} display='flex' justify='space-between'>
-                <Text size={16} css={{ color: '$kondorGray' }}>{a.symbol} Pool</Text>
-                <Text>{a.amount}</Text>
-              </Container>
-            )
-          })
-        }
-        <Spacer />
-        <Container css={{ p: '16px 0' }} display='flex' justify='center'>
+        <Grid.Container>
+          <Grid xs={12} md={6}>
+            <ItemDetailCard
+              title='Total value locked'
+              value={`≈$ ${abbreviateNumber(product.value)}`}
+              icon={<CiLock size={40} />}
+              m={8}
+            />
+          </Grid>
+          <Grid xs={12} md={6}>
+            <ItemDetailCard
+              title='Total rewards'
+              value={`≈$ ${abbreviateNumber(product.value * 0.001)}`}
+              icon={<CiBadgeDollar size={40} />}
+              m={8}
+            />
+          </Grid>
+        </Grid.Container>
+        <Card css={{ p: '16px', m: '8px', w: 'auto' }}>
+          {
+            product.assets.map((a, index) => {
+              return (
+                <Container key={index} css={{ p: 0, m: 0 }} display='flex' justify='space-between'>
+                  <Text size={16} css={{ color: '$kondorGray' }}>{a.symbol} Pool</Text>
+                  <Text>{a.amount}</Text>
+                </Container>
+              )
+            })
+          }
+        </Card>
+        <Container css={{ p: '8px' }} display='flex' justify='center'>
           <Nft id={product.id} name={product.name} />
         </Container>
         <Link href={'/product/delete/' + product?.id}>

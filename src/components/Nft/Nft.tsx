@@ -9,8 +9,8 @@ const Nft = ({ name, id }: NftProps) => {
     <div
       className='nft'
       style={{
-        width: '200px',
-        height: '300px'
+        width: '100%',
+        height: '128px'
       }}
     >
       <div className='nft_inner'>

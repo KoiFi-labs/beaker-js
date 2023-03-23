@@ -11,7 +11,7 @@ export default function ItemDetailCard ({ title, value, icon, m }: ItemDetailCar
   return (
     <Card css={{
       p: '16px',
-      width: '136px',
+      width: '100%',
       height: '136px',
       d: 'flex',
       flexDirection: 'column',
