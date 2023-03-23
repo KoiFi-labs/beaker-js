@@ -9,7 +9,7 @@ export const LinkButton = styled('button', {
   height: '40px',
   width: '100%',
   minWidth: '140px',
-  padding: '0',
+  padding: '16px',
   margin: '0',
   bg: '$black',
   transition: '$default',

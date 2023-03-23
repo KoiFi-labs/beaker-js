@@ -1,8 +1,5 @@
-import { Table, Text, Row, Col, Tooltip } from '@nextui-org/react'
+import { Table, Text } from '@nextui-org/react'
 import React from 'react'
-import { IconButton } from '../../../../src/components/IconButton/IconButton'
-import { DeleteIcon } from '../../../../public/icons/DeleteIcon'
-import Link from 'next/link'
 import { Product } from '../../../../interfaces'
 import { useRouter } from 'next/router'
 
@@ -10,8 +7,7 @@ export default function ProductsTable ({ products } : { products: Product[] }) {
   const router = useRouter()
   const columns = [
     { name: 'PRODUCT', uid: 'name' },
-    { name: 'MY STAKE', uid: 'value' },
-    { name: 'ACTIONS', uid: 'actions' }
+    { name: 'MY STAKE', uid: 'value' }
   ]
 
   const renderCell = (myProduct: Product, columnKey: React.Key) => {
@@ -28,23 +24,6 @@ export default function ProductsTable ({ products } : { products: Product[] }) {
           <Text b size={14} css={{ tt: 'capitalize' }}>
             {Number(cellValue).toFixed(4).toString()}
           </Text>
-        )
-
-      case 'actions':
-        return (
-          <Row justify='center' align='center'>
-            <Col css={{ d: 'flex' }}>
-              <Link href={'/product/delete/' + myProduct.id} legacyBehavior>
-                <a onClick={() => {}}>
-                  <Tooltip content='Remove NFT product liquidity'>
-                    <IconButton>
-                      <DeleteIcon size={20} fill='#FF0080' />
-                    </IconButton>
-                  </Tooltip>
-                </a>
-              </Link>
-            </Col>
-          </Row>
         )
     }
   }
@@ -67,8 +46,7 @@ export default function ProductsTable ({ products } : { products: Product[] }) {
         {(column) => (
           <Table.Column
             key={column.uid}
-            hideHeader={column.uid === 'actions'}
-            align={column.uid === 'actions' ? 'center' : 'start'}
+            align='start'
           >
             {column.name}
           </Table.Column>

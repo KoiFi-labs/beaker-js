@@ -33,7 +33,7 @@ export default function MyProducts () {
             }
           }}
         >
-          <Text h1 css={{ color: '$kondorGray' }}>MyProducts</Text>
+          <Text h1 css={{ color: '$kondorGray' }}>Investment Products</Text>
           <Text h4 css={{ color: '$kondorGray' }}>Manage your products</Text>
         </Grid>
         <Grid
@@ -49,7 +49,7 @@ export default function MyProducts () {
           }}
         >
           <Link href='/product/create'>
-            <LinkButton css={{ p: '8px' }}>
+            <LinkButton css={{ p: '16px' }}>
               Create new product
             </LinkButton>
           </Link>

@@ -1,8 +1,6 @@
-import { Text, Container, Tooltip, Card, Spacer } from '@nextui-org/react'
+import { Text, Container, Card, Grid } from '@nextui-org/react'
 import { useRouter } from 'next/router'
 import { getPoolById } from '../../src/services/poolService'
-import { IconButton } from '../../src/components/IconButton/IconButton'
-import { InfoIcon } from '../../public/icons/InfoIcon'
 import Link from 'next/link'
 import { LinkButton } from '../../src/components/LinkButton/LinkButton'
 import ItemDetailCard from '../../src/components/ItemDetailCard/ItemDetailCard'
@@ -17,23 +15,19 @@ export default function Details () {
   if (!pool) return <Text>Pool not found</Text>
 
   return (
-    <Container display='flex' justify='center' alignContent='flex-start' css={{ minHeight: '85vh', p: '16px' }}>
+    <Container css={{ p: '8px', mw: '992px' }}>
+      <Grid.Container css={{ m: 0, p: 0 }}>
+        <Grid xs={6} css={{ m: 0, p: 0, d: 'flex', flexDirection: 'column' }}>
+          <Text h1 css={{ color: '$kondorGray' }}>{pool.pool} Pool</Text>
+          <Text h4 css={{ color: '$kondorGray' }}>Earn fees by providing liquidity.</Text>
+        </Grid>
+      </Grid.Container>
       <Card css={{
         p: '16px',
-        maxWidth: '400px',
-        minHeight: '200px',
         bg: 'rgb(0, 0, 0, 0.6)',
         backdropFilter: 'saturate(180%) blur(10px);'
       }}
       >
-        <Container display='flex' justify='space-between' css={{ p: 0 }}>
-          <Text size={20} css={{ color: '$kondorLight' }}>{pool.pool} Pool</Text>
-          <Tooltip content='Details'>
-            <IconButton>
-              <InfoIcon size={20} fill='#979797' />
-            </IconButton>
-          </Tooltip>
-        </Container>
         <Container display='flex' justify='flex-start' css={{ p: 0 }}>
           <ItemDetailCard
             title='Total liquidity'
@@ -66,13 +60,13 @@ export default function Details () {
             m={8}
           />
         </Container>
-        <Spacer />
-        <Link href={'/pool/addLiquidity/' + pool.id}>
-          <LinkButton>
-            Add liquidity
-          </LinkButton>
-        </Link>
       </Card>
+      <Link href={'/pool/addLiquidity/' + pool.id}>
+        <LinkButton>
+          Add liquidity
+        </LinkButton>
+      </Link>
     </Container>
+
   )
 }
