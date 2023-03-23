@@ -41,7 +41,6 @@ export const WalletProvider: React.FC<Props> = ({ children }: Props): JSX.Elemen
 
   const reloadBalances = () => {
     if (account?.addr) {
-      console.log('reloadBalances')
       algoService.getBalances(account.addr).then((balances) => {
         setBalances(balances)
       })

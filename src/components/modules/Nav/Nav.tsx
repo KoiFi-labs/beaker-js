@@ -12,6 +12,7 @@ import Link from 'next/link'
 const Nav: React.FC = (): JSX.Element => {
   const { isConnected, handleDisconnectWalletClick, account, balances } = useWallet()
   const [connectWalletModalVisible, setConnectWalletModalVisible] = useState<boolean>(false)
+  const [isToggleSelected, setIsToggleSelected] = useState<boolean>(false)
   const balancesToShow = balances.filter((b: Balance) => config.assetList.map(a => a.id).includes(b.assetId))
 
   type Page = {
@@ -116,9 +117,24 @@ const Nav: React.FC = (): JSX.Element => {
     )
   }
 
+  const getResponsiveItems = () => {
+    if (isToggleSelected) {
+      return (
+        <Navbar.Collapse>
+          {pages.map((item, index) => (
+            <Navbar.CollapseItem key={item.label} onClick={() => { setIsToggleSelected(!isToggleSelected) }}>
+              <Link href={item.href}>
+                {item.label}
+              </Link>
+            </Navbar.CollapseItem>
+          ))}
+        </Navbar.Collapse>
+      )
+    }
+  }
   return (
     <Navbar variant='sticky' maxWidth='fluid' isCompact>
-      <Navbar.Toggle showIn='xs' />
+      <Navbar.Toggle showIn='xs' isSelected={isToggleSelected} onChange={(isSelected) => { setIsToggleSelected(isSelected as boolean) }} />
       <Navbar.Brand
         css={{
           '@xs': {
@@ -143,16 +159,7 @@ const Nav: React.FC = (): JSX.Element => {
           </div>
         </Navbar.Item>
       </Navbar.Content>
-
-      <Navbar.Collapse>
-        {pages.map((item, index) => (
-          <Navbar.CollapseItem key={item.label}>
-            <Link href={item.href}>
-              {item.label}
-            </Link>
-          </Navbar.CollapseItem>
-        ))}
-      </Navbar.Collapse>
+      {getResponsiveItems()}
     </Navbar>
   )
 }
