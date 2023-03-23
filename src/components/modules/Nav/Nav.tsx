@@ -8,6 +8,7 @@ import { microToStandard } from '../../../utils/math'
 import { config } from '../../../../config'
 import { abbreviateWallet } from '../../../utils/utils'
 import Link from 'next/link'
+import { BsWallet2 } from 'react-icons/bs'
 
 const Nav: React.FC = (): JSX.Element => {
   const { isConnected, handleDisconnectWalletClick, account, balances } = useWallet()
@@ -47,19 +48,39 @@ const Nav: React.FC = (): JSX.Element => {
     if (!isConnected) {
       return (
         <>
-          <Button
-            bordered
-            rounded
-            onPress={handlerConnect}
-            css={{
-              height: '36px',
-              minWidth: '128px',
-              w: '128px',
-              color: '$kondorLigth',
-              borderColor: '$kondorPrimary'
-            }}
-          >Connect
-          </Button>
+          <Grid.Container>
+            <Grid xs={0} sm={12} justify='center' alignItems='center' css={{ p: 0, m: 0 }}>
+              <Button
+                bordered
+                rounded
+                onPress={handlerConnect}
+                css={{
+                  height: '36px',
+                  minWidth: '128px',
+                  w: '128px',
+                  color: '$kondorLigth',
+                  borderColor: '$kondorPrimary'
+                }}
+              >Connect
+              </Button>
+            </Grid>
+            <Grid xs={12} sm={0} justify='center' alignItems='center' css={{ p: 0, m: 0 }}>
+              <Button
+                bordered
+                rounded
+                onPress={handlerConnect}
+                css={{
+                  height: '36px',
+                  minWidth: '36px',
+                  w: '36px',
+                  color: '$kondorLigth',
+                  borderColor: '$kondorPrimary'
+                }}
+              >
+                <BsWallet2 size={20} />
+              </Button>
+            </Grid>
+          </Grid.Container>
           <ConnectWalletModal isVisible={connectWalletModalVisible} onHide={() => setConnectWalletModalVisible(false)} />
         </>
       )
@@ -67,28 +88,48 @@ const Nav: React.FC = (): JSX.Element => {
     return (
       <Popover placement='bottom-right'>
         <Popover.Trigger>
-          <Button
-            rounded
-            bordered
-            onPress={handlerDisconnect}
-            css={{
-              height: '36px',
-              minWidth: '120px',
-              w: '120px',
-              color: '$kondorLigth',
-              borderColor: '$kondorPrimary'
-            }}
-          >
-            <Container
-              display='flex'
-              justify='space-between'
-              alignItems='center'
-              css={{ p: 0, m: 0, width: '120px' }}
-            >
-              <Text>{account?.addr ? abbreviateWallet(account.addr) : null}</Text>
-              <ChevronIcon size={20} fill='#DAD9D9' />
-            </Container>
-          </Button>
+          <Grid.Container>
+            <Grid xs={0} sm={12} justify='center' alignItems='center' css={{ p: 0, m: 0 }}>
+              <Button
+                rounded
+                bordered
+                onPress={handlerDisconnect}
+                css={{
+                  height: '36px',
+                  minWidth: '120px',
+                  w: '120px',
+                  color: '$kondorLigth',
+                  borderColor: '$kondorPrimary'
+                }}
+              >
+                <Container
+                  display='flex'
+                  justify='space-between'
+                  alignItems='center'
+                  css={{ p: 0, m: 0, width: '120px' }}
+                >
+                  <Text>{account?.addr ? abbreviateWallet(account.addr) : null}</Text>
+                  <ChevronIcon size={20} fill='#DAD9D9' />
+                </Container>
+              </Button>
+            </Grid>
+            <Grid xs={12} sm={0} justify='center' alignItems='center' css={{ p: 0, m: 0 }}>
+              <Button
+                rounded
+                bordered
+                onPress={handlerDisconnect}
+                css={{
+                  height: '36px',
+                  minWidth: '36px',
+                  w: '36px',
+                  color: '$kondorLigth',
+                  borderColor: '$kondorPrimary'
+                }}
+              >
+                <BsWallet2 size={20} />
+              </Button>
+            </Grid>
+          </Grid.Container>
         </Popover.Trigger>
         <Popover.Content>
           <Card css={{ padding: '20px' }}>
