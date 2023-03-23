@@ -72,7 +72,6 @@ const Nav: React.FC = (): JSX.Element => {
   }
 
   const getNavbarButton = () => {
-    console.log('isConnected', isConnected)
     if (!isConnected) {
       return (
         <Grid.Container>
@@ -192,7 +191,7 @@ const Nav: React.FC = (): JSX.Element => {
           }
         }}
       >
-        <Link href='/home'>
+        <Link href='/home' onClick={() => { setIsToggleSelected(false) }}>
           Kondor Finance
         </Link>
       </Navbar.Brand>
