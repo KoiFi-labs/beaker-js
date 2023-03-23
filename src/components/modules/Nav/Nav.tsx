@@ -50,7 +50,7 @@ const Nav: React.FC = (): JSX.Element => {
         <Card css={{ padding: '20px' }}>
           {balancesToShow.map((balance: Balance) => {
             return (
-              <Grid.Container css={{ minWidth: '320px', margin: '5px  0' }} key={balance.assetId}>
+              <Grid.Container css={{ minWidth: '250px', margin: '5px  0' }} key={balance.assetId}>
                 <Grid xs={8}>
                   <Avatar src={balance.icon} size='sm' css={{ margin: '0px 4px' }} />
                   <Text>{balance.symbol || `id: ${balance.assetId}`}</Text>

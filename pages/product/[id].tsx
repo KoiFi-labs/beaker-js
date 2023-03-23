@@ -70,7 +70,7 @@ export default function Details () {
               return (
                 <Container key={index} css={{ p: 0, m: 0 }} display='flex' justify='space-between'>
                   <Text size={16} css={{ color: '$kondorGray' }}>{a.symbol} Pool</Text>
-                  <Text>{a.amount}</Text>
+                  <Text>{a.amount} {a.symbol}</Text>
                 </Container>
               )
             })
