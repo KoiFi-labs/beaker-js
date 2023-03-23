@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Button, Navbar, Popover, Text, Card, Avatar, Container, Divider, Spacer, Grid } from '@nextui-org/react'
 import ConnectWalletModal from '../Modals/ConnectWalletModal'
 import { useWallet } from '../../../contexts/useWallet'
@@ -35,6 +35,10 @@ const Nav: React.FC = (): JSX.Element => {
       href: '/stable'
     }
   ]
+
+  useEffect(() => {
+    document.body.style.overflow = isToggleSelected ? 'hidden' : 'auto'
+  }, [isToggleSelected])
 
   const handlerConnect = (): void => {
     setConnectWalletModalVisible(true)
