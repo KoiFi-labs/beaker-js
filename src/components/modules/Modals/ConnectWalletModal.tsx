@@ -36,7 +36,7 @@ const ConnectWalletModal = ({ isVisible, onHide }: ConnectWalletModalProps) => {
         >
           Connect with Pera
         </Button>
-        <Button
+        {/* <Button
           bordered
           rounded
           css={{ borderColor: '$kondorPrimary', color: '$kondorLigth' }}
@@ -51,7 +51,7 @@ const ConnectWalletModal = ({ isVisible, onHide }: ConnectWalletModalProps) => {
           onPress={() => handleButton(WALLET_PROVIDER.SANDBOX)}
         >
           Connect with Sandbox
-        </Button>
+        </Button> */}
       </Modal.Body>
       <Modal.Footer>
         <Text>
