@@ -27,12 +27,12 @@ const Nav: React.FC = (): JSX.Element => {
       href: '/swap'
     },
     {
-      label: 'Pools',
-      href: '/pool'
-    },
-    {
       label: 'Products',
       href: '/product'
+    },
+    {
+      label: 'USD Stable',
+      href: '/stable'
     }
   ]
 
