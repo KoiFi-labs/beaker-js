@@ -44,52 +44,78 @@ const Nav: React.FC = (): JSX.Element => {
     handleDisconnectWalletClick()
   }
 
+  const getPopoverContent = () => {
+    return (
+      <Popover.Content>
+        <Card css={{ padding: '20px' }}>
+          {balancesToShow.map((balance: Balance) => {
+            return (
+              <Grid.Container css={{ minWidth: '320px', margin: '5px  0' }} key={balance.assetId}>
+                <Grid xs={8}>
+                  <Avatar src={balance.icon} size='sm' css={{ margin: '0px 4px' }} />
+                  <Text>{balance.symbol || `id: ${balance.assetId}`}</Text>
+                </Grid>
+                <Grid xs={4}>
+                  <Container display='flex' justify='flex-end' css={{ padding: 0 }}>
+                    <Text b>{microToStandard(balance.amount)}</Text>
+                  </Container>
+                </Grid>
+                <Spacer y={0.4} />
+                <Divider />
+              </Grid.Container>
+            )
+          })}
+          <Button rounded bordered css={{ minWidth: '120px', borderColor: '$kondorPrimary', color: '$white' }} onPress={handlerDisconnect}>Disconnect</Button>
+        </Card>
+      </Popover.Content>
+    )
+  }
+
   const getNavbarButton = () => {
+    console.log('isConnected', isConnected)
     if (!isConnected) {
       return (
-        <>
-          <Grid.Container>
-            <Grid xs={0} sm={12} justify='center' alignItems='center' css={{ p: 0, m: 0 }}>
-              <Button
-                bordered
-                rounded
-                onPress={handlerConnect}
-                css={{
-                  height: '36px',
-                  minWidth: '128px',
-                  w: '128px',
-                  color: '$kondorLigth',
-                  borderColor: '$kondorPrimary'
-                }}
-              >Connect
-              </Button>
-            </Grid>
-            <Grid xs={12} sm={0} justify='center' alignItems='center' css={{ p: 0, m: 0 }}>
-              <Button
-                bordered
-                rounded
-                onPress={handlerConnect}
-                css={{
-                  height: '36px',
-                  minWidth: '36px',
-                  w: '36px',
-                  color: '$kondorLigth',
-                  borderColor: '$kondorPrimary'
-                }}
-              >
-                <BsWallet2 size={20} />
-              </Button>
-            </Grid>
-          </Grid.Container>
-          <ConnectWalletModal isVisible={connectWalletModalVisible} onHide={() => setConnectWalletModalVisible(false)} />
-        </>
+        <Grid.Container>
+          <Grid xs={0} sm={12} justify='center' alignItems='center' css={{ p: 0, m: 0 }}>
+            <Button
+              bordered
+              rounded
+              onPress={handlerConnect}
+              css={{
+                height: '36px',
+                minWidth: '128px',
+                w: '128px',
+                color: '$kondorLigth',
+                borderColor: '$kondorPrimary'
+              }}
+            >Connect
+            </Button>
+          </Grid>
+          <Grid xs={12} sm={0} justify='center' alignItems='center' css={{ p: 0, m: 0 }}>
+            <Button
+              bordered
+              rounded
+              onPress={handlerConnect}
+              css={{
+                height: '36px',
+                minWidth: '36px',
+                w: '36px',
+                color: '$kondorLigth',
+                borderColor: '$kondorPrimary'
+              }}
+            >
+              <BsWallet2 size={20} />
+            </Button>
+            <ConnectWalletModal isVisible={connectWalletModalVisible} onHide={() => setConnectWalletModalVisible(false)} />
+          </Grid>
+        </Grid.Container>
       )
     }
     return (
-      <Popover placement='bottom-right'>
-        <Popover.Trigger>
-          <Grid.Container>
-            <Grid xs={0} sm={12} justify='center' alignItems='center' css={{ p: 0, m: 0 }}>
+      <Grid.Container>
+        <Grid xs={0} sm={12} justify='center' alignItems='center' css={{ p: 0, m: 0 }}>
+          <Popover placement='bottom-right'>
+            <Popover.Trigger>
               <Button
                 rounded
                 bordered
@@ -112,8 +138,13 @@ const Nav: React.FC = (): JSX.Element => {
                   <ChevronIcon size={20} fill='#DAD9D9' />
                 </Container>
               </Button>
-            </Grid>
-            <Grid xs={12} sm={0} justify='center' alignItems='center' css={{ p: 0, m: 0 }}>
+            </Popover.Trigger>
+            {getPopoverContent()}
+          </Popover>
+        </Grid>
+        <Grid xs={12} sm={0} justify='center' alignItems='center' css={{ p: 0, m: 0 }}>
+          <Popover placement='bottom-right'>
+            <Popover.Trigger>
               <Button
                 rounded
                 bordered
@@ -128,33 +159,11 @@ const Nav: React.FC = (): JSX.Element => {
               >
                 <BsWallet2 size={20} />
               </Button>
-            </Grid>
-          </Grid.Container>
-        </Popover.Trigger>
-        <Popover.Content>
-          <Card css={{ padding: '20px' }}>
-            {balancesToShow.map((balance: Balance) => {
-              return (
-                <Grid.Container css={{ minWidth: '320px', margin: '5px  0' }} key={balance.assetId}>
-                  <Grid xs={8}>
-                    <Avatar src={balance.icon} size='sm' css={{ margin: '0px 4px' }} />
-                    <Text>{balance.symbol || `id: ${balance.assetId}`}</Text>
-                  </Grid>
-                  <Grid xs={4}>
-                    <Container display='flex' justify='flex-end' css={{ padding: 0 }}>
-                      <Text b>{microToStandard(balance.amount)}</Text>
-                    </Container>
-                  </Grid>
-                  <Spacer y={0.4} />
-                  <Divider />
-                </Grid.Container>
-              )
-            })}
-            <Button rounded bordered css={{ minWidth: '120px', borderColor: '$kondorPrimary', color: '$white' }} onPress={handlerDisconnect}>Disconnect</Button>
-          </Card>
-        </Popover.Content>
-      </Popover>
-
+            </Popover.Trigger>
+            {getPopoverContent()}
+          </Popover>
+        </Grid>
+      </Grid.Container>
     )
   }
 
