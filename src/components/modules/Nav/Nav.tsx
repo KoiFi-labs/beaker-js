@@ -126,7 +126,7 @@ const Nav: React.FC = (): JSX.Element => {
           }
         }}
       >
-        <Link href='home'>
+        <Link href='/home'>
           Kondor Finance
         </Link>
       </Navbar.Brand>
