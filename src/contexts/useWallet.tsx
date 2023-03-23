@@ -29,7 +29,7 @@ export const WalletProvider: React.FC<Props> = ({ children }: Props): JSX.Elemen
   const [balances, setBalances] = useState<Balance[]>([])
 
   useEffect(() => {
-    if (account) {
+    if (account?.addr) {
       algoService.getBalances(account.addr).then((balances) => {
         setBalances(balances)
       })
@@ -40,7 +40,8 @@ export const WalletProvider: React.FC<Props> = ({ children }: Props): JSX.Elemen
   const { handleConnectSandboxWalletClick, handleDisconnectSandboxWalletClick, sandboxAccountAddress } = useSandbox()
 
   const reloadBalances = () => {
-    if (account) {
+    if (account?.addr) {
+      console.log('reloadBalances')
       algoService.getBalances(account.addr).then((balances) => {
         setBalances(balances)
       })
@@ -64,6 +65,7 @@ export const WalletProvider: React.FC<Props> = ({ children }: Props): JSX.Elemen
     peraService
       .reconnectSession(handleDisconnectWalletClick)
       .then((acc) => {
+        if (!acc.addr) return
         setWalletProvider(walletProvider)
         setAccount({ addr: acc.addr })
         setIsConnected(true)
