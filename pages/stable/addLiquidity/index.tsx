@@ -11,6 +11,8 @@ import { useRouter } from 'next/router'
 import { createProduct, getBalances, getPrices } from '../../../src/services/mock'
 import { Balance, Price } from '../../../interfaces'
 import { BindingsChangeTarget } from '@nextui-org/react/types/use-input/use-input'
+import { getMintAmount } from '../../../src/services/kondorServices/symmetricPoolServise'
+import { config } from '../../../config'
 
 enum StyleType {
   ALIQUOT = 'aliquot',
@@ -44,6 +46,7 @@ export default function AddLiquidityPool () {
   const inputPorcentage2 = useInput('')
   const [inputWithErrors, setInputWithErrors] = useState<boolean>(false)
   const router = useRouter()
+  const [flag, setFlag] = useState<boolean>(false)
 
   const getPrice = (asset: string) => {
     const price = prices.find(p => p.assetSymbol === asset)
@@ -60,16 +63,30 @@ export default function AddLiquidityPool () {
     fetchBalancesAndPrices()
   }, [])
 
-  const handlePoolSelectButton1 = (pool: PoolType) => {
-    setAssetInput1(pool.pool)
+  useEffect(() => {
+    if (style === StyleType.ALIQUOT) {
+      if (input1.value) {
+        getMintAmount(Number(input1.value), config.pond.assetIdB)
+          .then((amount: number) => { input2.setValue(abbreviateNumber(amount)) })
+      }
+      if (input2.value) {
+        getMintAmount(Number(input2.value), config.pond.assetIdA)
+          .then((amount: number) => { input1.setValue(abbreviateNumber(amount)) })
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [style, flag])
+
+  const onChangeInput1 = (e: any) => {
+    input1.setValue(e.target.value)
+    input2.setValue('')
+    setFlag(!flag)
   }
 
-  const handlePoolSelectButton2 = (pool: PoolType) => {
-    setAssetInput2(pool.pool)
-  }
-
-  const handlePoolSelectButtonAssetSupply = (pool: PoolType) => {
-    setAssetSupplyInputByPorcentage(pool.pool)
+  const onChangeInput2 = (e: any) => {
+    input2.setValue(e.target.value)
+    input1.setValue('')
+    setFlag(!flag)
   }
 
   const handlePoolSelectButtonPorcentage1 = (pool: PoolType) => {
@@ -141,6 +158,21 @@ export default function AddLiquidityPool () {
     return total
   }
 
+  const calculateAssetAmountByPorcentage = (asset: string, porcentage: number) => {
+    const supplyInput = Number(inputAssetSupplyByPorcentage.value)
+    const supplyInputUSD = supplyInput * (prices.find(p => p.assetSymbol === assetSupplyInputByPorcentage)?.price || 0)
+    const assetAmountUDS = (supplyInputUSD * porcentage) / 100
+    const assetAmount = assetAmountUDS / (prices.find(p => p.assetSymbol === asset)?.price || 0)
+    return assetAmount
+  }
+
+  const calculateAssetAmountUSDByPorcentage = (asset: string, porcentage: number) => {
+    const supplyInput = Number(inputAssetSupplyByPorcentage.value)
+    const supplyInputUSD = supplyInput * (prices.find(p => p.assetSymbol === assetSupplyInputByPorcentage)?.price || 0)
+    const assetAmountUDS = (supplyInputUSD * porcentage) / 100
+    return assetAmountUDS
+  }
+
   const PoolInput = (
     asset: string,
     value:string,
@@ -165,21 +197,6 @@ export default function AddLiquidityPool () {
         </Grid.Container>
       </Card>
     )
-  }
-
-  const calculateAssetAmountByPorcentage = (asset: string, porcentage: number) => {
-    const supplyInput = Number(inputAssetSupplyByPorcentage.value)
-    const supplyInputUSD = supplyInput * (prices.find(p => p.assetSymbol === assetSupplyInputByPorcentage)?.price || 0)
-    const assetAmountUDS = (supplyInputUSD * porcentage) / 100
-    const assetAmount = assetAmountUDS / (prices.find(p => p.assetSymbol === asset)?.price || 0)
-    return assetAmount
-  }
-
-  const calculateAssetAmountUSDByPorcentage = (asset: string, porcentage: number) => {
-    const supplyInput = Number(inputAssetSupplyByPorcentage.value)
-    const supplyInputUSD = supplyInput * (prices.find(p => p.assetSymbol === assetSupplyInputByPorcentage)?.price || 0)
-    const assetAmountUDS = (supplyInputUSD * porcentage) / 100
-    return assetAmountUDS
   }
 
   const PoolPorcentageInput = (
@@ -238,8 +255,8 @@ export default function AddLiquidityPool () {
   const getInputsByAmount = () => {
     return (
       <>
-        {PoolInput(assetInput1, input1.bindings.value, input1.bindings.onChange)}
-        {PoolInput(assetInput2, input2.bindings.value, input2.bindings.onChange)}
+        {PoolInput(assetInput1, input1.value, onChangeInput1)}
+        {PoolInput(assetInput2, input2.value, onChangeInput2)}
       </>
     )
   }

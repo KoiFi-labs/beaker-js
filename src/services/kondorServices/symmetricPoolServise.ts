@@ -174,7 +174,6 @@ export const bootstrap = async (addr: string, amount: number, assetA: number, as
     })
     const results = await comp.execute(client, 2)
 
-    console.log('results', results)
     return {
       result: results.methodResults[0].returnValue,
       txId: results.methodResults[0].txID
@@ -191,6 +190,20 @@ export const getSwapResult = async (amountAssetOut: number, assetOut: number, as
   ])
   const factor = config.pond.scale - config.pond.fee
   return (amountAssetOut * factor * assetInSupply) / ((assetOutSupply * config.pond.scale) + (amountAssetOut * factor))
+}
+
+export const getMintAmount = async (amount: number, assetToKnow: number) => {
+  if (assetToKnow !== config.pond.assetIdA && assetToKnow !== config.pond.assetIdB) {
+    throw new Error('Invalid asset')
+  }
+  const [assetASupply, assetBSupply] = await Promise.all([
+    getAssetSupply(config.pond.assetIdA),
+    getAssetSupply(config.pond.assetIdB)
+  ])
+  if (assetToKnow === config.pond.assetIdA) {
+    return amount / (assetASupply / assetBSupply)
+  }
+  return amount / (assetBSupply / assetASupply)
 }
 
 const getAssetSupply = async (assetId: number) => {
