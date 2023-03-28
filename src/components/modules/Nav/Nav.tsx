@@ -37,7 +37,7 @@ const Nav: React.FC = (): JSX.Element => {
   ]
 
   useEffect(() => {
-    document.body.style.overflow = isToggleSelected ? 'hidden' : 'auto'
+    document.body.style.overflow = 'auto'
   }, [isToggleSelected])
 
   const handlerConnect = (): void => {
