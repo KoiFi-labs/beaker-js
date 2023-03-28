@@ -33,8 +33,6 @@ export default function AddLiquidityPool () {
   const [sendingTransactionModalIsVisible, setSendingTransactionModalIsVisible] = useState<boolean>(false)
   const [balances, setBalances] = useState<Balance[]>([])
   const [prices, setPrices] = useState<Price[]>([])
-  const [assetInput1, setAssetInput1] = useState<string>('USDC')
-  const [assetInput2, setAssetInput2] = useState<string>('USDT')
   const [assetPorcentageInput1, setAssetPorcentageInput1] = useState<string>('ALGO')
   const [assetPorcentageInput2, setAssetPorcentageInput2] = useState<string>('PLANET')
   const [assetSupplyInputByPorcentage, setAssetSupplyInputByPorcentage] = useState<string>('USDC')
@@ -47,6 +45,8 @@ export default function AddLiquidityPool () {
   const [inputWithErrors, setInputWithErrors] = useState<boolean>(false)
   const router = useRouter()
   const [flag, setFlag] = useState<boolean>(false)
+  const assetInput1 = ('USDC')
+  const assetInput2 = ('USDT')
 
   const getPrice = (asset: string) => {
     const price = prices.find(p => p.assetSymbol === asset)
@@ -64,58 +64,51 @@ export default function AddLiquidityPool () {
   }, [])
 
   useEffect(() => {
-    if (style === StyleType.ALIQUOT) {
-      if (input1.value) {
-        getMintAmount(Number(input1.value), config.pond.assetIdB)
-          .then((amount: number) => { input2.setValue(abbreviateNumber(amount)) })
+    switch (style) {
+      case StyleType.ALIQUOT: {
+        if (input1.value) {
+          getMintAmount(Number(input1.value), config.pond.assetIdB)
+            .then((amount: number) => { input2.setValue(abbreviateNumber(amount)) })
+        }
+        if (input2.value) {
+          getMintAmount(Number(input2.value), config.pond.assetIdA)
+            .then((amount: number) => { input1.setValue(abbreviateNumber(amount)) })
+        }
+        break
       }
-      if (input2.value) {
-        getMintAmount(Number(input2.value), config.pond.assetIdA)
-          .then((amount: number) => { input1.setValue(abbreviateNumber(amount)) })
-      }
+      case StyleType.ASSET_A:
+        input2.setValue('')
+        break
+      case StyleType.ASSET_B:
+        input1.setValue('')
+        break
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [style, flag])
 
   const onChangeInput1 = (e: any) => {
     input1.setValue(e.target.value)
-    input2.setValue('')
-    setFlag(!flag)
+    switch (style) {
+      case StyleType.ALIQUOT:
+        input2.setValue('')
+        setFlag(!flag)
+        break
+    }
   }
 
   const onChangeInput2 = (e: any) => {
     input2.setValue(e.target.value)
-    input1.setValue('')
-    setFlag(!flag)
-  }
-
-  const handlePoolSelectButtonPorcentage1 = (pool: PoolType) => {
-    setAssetPorcentageInput1(pool.pool)
-  }
-
-  const handlePoolSelectButtonPorcentage2 = (pool: PoolType) => {
-    setAssetPorcentageInput2(pool.pool)
+    switch (style) {
+      case StyleType.ALIQUOT:
+        input1.setValue('')
+        setFlag(!flag)
+        break
+    }
   }
 
   const handleOkButton = () => {
     setSuccessfulTransactionModalIsVisible(false)
-    router.push('/product')
-  }
-
-  const getAsset1Input: () => AssetInput = () => {
-    if (style === StyleType.ALIQUOT) {
-      return { asset: assetInput1, amount: Number(input1.value) }
-    }
-    const amount = calculateAssetAmountByPorcentage(assetPorcentageInput1, Number(inputPorcentage1.value))
-    return { asset: assetPorcentageInput1, amount }
-  }
-
-  const getAsset2Input: () => AssetInput = () => {
-    if (style === StyleType.ALIQUOT) {
-      return { asset: assetInput2, amount: Number(input2.value) }
-    }
-    const amount = calculateAssetAmountByPorcentage(assetPorcentageInput2, Number(inputPorcentage2.value))
-    return { asset: assetPorcentageInput2, amount }
+    router.push('/stable')
   }
 
   const getValueFromAsset = (asset: string) => {
@@ -152,9 +145,9 @@ export default function AddLiquidityPool () {
   }
 
   const calculateTotalPrice = () => {
-    const price1 = prices.find(p => p.assetSymbol === getAsset1Input().asset)
-    const price2 = prices.find(p => p.assetSymbol === getAsset2Input().asset)
-    const total = getAsset1Input().amount * Number(price1?.price) + getAsset2Input().amount * Number(price2?.price)
+    const price1 = prices.find(p => p.assetSymbol === assetInput1)
+    const price2 = prices.find(p => p.assetSymbol === assetInput2)
+    const total = Number(input1.value) * Number(price1?.price) + Number(input2.value) * Number(price2?.price)
     return total
   }
 
@@ -164,13 +157,6 @@ export default function AddLiquidityPool () {
     const assetAmountUDS = (supplyInputUSD * porcentage) / 100
     const assetAmount = assetAmountUDS / (prices.find(p => p.assetSymbol === asset)?.price || 0)
     return assetAmount
-  }
-
-  const calculateAssetAmountUSDByPorcentage = (asset: string, porcentage: number) => {
-    const supplyInput = Number(inputAssetSupplyByPorcentage.value)
-    const supplyInputUSD = supplyInput * (prices.find(p => p.assetSymbol === assetSupplyInputByPorcentage)?.price || 0)
-    const assetAmountUDS = (supplyInputUSD * porcentage) / 100
-    return assetAmountUDS
   }
 
   const PoolInput = (
@@ -199,147 +185,62 @@ export default function AddLiquidityPool () {
     )
   }
 
-  const PoolPorcentageInput = (
-    asset: string,
-    value:string,
-    onChange: (event: BindingsChangeTarget) => void,
-    onSelect: (pool: PoolType) => void,
-    label?: string
-  ) => {
-    const pool = getPoolBySymbol(asset)!
-    const supplyAvailable = balances.find(b => b.assetSymbol === assetSupplyInputByPorcentage)?.amount || 0
-    const supplyInput = Number(inputAssetSupplyByPorcentage.value)
-    const assetAmount = calculateAssetAmountByPorcentage(asset, Number(value))
-    const assetAmountUDS = calculateAssetAmountUSDByPorcentage(asset, Number(value))
-    const assetAmountString = abbreviateNumber(assetAmount, 2)
-    const assetAmountUSDString = abbreviateNumber(assetAmountUDS, 2)
-
+  const getResumeDetails = (label: string, value: string) => {
     return (
-      <Card key={pool.pool} css={{ $$cardColor: '$colors$gray100', m: '4px 0px' }}>
-        <Grid.Container justify='center' css={{ p: '8px' }}>
-          <Grid xs={6}>
-            <Grid.Container>
-              <Grid xs={6}>
-                <Input
-                  {...{ value, onChange }}
-                  label={label || `${asset}`}
-                  underlined
-                  placeholder='0.00'
-                  color={Number(value) > 100 ? 'error' : 'default'}
-                />
-              </Grid>
-              <Grid xs={2} css={{ d: 'flex', justifyContent: 'flex-end', flexDirection: 'column' }}>
-                <Text size={14} css={{ color: '$kondorGray' }}>%</Text>
-              </Grid>
-            </Grid.Container>
-          </Grid>
-          <Grid xs={2} />
-          <Grid xs={4} css={{ d: 'flex', alignItems: 'center' }}>
-            <PoolSelect pool={pool} onPress={onSelect} />
-          </Grid>
-          <Container display='flex' justify='flex-start' css={{ p: 0 }}>
-            {Number(value) > 100
-              ? <Text size={14} b css={{ color: '$error' }}>Porcentage must be less than 100</Text>
-              : (
-                <>
-                  <Text size={14} css={{ color: '$kondorGray' }}>≈{assetAmountString} {pool.pool} </Text>
-                  <Spacer x={1} />
-                  <Text size={14} css={{ color: '$kondorGray' }}>≈{assetAmountUSDString} USD</Text>
-                </>
-                )}
-          </Container>
-        </Grid.Container>
-      </Card>
-    )
-  }
-  const getInputsByAmount = () => {
-    return (
-      <>
-        {PoolInput(assetInput1, input1.value, onChangeInput1)}
-        {PoolInput(assetInput2, input2.value, onChangeInput2)}
-      </>
+      <Container css={{ p: 0 }} display='flex' justify='space-between'>
+        <Text size={16} css={{ color: '$kondorGray' }}>{label}</Text>
+        <Text>{value}</Text>
+      </Container>
     )
   }
 
-  const getInputsByPorcentage = () => {
-    return (
-      <>
-        {PoolInput(
-          assetSupplyInputByPorcentage,
-          inputAssetSupplyByPorcentage.bindings.value,
-          inputAssetSupplyByPorcentage.bindings.onChange,
-          'Total investment amount'
-        )}
-        <Spacer y={1} />
-        <Text size={14} css={{ color: '$kondorGray' }}>Enter the percentages</Text>
-        {PoolPorcentageInput(
-          assetPorcentageInput1,
-          inputPorcentage1.bindings.value,
-          inputPorcentage1.bindings.onChange,
-          handlePoolSelectButtonPorcentage1
-        )}
-        {
-          inputsAmount > 1
-            ? PoolPorcentageInput(
-              assetPorcentageInput2,
-              inputPorcentage2.bindings.value,
-              inputPorcentage2.bindings.onChange,
-              handlePoolSelectButtonPorcentage2)
-            : null
-        }
-      </>
-    )
-  }
-
-  const getResumeDetailByAsset = (asset: string, amount: number, amountUSD: number, porcentage: number) => {
-    return (
-      <Grid.Container>
-        <Grid xs={6}>
-          <Text size={14} css={{ color: '$kondorGray' }}>{porcentage}% {asset}</Text>
-        </Grid>
-        <Grid xs={6} css={{ d: 'flex', justifyContent: 'flex-end', alignItems: 'flex-end', flexDirection: 'column' }}>
-          <Text size={14} css={{ color: '$kondorLight' }}>{abbreviateNumber(amount)} {asset}</Text>
-          <Text size={12} css={{ color: '$kondorGray' }}>≈ ${abbreviateNumber(amountUSD)}</Text>
-        </Grid>
-      </Grid.Container>
-    )
-  }
-
-  const getResumeByPorcentage = () => {
-    const assetSupply = Number(inputAssetSupplyByPorcentage.bindings.value)
-    const porcentage1 = Number(inputPorcentage1.bindings.value)
-    const porcentage2 = Number(inputPorcentage2.bindings.value)
-    const totalPorcentage = porcentage1 + porcentage2
-    const assetAmount1 = calculateAssetAmountByPorcentage(assetPorcentageInput1, porcentage1)
-    const assetAmount2 = calculateAssetAmountByPorcentage(assetPorcentageInput2, porcentage2)
-    const assetAmountUSD1 = calculateAssetAmountUSDByPorcentage(assetPorcentageInput1, porcentage1)
-    const assetAmountUSD2 = calculateAssetAmountUSDByPorcentage(assetPorcentageInput2, porcentage2)
-
-    if (totalPorcentage !== 100 && totalPorcentage !== 0) {
-      return (
-        <Container
-          css={{ p: '4px', d: 'flex', justifyContent: 'center' }}
-        >
-          <Text size={14} css={{ color: '$error' }}>The total percentage must be 100%</Text>
-        </Container>
-      )
+  const getInputs = () => {
+    switch (style) {
+      case StyleType.ALIQUOT:
+      case StyleType.FREE:
+        return (
+          <>
+            {PoolInput(assetInput1, input1.value, onChangeInput1)}
+            {PoolInput(assetInput2, input2.value, onChangeInput2)}
+          </>
+        )
+      case StyleType.ASSET_A:
+        return (<>{PoolInput(assetInput1, input1.value, onChangeInput1)}</>)
+      case StyleType.ASSET_B:
+        return (<>{PoolInput(assetInput2, input2.value, onChangeInput2)}</>)
     }
+  }
+
+  const getConfirmModal = () => {
     return (
-      <Collapse.Group css={{ fontSize: '$xs' }}>
-        <Collapse title='Resume' css={{ fontSize: '$xs' }}>
-          <Container css={{ p: 0 }}>
-            <Container css={{ p: 0 }} display='flex' justify='space-between'>
-              <Text size={16} css={{ color: '$kondorLigth' }}>Total investment amount</Text>
-              <Text size={14} css={{ color: '$kondorLight' }}>{assetSupply} {assetSupplyInputByPorcentage}</Text>
-            </Container>
-            <Container css={{ p: 0 }} display='flex' justify='space-between'>
-              <Text size={16} css={{ color: '$kondorLigth' }}>Your investment will be divided into: </Text>
-            </Container>
-            {getResumeDetailByAsset(assetPorcentageInput1, assetAmount1, assetAmountUSD1, porcentage1)}
-            {inputsAmount > 1 ? getResumeDetailByAsset(assetPorcentageInput2, assetAmount2, assetAmountUSD2, porcentage2) : null}
-          </Container>
-        </Collapse>
-      </Collapse.Group>
+      <ConfirmModal
+        isVisible={confirmModalIsvisible}
+        onHide={() => setConfirmModalIsVisible(false)}
+        onPress={handleConfirmButton}
+        title='Confirm transaction'
+      >
+        <>
+          {
+            style === StyleType.ASSET_B
+              ? null
+              : getResumeDetails(
+                assetInput1,
+                `${abbreviateNumber(Number(input1.value), 2)} ${assetInput1}`)
+          }
+          {
+            style === StyleType.ASSET_A
+              ? null
+              : getResumeDetails(
+                assetInput2,
+                `${abbreviateNumber(Number(input2.value), 2)} ${assetInput2}`)
+          }
+          {
+            getResumeDetails(
+              'Total value',
+              `≈ $${abbreviateNumber(calculateTotalPrice())}`)
+          }
+        </>
+      </ConfirmModal>
     )
   }
 
@@ -358,7 +259,7 @@ export default function AddLiquidityPool () {
         <Radio.Group
           orientation='horizontal'
           label='Select style'
-          defaultValue='byAmount'
+          defaultValue={StyleType.ALIQUOT}
           size='xs'
           onChange={(value) => { setStyle(value as StyleType) }}
         >
@@ -376,7 +277,7 @@ export default function AddLiquidityPool () {
           </Radio>
         </Radio.Group>
         <Spacer y={1} />
-        {style === StyleType.ALIQUOT ? getInputsByAmount() : getInputsByPorcentage()}
+        {getInputs()}
         <Button
           onPress={() => handleCreateButton()}
           bordered
@@ -385,28 +286,7 @@ export default function AddLiquidityPool () {
         >Create
         </Button>
       </Card>
-      <ConfirmModal
-        isVisible={confirmModalIsvisible}
-        onHide={() => setConfirmModalIsVisible(false)}
-        onPress={handleConfirmButton}
-        title='Confirm create product'
-      >
-        <>
-          <Container css={{ p: 0 }} display='flex' justify='space-between'>
-            <Text size={16} css={{ color: '$kondorGray' }}>{getAsset1Input().asset} to be added</Text>
-            <Text>{abbreviateNumber(getAsset1Input().amount, 4)} {getAsset1Input().asset}</Text>
-          </Container>
-          <Container css={{ p: 0 }} display='flex' justify='space-between'>
-            <Text size={16} css={{ color: '$kondorGray' }}>{getAsset2Input().asset} to be added</Text>
-            <Text>{abbreviateNumber(getAsset2Input().amount, 4)} {getAsset2Input().asset}</Text>
-          </Container>
-          <Container css={{ p: 0 }} display='flex' justify='space-between'>
-            <Text size={16} css={{ color: '$kondorGray' }}>Total value</Text>
-            <Text>≈ ${calculateTotalPrice()}</Text>
-          </Container>
-        </>
-      </ConfirmModal>
-
+      {getConfirmModal()}
       <SendingTransactionModal
         isVisible={sendingTransactionModalIsVisible}
         onHide={() => setSendingTransactionModalIsVisible(false)}
