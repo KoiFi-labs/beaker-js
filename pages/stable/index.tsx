@@ -1,4 +1,4 @@
-import { Text, Container, Grid, Card } from '@nextui-org/react'
+import { Text, Container, Grid } from '@nextui-org/react'
 import Link from 'next/link'
 import { LinkButton } from '../../src/components/LinkButton/LinkButton'
 import React from 'react'
@@ -17,7 +17,7 @@ export default function Pool () {
   }
 
   return (
-    <Container css={{ p: '0', mw: '992px' }}>
+    <Container css={{ p: '8px', mw: '992px' }}>
       <Grid.Container css={{ p: '8px' }}>
         <Grid
           xs={12} md={8} css={{
@@ -51,63 +51,56 @@ export default function Pool () {
           </Link>
         </Grid>
       </Grid.Container>
-      <Card css={{
-        p: '16px',
-        bg: 'rgb(0, 0, 0, 0.6)',
-        backdropFilter: 'saturate(180%) blur(10px);'
-      }}
-      >
-        <Grid.Container>
-          <Grid xs={12} md={4}>
-            <ItemDetailCard
-              title='Stable pool'
-              value='USDC/USDT'
-              icon={<FaCoins size={40} />}
-              m={8}
-            />
-          </Grid>
-          <Grid xs={12} md={4}>
-            <ItemDetailCard
-              title='Total liquidity'
-              value={`$${abbreviateNumber(pool.total)}`}
-              icon={<AiOutlineGlobal size={40} />}
-              m={8}
-            />
-          </Grid>
-          <Grid xs={12} md={4}>
-            <ItemDetailCard
-              title='Volume 24H'
-              value={`$${abbreviateNumber(1532)}`}
-              icon={<BiData size={40} />}
-              m={8}
-            />
-          </Grid>
-          <Grid xs={12} md={4}>
-            <ItemDetailCard
-              title='Fees 24H'
-              value={`$${abbreviateNumber(pool.volume * 0.003)}`}
-              icon={<BiDollar size={40} />}
-              m={8}
-            />
-          </Grid>
-          <Grid xs={12} md={4}>
-            <ItemDetailCard
-              title='Transactions 24H'
-              value='12.3K'
-              icon={<BiTransfer size={40} />}
-              m={8}
-            />
-          </Grid>
-          <Grid xs={12} md={4}>
-            <ItemDetailCard
-              title='APR'
-              value={`${pool.apr} %`}
-              icon={<BiCalculator size={40} />}
-              m={8}
-            />
-          </Grid>
-        </Grid.Container>
-      </Card>
+      <Grid.Container>
+        <Grid xs={12} sm={4} md={2}>
+          <ItemDetailCard
+            title='Stable pool'
+            value='USDC/USDT'
+            icon={<FaCoins size={40} />}
+            m={8}
+          />
+        </Grid>
+        <Grid xs={12} sm={4} md={2}>
+          <ItemDetailCard
+            title='APR'
+            value={`${pool.apr} %`}
+            icon={<BiCalculator size={40} />}
+            m={8}
+          />
+        </Grid>
+        <Grid xs={12} sm={4} md={2}>
+          <ItemDetailCard
+            title='Total liquidity'
+            value={`$${abbreviateNumber(pool.total)}`}
+            icon={<AiOutlineGlobal size={40} />}
+            m={8}
+          />
+        </Grid>
+        <Grid xs={12} sm={4} md={2}>
+          <ItemDetailCard
+            title='Volume 24H'
+            value={`$${abbreviateNumber(1532)}`}
+            icon={<BiData size={40} />}
+            m={8}
+          />
+        </Grid>
+        <Grid xs={12} sm={4} md={2}>
+          <ItemDetailCard
+            title='Fees 24H'
+            value={`$${abbreviateNumber(pool.volume * 0.003)}`}
+            icon={<BiDollar size={40} />}
+            m={8}
+          />
+        </Grid>
+        <Grid xs={12} sm={4} md={2}>
+          <ItemDetailCard
+            title='Transactions 24H'
+            value='12.3K'
+            icon={<BiTransfer size={40} />}
+            m={8}
+          />
+        </Grid>
+      </Grid.Container>
     </Container>
   )
 }
