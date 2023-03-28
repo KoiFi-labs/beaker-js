@@ -1,14 +1,14 @@
-import { Text, Container, Grid, Loading } from '@nextui-org/react'
+import { Text, Container, Grid, Loading, Button } from '@nextui-org/react'
 import React, { useEffect, useState } from 'react'
-import Link from 'next/link'
 import { getProducts } from '../../src/services/mock'
-import { LinkButton } from '../../src/components/LinkButton/LinkButton'
 import { Product } from '../../interfaces'
 import ProductsTable from '../../src/components/modules/Tables/ProductsTable'
+import { useRouter } from 'next/router'
 
 export default function MyProducts () {
   const [myProducts, setMyProducts] = React.useState<Product[]>([])
   const [isLoading, setIsLoading] = useState<boolean>(false)
+  const router = useRouter()
 
   useEffect(() => {
     setIsLoading(true)
@@ -21,38 +21,38 @@ export default function MyProducts () {
   }, [])
 
   return (
-    <Container css={{ p: '0', mw: '992px' }}>
-      <Grid.Container css={{ p: '8px' }}>
+    <Container css={{ p: '16px', mw: '992px' }}>
+      <Grid.Container>
         <Grid
-          xs={12} md={8} css={{
+          xs={12} sm={10} css={{
             d: 'flex',
-            alignItems: 'center',
-            flexDirection: 'column',
-            '@sm': {
-              alignItems: 'flex-start'
-            }
+            flexDirection: 'column'
           }}
         >
           <Text h1>Investment Products</Text>
           <Text h4>Manage your products</Text>
         </Grid>
         <Grid
-          xs={12} md={4} css={{
-            m: 0,
-            p: 0,
+          xs={12} sm={2} css={{
             d: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            '@sm': {
-              justifyContent: 'flex-end'
-            }
+            justifyContent: 'flex-end',
+            alignItems: 'center'
           }}
         >
-          <Link href='/product/create'>
-            <LinkButton css={{ p: '16px' }}>
-              Create new product
-            </LinkButton>
-          </Link>
+          <Button
+            rounded
+            bordered
+            css={{
+              width: '100%',
+              color: '$white',
+              bgColor: '$black',
+              borderColor: '$kondorPrimary',
+              zIndex: 1
+            }}
+            onPress={() => { router.push('/product/create') }}
+          >
+            Create new product
+          </Button>
         </Grid>
       </Grid.Container>
       {

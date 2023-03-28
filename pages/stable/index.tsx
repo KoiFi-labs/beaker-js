@@ -1,14 +1,14 @@
-import { Text, Container, Grid } from '@nextui-org/react'
-import Link from 'next/link'
-import { LinkButton } from '../../src/components/LinkButton/LinkButton'
+import { Text, Container, Grid, Button } from '@nextui-org/react'
 import React from 'react'
 import ItemDetailCard from '../../src/components/ItemDetailCard/ItemDetailCard'
 import { abbreviateNumber } from '../../src/utils/utils'
 import { BiTransfer, BiDollar, BiCalculator, BiData } from 'react-icons/bi'
 import { FaCoins } from 'react-icons/fa'
 import { AiOutlineGlobal } from 'react-icons/ai'
+import { useRouter } from 'next/router'
 
-export default function Pool () {
+export default function Stable () {
+  const router = useRouter()
   const pool = {
     pool: 'USDC/USDT',
     total: 1200420,
@@ -20,35 +20,35 @@ export default function Pool () {
     <Container css={{ p: '8px', mw: '992px' }}>
       <Grid.Container css={{ p: '8px' }}>
         <Grid
-          xs={12} md={8} css={{
+          xs={12} sm={10} css={{
             d: 'flex',
-            alignItems: 'center',
-            flexDirection: 'column',
-            '@sm': {
-              alignItems: 'flex-start'
-            }
+            flexDirection: 'column'
           }}
         >
           <Text h1>USD Stable</Text>
           <Text h4>Provide liquidity and earn fees.</Text>
         </Grid>
         <Grid
-          xs={12} md={4} css={{
-            m: 0,
-            p: 0,
+          xs={12} sm={2} css={{
             d: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            '@sm': {
-              justifyContent: 'flex-end'
-            }
+            justifyContent: 'flex-end',
+            alignItems: 'center'
           }}
         >
-          <Link href='/stable/addLiquidity'>
-            <LinkButton css={{ p: '16px' }}>
-              Add liquidity
-            </LinkButton>
-          </Link>
+          <Button
+            rounded
+            bordered
+            css={{
+              width: '100%',
+              color: '$white',
+              bgColor: '$black',
+              borderColor: '$kondorPrimary',
+              zIndex: 1
+            }}
+            onPress={() => { router.push('/stable/addLiquidity') }}
+          >
+            Add liquidity pool
+          </Button>
         </Grid>
       </Grid.Container>
       <Grid.Container>
