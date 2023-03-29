@@ -33,12 +33,9 @@ export default function ProductsTable ({ products } : { products: Product[] }) {
       aria-label='Example table with custom cells'
       css={{
         height: 'auto',
-        minWidth: '100%',
-        bg: 'rgb(0, 0, 0, 0.6)',
-        backdropFilter: 'saturate(180%) blur(10px);',
-        m: '16px 0',
-        borderRadius: '16px'
+        minWidth: '100%'
       }}
+      bordered
       selectionMode='single'
       onSelectionChange={(key: Object) => { router.push(`product/${Object.values(key)[0]}`) }}
     >

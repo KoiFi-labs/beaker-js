@@ -7,9 +7,9 @@ import { useWallet } from '../../src/contexts/useWallet'
 import { Balance } from '../../src/services/algoService'
 import { microToStandard } from '../../src/utils/math'
 import { getSwapResult, swap } from '../../src/services/kondorServices/symmetricPoolServise'
-import { DownArrowAltIcon } from '../../public/icons/down-arrow-alt'
 import ConfirmModal from '../../src/components/modules/Modals/ConfirmModal'
 import SuccessfulTransactionModal from '../../src/components/modules/Modals/SuccessfulTransactionModal'
+import { BsArrowDownUp } from 'react-icons/bs'
 
 export default function Swap () {
   const [outAsset, setOutAsset] = useState<Asset>(config.assetList[0])
@@ -122,74 +122,70 @@ export default function Swap () {
   }
 
   return (
-    <Container fluid display='flex' justify='center' alignItems='center' css={{ minHeight: '85vh' }}>
-      <Card css={{
-        mw: '330px',
-        maxWidth: '400px',
-        bg: 'rgb(0, 0, 0, 0.6)',
-        backdropFilter: 'saturate(180%) blur(10px);'
+    <Container display='flex' justify='center' css={{ p: 0, width: '100%' }}>
+      <Container css={{
+        minWidth: '330px',
+        width: '100%',
+        maxWidth: '500px',
+        p: 0
       }}
       >
-        <Card.Header>
-          <Text b>Swap</Text>
-        </Card.Header>
-        <Container display='flex' justify='center' css={{ p: '10px' }}>
-          <Card>
-            <Card.Body>
-              <Grid.Container justify='center' css={{ p: 0 }}>
-                <Grid xs={8} css={{ d: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-                  <Input
-                    aria-label='Amount to sell'
-                    underlined
-                    fullWidth
-                    {...outInput.bindings}
-                    placeholder='0.00'
-                  />
-                  <Container display='flex' justify='flex-start' css={{ p: 0 }}>
-                    <Text size={12} css={{ color: '$kondorGray' }}>
-                      Balance {balanceToSell ? balanceToSell.toFixed(4) : 0} {outAsset.symbol}
-                    </Text>
-                  </Container>
-                </Grid>
-                <Grid xs={4} css={{ d: 'flex', justifyContent: 'flex-end' }}>
-                  <AssetSelect asset={outAsset} onPress={handleSellAssetSelect} />
-                </Grid>
-              </Grid.Container>
-            </Card.Body>
+        <Text h1>Swap</Text>
+        <Container display='flex' justify='center' css={{ p: 0 }}>
+          <Card css={{ p: '16px' }}>
+            <Grid.Container justify='center' css={{ p: 0 }}>
+              <Grid xs={8} css={{ d: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                <Input
+                  aria-label='Amount to sell'
+                  underlined
+                  fullWidth
+                  {...outInput.bindings}
+                  placeholder='0.00'
+                />
+                <Container display='flex' justify='flex-start' css={{ p: 0 }}>
+                  <Text size={12} css={{ color: '$kondorGray' }}>
+                    Balance {balanceToSell ? balanceToSell.toFixed(4) : 0} {outAsset.symbol}
+                  </Text>
+                </Container>
+              </Grid>
+              <Grid xs={4} css={{ d: 'flex', justifyContent: 'flex-end' }}>
+                <AssetSelect asset={outAsset} onPress={handleSellAssetSelect} />
+              </Grid>
+            </Grid.Container>
           </Card>
           <Button
+            bordered
+            rounded
             onPress={() => { handleCentralButton() }}
             css={{
-              margin: '20px',
-              borderRadius: '50%',
-              width: '40px',
               height: '40px',
-              minWidth: '0px',
-              backgroundColor: '$kondorPrimary'
+              minWidth: '40px',
+              w: '40px',
+              color: '$kondorLigth',
+              borderColor: '$kondorPrimary',
+              m: '16px'
             }}
           >
-            <DownArrowAltIcon fill='#454545' />
+            <BsArrowDownUp size={20} />
           </Button>
-          <Card>
-            <Card.Body>
-              <Grid.Container justify='center'>
-                <Grid xs={8} css={{ d: 'flex', flexDirection: 'column' }}>
-                  <Text size={20} css={{ color: '$kondorGray' }}>
-                    {inAmount ? inAmount.toFixed(6) : 0}
+          <Card css={{ p: '16px' }}>
+            <Grid.Container justify='center'>
+              <Grid xs={8} css={{ d: 'flex', flexDirection: 'column' }}>
+                <Text size={20} css={{ color: '$kondorGray' }}>
+                  {inAmount ? inAmount.toFixed(6) : 0}
+                </Text>
+                <Container display='flex' justify='flex-start' css={{ p: 0 }}>
+                  <Text size={12} css={{ color: '$kondorGray' }}>
+                    Balance {balanceToBuy ? balanceToBuy.toFixed(4) : 0} {inAsset.symbol}
                   </Text>
-                  <Container display='flex' justify='flex-start' css={{ p: 0 }}>
-                    <Text size={12} css={{ color: '$kondorGray' }}>
-                      Balance {balanceToBuy ? balanceToBuy.toFixed(4) : 0} {inAsset.symbol}
-                    </Text>
-                  </Container>
-                </Grid>
-                <Grid xs={4} css={{ d: 'flex', justifyContent: 'flex-end' }}>
-                  <AssetSelect asset={inAsset} onPress={handleBuyAssetSelect} />
-                </Grid>
-              </Grid.Container>
-            </Card.Body>
+                </Container>
+              </Grid>
+              <Grid xs={4} css={{ d: 'flex', justifyContent: 'flex-end' }}>
+                <AssetSelect asset={inAsset} onPress={handleBuyAssetSelect} />
+              </Grid>
+            </Grid.Container>
           </Card>
-          <Container css={{ m: 0, p: '24px 8px' }}>
+          <Container css={{ m: 0, p: '24px 16px' }}>
             <Container display='flex' justify='space-between' css={{ p: 0, m: 0 }}>
               <Text size={14} css={{ color: '$kondorGray' }}>
                 You will receive a minimun of
@@ -209,7 +205,7 @@ export default function Swap () {
           </Container>
           {getActionButton()}
         </Container>
-      </Card>
+      </Container>
       <ConfirmModal
         isVisible={confirmModalVisible}
         onHide={() => setConfirmModalVisible(false)}

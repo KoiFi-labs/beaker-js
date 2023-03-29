@@ -1,4 +1,4 @@
-import { Text, Container, Grid, Loading, Button } from '@nextui-org/react'
+import { Text, Container, Grid, Loading, Button, Spacer } from '@nextui-org/react'
 import React, { useEffect, useState } from 'react'
 import { getProducts } from '../../src/services/mock'
 import { Product } from '../../interfaces'
@@ -21,10 +21,10 @@ export default function MyProducts () {
   }, [])
 
   return (
-    <Container css={{ p: '16px', mw: '992px' }}>
+    <>
       <Grid.Container>
         <Grid
-          xs={12} sm={10} css={{
+          xs={12} sm={9} css={{
             d: 'flex',
             flexDirection: 'column'
           }}
@@ -33,7 +33,7 @@ export default function MyProducts () {
           <Text h4>Manage your products</Text>
         </Grid>
         <Grid
-          xs={12} sm={2} css={{
+          xs={12} sm={3} css={{
             d: 'flex',
             justifyContent: 'flex-end',
             alignItems: 'center'
@@ -51,10 +51,11 @@ export default function MyProducts () {
             }}
             onPress={() => { router.push('/product/create') }}
           >
-            Create new product
+            Create product
           </Button>
         </Grid>
       </Grid.Container>
+      <Spacer y={1.5} />
       {
         isLoading
           ? (
@@ -64,6 +65,6 @@ export default function MyProducts () {
             )
           : <ProductsTable products={myProducts} />
       }
-    </Container>
+    </>
   )
 }

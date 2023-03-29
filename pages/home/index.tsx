@@ -3,17 +3,7 @@ import Image from 'next/image'
 
 export default function Home () {
   return (
-    <Container
-      fluid
-      display='flex'
-      direction='column'
-      justify='center'
-      alignItems='center'
-      css={{
-        minHeight: '92vh',
-        position: 'relative'
-      }}
-    >
+    <Container display='flex' justify='center' alignItems='center'>
       <Grid.Container gap={2} justify='center'>
         <Grid sm={12} xs={0} css={{ d: 'flex', justifyContent: 'center' }}>
           <Image alt='Kondor Finance logo' src='/Kondor_Logo_01.png' width={500} height={190} />

@@ -36,7 +36,7 @@ export default function RemoveNftProductLiquidity () {
   }
 
   return (
-    <Container display='flex' justify='center' alignContent='flex-start' css={{ minHeight: '85vh', p: '16px' }}>
+    <Container display='flex' justify='center'>
       <Card css={{
         p: '8px',
         maxWidth: '400px',

@@ -186,7 +186,7 @@ const Nav: React.FC = (): JSX.Element => {
     }
   }
   return (
-    <Navbar variant='sticky' maxWidth='fluid' isCompact>
+    <Navbar variant='sticky' maxWidth='fluid' isCompact isBordered>
       <Navbar.Toggle showIn='xs' isSelected={isToggleSelected} onChange={(isSelected) => { setIsToggleSelected(isSelected as boolean) }} />
       <Navbar.Brand
         css={{

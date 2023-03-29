@@ -1,8 +1,6 @@
-import { Text, Container, Tooltip, Card, Spacer, Grid } from '@nextui-org/react'
+import { Text, Container, Card, Grid } from '@nextui-org/react'
 import { useRouter } from 'next/router'
 import { getProductById } from '../../src/services/mock'
-import { IconButton } from '../../src/components/IconButton/IconButton'
-import { InfoIcon } from '../../public/icons/InfoIcon'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { Product } from '../../interfaces'
@@ -28,54 +26,45 @@ export default function Details () {
   if (!product) return <Container><Text>Product not found</Text></Container>
 
   return (
-    <Container display='flex' justify='center' alignContent='flex-start' css={{ minHeight: '85vh', p: '16px' }}>
-      <Card css={{
-        p: '8px',
-        maxWidth: '400px',
-        minHeight: '200px',
-        bg: 'rgb(0, 0, 0, 0.6)',
-        backdropFilter: 'saturate(180%) blur(10px);'
+    <Container display='flex' justify='center' css={{ p: 0, width: '100%' }}>
+      <Container css={{
+        minWidth: '330px',
+        width: '100%',
+        maxWidth: '500px',
+        p: 0
       }}
       >
-        <Container display='flex' justify='space-between' css={{ p: 0 }}>
-          <Text size={20} css={{ color: '$kondorLight' }}>{product.name} Product</Text>
-          <Tooltip content='Details'>
-            <IconButton>
-              <InfoIcon size={20} fill='#979797' />
-            </IconButton>
-          </Tooltip>
-        </Container>
-        <Spacer y={1} />
-        <Grid.Container>
-          <Grid xs={12} md={6}>
+        <Text h1>{product.name} product</Text>
+        <Grid.Container gap={1} justify='space-evenly'>
+          <Grid xs={12} sm={6}>
             <ItemDetailCard
               title='Total value locked'
               value={`≈$ ${abbreviateNumber(product.value)}`}
               icon={<CiLock size={40} />}
-              m={8}
             />
           </Grid>
-          <Grid xs={12} md={6}>
+          <Grid xs={12} sm={6}>
             <ItemDetailCard
               title='Total rewards'
               value={`≈$ ${abbreviateNumber(product.value * 0.001)}`}
               icon={<CiBadgeDollar size={40} />}
-              m={8}
             />
           </Grid>
+          <Grid xs={12}>
+            <Card css={{ p: '16px' }}>
+              {
+                product.assets.map((a, index) => {
+                  return (
+                    <Container key={index} css={{ p: 0, m: 0 }} display='flex' justify='space-between'>
+                      <Text size={16} css={{ color: '$kondorGray' }}>{a.symbol} Pool</Text>
+                      <Text>{a.amount} {a.symbol}</Text>
+                    </Container>
+                  )
+                })
+              }
+            </Card>
+          </Grid>
         </Grid.Container>
-        <Card css={{ p: '16px', m: '8px', w: 'auto' }}>
-          {
-            product.assets.map((a, index) => {
-              return (
-                <Container key={index} css={{ p: 0, m: 0 }} display='flex' justify='space-between'>
-                  <Text size={16} css={{ color: '$kondorGray' }}>{a.symbol} Pool</Text>
-                  <Text>{a.amount} {a.symbol}</Text>
-                </Container>
-              )
-            })
-          }
-        </Card>
         <Container css={{ p: '8px' }} display='flex' justify='center'>
           <Nft id={product.id} name={product.name} />
         </Container>
@@ -84,7 +73,7 @@ export default function Details () {
             Remove NFT liquidity
           </LinkButton>
         </Link>
-      </Card>
+      </Container>
     </Container>
   )
 }

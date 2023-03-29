@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { Button, Text, Container, Card, Grid, Input, useInput, Radio, Spacer, Collapse } from '@nextui-org/react'
+import { Button, Text, Container, Card, Grid, Input, useInput, Radio, Collapse } from '@nextui-org/react'
 import PoolSelect from '../../../src/components/PoolSelect/PoolSelect'
 import { PoolType, getPoolBySymbol } from '../../../src/services/poolService'
 import { useState, useEffect } from 'react'
@@ -33,15 +33,9 @@ export default function AddLiquidityPool () {
   const [sendingTransactionModalIsVisible, setSendingTransactionModalIsVisible] = useState<boolean>(false)
   const [balances, setBalances] = useState<Balance[]>([])
   const [prices, setPrices] = useState<Price[]>([])
-  const [assetPorcentageInput1, setAssetPorcentageInput1] = useState<string>('ALGO')
-  const [assetPorcentageInput2, setAssetPorcentageInput2] = useState<string>('PLANET')
-  const [assetSupplyInputByPorcentage, setAssetSupplyInputByPorcentage] = useState<string>('USDC')
   const [style, setStyle] = useState<StyleType>(StyleType.ALIQUOT)
   const input1 = useInput('')
   const input2 = useInput('')
-  const inputAssetSupplyByPorcentage = useInput('')
-  const inputPorcentage1 = useInput('')
-  const inputPorcentage2 = useInput('')
   const [inputWithErrors, setInputWithErrors] = useState<boolean>(false)
   const router = useRouter()
   const [flag, setFlag] = useState<boolean>(false)
@@ -151,14 +145,6 @@ export default function AddLiquidityPool () {
     return total
   }
 
-  const calculateAssetAmountByPorcentage = (asset: string, porcentage: number) => {
-    const supplyInput = Number(inputAssetSupplyByPorcentage.value)
-    const supplyInputUSD = supplyInput * (prices.find(p => p.assetSymbol === assetSupplyInputByPorcentage)?.price || 0)
-    const assetAmountUDS = (supplyInputUSD * porcentage) / 100
-    const assetAmount = assetAmountUDS / (prices.find(p => p.assetSymbol === asset)?.price || 0)
-    return assetAmount
-  }
-
   const PoolInput = (
     asset: string,
     value:string,
@@ -200,14 +186,26 @@ export default function AddLiquidityPool () {
       case StyleType.FREE:
         return (
           <>
-            {PoolInput(assetInput1, input1.value, onChangeInput1)}
-            {PoolInput(assetInput2, input2.value, onChangeInput2)}
+            <Container css={{ p: '16px 0px 8px 0px' }}>
+              {PoolInput(assetInput1, input1.value, onChangeInput1)}
+            </Container>
+            <Container css={{ p: '8px 0px 16px 0px' }}>
+              {PoolInput(assetInput2, input2.value, onChangeInput2)}
+            </Container>
           </>
         )
       case StyleType.ASSET_A:
-        return (<>{PoolInput(assetInput1, input1.value, onChangeInput1)}</>)
+        return (
+          <Container css={{ p: '16px 0px' }}>
+            {PoolInput(assetInput1, input1.value, onChangeInput1)}
+          </Container>
+        )
       case StyleType.ASSET_B:
-        return (<>{PoolInput(assetInput2, input2.value, onChangeInput2)}</>)
+        return (
+          <Container css={{ p: '16px 0px' }}>
+            {PoolInput(assetInput2, input2.value, onChangeInput2)}
+          </Container>
+        )
     }
   }
 
@@ -245,17 +243,15 @@ export default function AddLiquidityPool () {
   }
 
   return (
-    <Container display='flex' justify='center' alignContent='flex-start' css={{ minHeight: '85vh', p: '16px' }}>
-      <Card css={{
-        p: '8px',
-        maxWidth: '400px',
-        minHeight: '200px',
-        bg: 'rgb(0, 0, 0, 0.6)',
-        backdropFilter: 'saturate(180%) blur(10px);'
+    <Container display='flex' justify='center' css={{ p: 0, width: '100%' }}>
+      <Container css={{
+        minWidth: '330px',
+        width: '100%',
+        maxWidth: '500px',
+        p: 0
       }}
       >
-        <Text size={20} css={{ color: '$kondorLight' }}>Add liquidity USDC / USDT Pool</Text>
-        <Spacer y={0.5} />
+        <Text h1>Add USD liquidity</Text>
         <Radio.Group
           orientation='horizontal'
           label='Select style'
@@ -276,16 +272,15 @@ export default function AddLiquidityPool () {
             {assetInput2.toUpperCase()}
           </Radio>
         </Radio.Group>
-        <Spacer y={1} />
         {getInputs()}
         <Button
           onPress={() => handleCreateButton()}
           bordered
           rounded
-          css={{ withd: '100%', m: '4px 0', borderColor: '$kondorPrimary', color: '$white' }}
+          css={{ width: '100%', color: '$white', borderColor: '$kondorPrimary' }}
         >Create
         </Button>
-      </Card>
+      </Container>
       {getConfirmModal()}
       <SendingTransactionModal
         isVisible={sendingTransactionModalIsVisible}

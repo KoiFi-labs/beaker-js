@@ -438,16 +438,15 @@ export default function CreateProduct () {
   }
 
   return (
-    <Container display='flex' justify='center' alignContent='flex-start' css={{ minHeight: '85vh', p: '16px' }}>
-      <Card css={{
-        p: '8px',
-        maxWidth: '400px',
-        minHeight: '200px',
-        bg: 'rgb(0, 0, 0, 0.6)',
-        backdropFilter: 'saturate(180%) blur(10px);'
+    <Container display='flex' justify='center' css={{ p: 0, width: '100%' }}>
+      <Container css={{
+        minWidth: '330px',
+        width: '100%',
+        maxWidth: '500px',
+        p: 0
       }}
       >
-        <Text size={20} css={{ color: '$kondorLight' }}>Create Product</Text>
+        <Text h1>Create product</Text>
         <Spacer y={0.5} />
         <Radio.Group
           orientation='horizontal'
@@ -470,10 +469,10 @@ export default function CreateProduct () {
           onPress={() => handleCreateButton()}
           bordered
           rounded
-          css={{ withd: '100%', m: '4px 0', borderColor: '$kondorPrimary', color: '$white' }}
+          css={{ width: '100%', m: '4px 0', borderColor: '$kondorPrimary', color: '$white' }}
         >Create
         </Button>
-      </Card>
+      </Container>
       <ConfirmModal
         isVisible={confirmModalIsvisible}
         onHide={() => setConfirmModalIsVisible(false)}

@@ -1,4 +1,4 @@
-import { Text, Container, Grid, Button } from '@nextui-org/react'
+import { Text, Grid, Button } from '@nextui-org/react'
 import React from 'react'
 import ItemDetailCard from '../../src/components/ItemDetailCard/ItemDetailCard'
 import { abbreviateNumber } from '../../src/utils/utils'
@@ -17,10 +17,10 @@ export default function Stable () {
   }
 
   return (
-    <Container css={{ p: '8px', mw: '992px' }}>
-      <Grid.Container css={{ p: '8px' }}>
+    <>
+      <Grid.Container>
         <Grid
-          xs={12} sm={10} css={{
+          xs={12} sm={9} css={{
             d: 'flex',
             flexDirection: 'column'
           }}
@@ -29,10 +29,10 @@ export default function Stable () {
           <Text h4>Provide liquidity and earn fees.</Text>
         </Grid>
         <Grid
-          xs={12} sm={2} css={{
+          xs={12} sm={3} css={{
             d: 'flex',
-            justifyContent: 'flex-end',
-            alignItems: 'center'
+            flexDirection: 'column',
+            justifyContent: 'center'
           }}
         >
           <Button
@@ -43,11 +43,27 @@ export default function Stable () {
               color: '$white',
               bgColor: '$black',
               borderColor: '$kondorPrimary',
-              zIndex: 1
+              zIndex: 1,
+              m: '4px 0px'
             }}
             onPress={() => { router.push('/stable/addLiquidity') }}
           >
             Add liquidity pool
+          </Button>
+          <Button
+            rounded
+            bordered
+            css={{
+              width: '100%',
+              color: '$white',
+              bgColor: '$black',
+              borderColor: '$kondorPrimary',
+              zIndex: 1,
+              m: '4px 0px'
+            }}
+            onPress={() => { router.push('/stable/myPosition') }}
+          >
+            My position
           </Button>
         </Grid>
       </Grid.Container>
@@ -101,6 +117,6 @@ export default function Stable () {
           />
         </Grid>
       </Grid.Container>
-    </Container>
+    </>
   )
 }

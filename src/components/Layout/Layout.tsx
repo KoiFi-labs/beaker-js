@@ -1,3 +1,4 @@
+import { Container } from '@nextui-org/react'
 import { Box } from '../Box/Box'
 import Nav from '../modules/Nav/Nav'
 
@@ -10,7 +11,9 @@ export const Layout = ({ children }: Props) => {
     <>
       <Box css={{ maxW: '100%' }}>
         <Nav />
-        {children}
+        <Container css={{ p: '48px 16px', mw: '992px' }}>
+          {children}
+        </Container>
         {/* <Footer/> */}
       </Box>
     </>
