@@ -55,7 +55,7 @@ export default function MyProducts () {
           </Button>
         </Grid>
       </Grid.Container>
-      <Spacer y={1.5} />
+      <Spacer y={2} />
       {
         isLoading
           ? (

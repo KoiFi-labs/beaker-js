@@ -278,7 +278,7 @@ export default function AddLiquidityPool () {
           bordered
           rounded
           css={{ width: '100%', color: '$white', borderColor: '$kondorPrimary' }}
-        >Create
+        >Add liquidity
         </Button>
       </Container>
       {getConfirmModal()}

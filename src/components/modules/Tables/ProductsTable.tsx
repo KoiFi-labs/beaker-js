@@ -6,8 +6,8 @@ import { useRouter } from 'next/router'
 export default function ProductsTable ({ products } : { products: Product[] }) {
   const router = useRouter()
   const columns = [
-    { name: 'PRODUCT', uid: 'name' },
-    { name: 'MY STAKE', uid: 'value' }
+    { name: 'MY INVESTMENT PRODUCT', uid: 'name' },
+    { name: 'VALUE', uid: 'value' }
   ]
 
   const renderCell = (myProduct: Product, columnKey: React.Key) => {
