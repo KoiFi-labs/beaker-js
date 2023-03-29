@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from 'react'
-import { Button, Navbar, Popover, Text, Card, Avatar, Container, Divider, Spacer, Grid } from '@nextui-org/react'
+import { Button, Navbar, Popover, Text, Card, Avatar, Container, Divider, Spacer, Grid, Tooltip } from '@nextui-org/react'
 import ConnectWalletModal from '../Modals/ConnectWalletModal'
 import { useWallet } from '../../../contexts/useWallet'
 import { ChevronIcon } from '../../../../public/icons/chevron-down'
 import { Balance } from '../../../services/algoService'
 import { microToStandard } from '../../../utils/math'
 import { config } from '../../../../config'
-import { abbreviateWallet } from '../../../utils/utils'
+import { abbreviateWallet, copyToClipboard } from '../../../utils/utils'
 import Link from 'next/link'
 import { BsWallet2 } from 'react-icons/bs'
+import { BiCopy, BiLinkExternal } from 'react-icons/bi'
 import Image from 'next/image'
 
 const Nav: React.FC = (): JSX.Element => {
@@ -51,13 +52,35 @@ const Nav: React.FC = (): JSX.Element => {
 
   const getPopoverContent = () => {
     return (
-      <Popover.Content>
+      <Popover.Content css={{ zIndex: '$3' }}>
         <Card css={{ padding: '20px' }}>
+          <Grid.Container>
+            <Grid xs={8} css={{ d: 'flex', alignItems: 'center', zIndex: '$3' }}>
+              <Spacer x={0.2} />
+              <BsWallet2 size={24} />
+              <Spacer x={0.2} />
+              <Text b>{abbreviateWallet(account?.addr)}</Text>
+            </Grid>
+            <Grid xs={4} css={{ d: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
+              <Tooltip content='Open in explorer' placement='bottom'>
+                <Link href={`${config.network.explorer}/address/${account?.addr}`} target='_blank' rel='noreferrer'>
+                  <Container css={{ p: 0, height: '100%', d: 'flex', alignItems: 'center' }}>
+                    <BiLinkExternal size={24} />
+                  </Container>
+                </Link>
+              </Tooltip>
+              <Spacer x={0.2} />
+              <Tooltip content='Copy address' placement='bottom'>
+                <BiCopy size={24} onClick={() => { copyToClipboard(account.addr) }} />
+              </Tooltip>
+            </Grid>
+          </Grid.Container>
+          <Spacer y={0.4} />
           {balancesToShow.map((balance: Balance) => {
             return (
-              <Grid.Container css={{ minWidth: '250px', margin: '5px  0' }} key={balance.assetId}>
+              <Grid.Container css={{ minWidth: '300px', m: '16px  0' }} key={balance.assetId}>
                 <Grid xs={8}>
-                  <Avatar src={balance.icon} size='sm' css={{ margin: '0px 4px' }} />
+                  <Avatar src={balance.icon} size='sm' css={{ m: '0px 4px' }} />
                   <Text>{balance.symbol || `id: ${balance.assetId}`}</Text>
                 </Grid>
                 <Grid xs={4}>
@@ -70,7 +93,18 @@ const Nav: React.FC = (): JSX.Element => {
               </Grid.Container>
             )
           })}
-          <Button rounded bordered css={{ minWidth: '120px', borderColor: '$kondorPrimary', color: '$white' }} onPress={handlerDisconnect}>Disconnect</Button>
+          <Button
+            rounded
+            bordered
+            css={{
+              minWidth: '120px',
+              borderColor: '$kondorPrimary',
+              color: '$white'
+            }}
+            onPress={handlerDisconnect}
+          >
+            Disconnect
+          </Button>
         </Card>
       </Popover.Content>
     )
