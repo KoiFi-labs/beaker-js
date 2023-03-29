@@ -9,6 +9,7 @@ import { config } from '../../../../config'
 import { abbreviateWallet } from '../../../utils/utils'
 import Link from 'next/link'
 import { BsWallet2 } from 'react-icons/bs'
+import Image from 'next/image'
 
 const Nav: React.FC = (): JSX.Element => {
   const { isConnected, handleDisconnectWalletClick, account, balances } = useWallet()
@@ -173,7 +174,7 @@ const Nav: React.FC = (): JSX.Element => {
   const getResponsiveItems = () => {
     if (isToggleSelected) {
       return (
-        <Navbar.Collapse>
+        <Navbar.Collapse transitionTime={150}>
           {pages.map((item, index) => (
             <Navbar.CollapseItem key={item.label} onClick={() => { setIsToggleSelected(!isToggleSelected) }}>
               <Link href={item.href}>
@@ -195,8 +196,10 @@ const Nav: React.FC = (): JSX.Element => {
           }
         }}
       >
-        <Link href='/home' onClick={() => { setIsToggleSelected(false) }}>
-          Kondor Finance
+        <Link href='/swap' onClick={() => { setIsToggleSelected(false) }}>
+          <Container css={{ display: 'flex', alignItems: 'center', width: '201px', p: 0 }}>
+            <Image src='/KondorLogo5.png' alt='Kondor Finance logo' width={201} height={40} />
+          </Container>
         </Link>
       </Navbar.Brand>
       <Navbar.Content hideIn='xs'>
