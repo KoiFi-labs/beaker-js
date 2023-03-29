@@ -1,13 +1,25 @@
-import { Button, Grid, Text } from '@nextui-org/react'
+import { Button, Grid, Spacer, Text } from '@nextui-org/react'
 import MyStake from '../../../src/components/MyStake/MyStake'
+import MultiDetails from '../../../src/components/MultiDetails/MultiDetails'
 import { useRouter } from 'next/router'
 
 const MyPosition = () => {
   const router = useRouter()
 
+  const details = [
+    {
+      title: 'Your Pool USD balance',
+      value: '≈$24120'
+    },
+    {
+      title: 'Your Pool participation',
+      value: '0.21%'
+    }
+  ]
+
   return (
     <>
-      <Grid.Container css={{ p: '8px' }}>
+      <Grid.Container>
         <Grid
           xs={12} sm={9} css={{
             d: 'flex',
@@ -56,7 +68,10 @@ const MyPosition = () => {
           </Button>
         </Grid>
       </Grid.Container>
+      <Spacer y={2} />
       <MyStake />
+      <Spacer y={2} />
+      <MultiDetails details={details} />
     </>
   )
 }
