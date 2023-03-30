@@ -183,13 +183,22 @@ export const bootstrap = async (addr: string, amount: number, assetA: number, as
   }
 }
 
-export const getSwapResult = async (amountAssetOut: number, assetOut: number, assetIn: number) => {
-  const [assetOutSupply, assetInSupply] = await Promise.all([
+export const getSwapOutput = async (inAmount: number, assetOut: number, assetIn: number) => {
+  const [outSupply, inSupply] = await Promise.all([
     getAssetSupply(assetOut),
     getAssetSupply(assetIn)
   ])
   const factor = config.pond.scale - config.pond.fee
-  return (amountAssetOut * factor * assetInSupply) / ((assetOutSupply * config.pond.scale) + (amountAssetOut * factor))
+  return (inAmount * factor * outSupply) / ((inSupply * config.pond.scale) + (inAmount * factor))
+}
+
+export const getSwapInput = async (outAmount: number, assetOut: number, assetIn: number) => {
+  const [outSupply, inSupply] = await Promise.all([
+    getAssetSupply(assetOut),
+    getAssetSupply(assetIn)
+  ])
+  const factor = config.pond.scale - config.pond.fee
+  return (outAmount * inSupply * config.pond.scale) / ((outSupply - outAmount) * factor)
 }
 
 export const getMintAmount = async (amount: number, assetToKnow: number) => {

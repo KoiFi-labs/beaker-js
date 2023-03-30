@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react'
-import { Button, Text, Container, Card, Grid, Input, useInput, Loading, Spacer } from '@nextui-org/react'
+import { Button, Text, Container, Card, Grid, useInput, Loading, Spacer } from '@nextui-org/react'
+import { Input } from '../../src/components/Input/Input'
 import { Asset } from '../../config/Assets'
 import { config } from '../../config'
 import AssetSelect from '../../src/components/AssetSelect/AssetSelect'
 import { useWallet } from '../../src/contexts/useWallet'
 import { Balance } from '../../src/services/algoService'
 import { microToStandard } from '../../src/utils/math'
-import { getSwapResult, swap } from '../../src/services/kondorServices/symmetricPoolServise'
+import { getSwapInput, getSwapOutput, swap } from '../../src/services/kondorServices/symmetricPoolServise'
 import ConfirmModal from '../../src/components/modules/Modals/ConfirmModal'
 import SuccessfulTransactionModal from '../../src/components/modules/Modals/SuccessfulTransactionModal'
 import { BsArrowDownUp } from 'react-icons/bs'
@@ -22,17 +23,50 @@ export default function Swap () {
   const [loading, setLoading] = useState<boolean>(false)
   const [inAmount, setInAmount] = useState<number>(0)
   const { isConnected, balances, account, reloadBalances } = useWallet()
-  const outInput = useInput('0.00')
+  const [flag, setFlag] = useState<boolean>(false)
+  const [timerId, setTimerId] = useState<NodeJS.Timeout | null>(null)
+  const sellInput = useInput('0.00')
+  const buyInput = useInput('0.00')
   const slippageText = 'If the price changes by more than your slippage tolerance your transaction will revert.'
 
   useEffect(() => {
-    const outAmount = Number(outInput.value)
-    if (outAmount > 0) {
-      getSwapResult(outAmount, outAsset.id, inAsset.id)
-        .then((result: number) => setInAmount(result))
+    if (sellInput.value) {
+      getSwapOutput(Number(sellInput.value), outAsset.id, inAsset.id)
+        .then((amount: number) => { buyInput.setValue(amount === 0 ? '0.00' : amount.toFixed(6)) })
+    }
+    if (buyInput.value) {
+      getSwapInput(Number(buyInput.value), outAsset.id, inAsset.id)
+        .then((amount: number) => { sellInput.setValue(amount === 0 ? '0.00' : amount.toFixed(6)) })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [outInput, outAsset, inAsset])
+  }, [inAsset, outAsset, flag])
+
+  const runTimmer = () => {
+    if (timerId) {
+      clearTimeout(timerId)
+      setTimerId(null)
+    }
+    const newTimerId = setTimeout(() => {
+      setFlag(!flag)
+      setTimerId(null)
+    }, 2000)
+    setTimerId(newTimerId)
+  }
+
+  const onChangeSellInput = (e: any) => {
+    sellInput.setValue(e.target.value)
+    buyInput.setValue('')
+    runTimmer()
+  }
+
+  const onChangeBuyInput = (e: any) => {
+    buyInput.setValue(e.target.value)
+    sellInput.setValue('')
+    runTimmer()
+  }
+
+  // RUN TIMMER se encargara de setear el flag despues de un segundo. Esto es para evitar que se hagan muchas peticiones al servidor,
+  // si el timmer esta corriendo, este volvera a correr y se cancelara la peticion anterior.
 
   const handleSellAssetSelect = (asset: Asset) => asset === inAsset
     ? (setInAsset(outAsset), setOutAsset(asset))
@@ -52,10 +86,10 @@ export default function Swap () {
     try {
       setConfirmModalVisible(false)
       setLoading(true)
-      const amount = Number(outInput.value)
+      const amount = Number(sellInput.value)
       const result = await swap(account.addr, amount, outAsset.id)
       setTransactionId(result.txId)
-      outInput.setValue('')
+      sellInput.setValue('')
       setInAmount(0)
       reloadBalances()
     } catch (e) {
@@ -66,7 +100,7 @@ export default function Swap () {
   }
 
   const handleSwapButton = () => {
-    if (Number(outInput.value) > 0) {
+    if (Number(sellInput.value) > 0) {
       setConfirmModalVisible(true)
     }
   }
@@ -137,13 +171,12 @@ export default function Swap () {
               <Grid xs={8} css={{ d: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
                 <Input
                   aria-label='Amount to sell'
-                  underlined
-                  fullWidth
-                  {...outInput.bindings}
+                  onChange={onChangeSellInput}
+                  value={sellInput.value}
                   placeholder='0.00'
                 />
                 <Container display='flex' justify='flex-start' css={{ p: 0 }}>
-                  <Text size={12} css={{ color: '$kondorGray' }}>
+                  <Text size={14} css={{ color: '$kondorGray' }}>
                     Balance {balanceToSell ? balanceToSell.toFixed(4) : 0} {outAsset.symbol}
                   </Text>
                 </Container>
@@ -171,11 +204,14 @@ export default function Swap () {
           <Card css={{ p: '16px' }}>
             <Grid.Container justify='center'>
               <Grid xs={8} css={{ d: 'flex', flexDirection: 'column' }}>
-                <Text size={20} css={{ color: '$kondorGray' }}>
-                  {inAmount ? inAmount.toFixed(6) : 0}
-                </Text>
+                <Input
+                  aria-label='Amount to buy'
+                  onChange={onChangeBuyInput}
+                  value={buyInput.value}
+                  placeholder='0.00'
+                />
                 <Container display='flex' justify='flex-start' css={{ p: 0 }}>
-                  <Text size={12} css={{ color: '$kondorGray' }}>
+                  <Text size={14} css={{ color: '$kondorGray' }}>
                     Balance {balanceToBuy ? balanceToBuy.toFixed(4) : 0} {inAsset.symbol}
                   </Text>
                 </Container>
@@ -215,7 +251,7 @@ export default function Swap () {
         <>
           <Container css={{ p: 0 }} display='flex' justify='space-between'>
             <Text size={14} css={{ color: '$kondorGray' }}>Out</Text>
-            <Text>{outInput.value} {outAsset.symbol}</Text>
+            <Text>{sellInput.value} {outAsset.symbol}</Text>
           </Container>
           <Container css={{ p: 0 }} display='flex' justify='space-between'>
             <Text size={14} css={{ color: '$kondorGray' }}>In</Text>
