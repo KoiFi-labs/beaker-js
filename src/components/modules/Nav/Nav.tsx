@@ -78,7 +78,7 @@ const Nav: React.FC = (): JSX.Element => {
           <Spacer y={0.4} />
           {balancesToShow.map((balance: Balance) => {
             return (
-              <Grid.Container css={{ minWidth: '300px', m: '16px  0' }} key={balance.assetId}>
+              <Grid.Container css={{ minWidth: '256px', m: '16px  0' }} key={balance.assetId}>
                 <Grid xs={8}>
                   <Avatar src={balance.icon} size='sm' css={{ m: '0px 4px' }} />
                   <Text>{balance.symbol || `id: ${balance.assetId}`}</Text>

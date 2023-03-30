@@ -21,7 +21,6 @@ export default function Swap () {
   const [successfulTransactionModalVisible, setSuccessfulTransactionModalVisible] = useState<boolean>(false)
   const [transactionId, setTransactionId] = useState<string>('')
   const [loading, setLoading] = useState<boolean>(false)
-  const [inAmount, setInAmount] = useState<number>(0)
   const { isConnected, balances, account, reloadBalances } = useWallet()
   const [flag, setFlag] = useState<boolean>(false)
   const [timerId, setTimerId] = useState<NodeJS.Timeout | null>(null)
@@ -31,11 +30,11 @@ export default function Swap () {
 
   useEffect(() => {
     if (sellInput.value) {
-      getSwapOutput(Number(sellInput.value), outAsset.id, inAsset.id)
+      getSwapInput(Number(sellInput.value), outAsset.id, inAsset.id)
         .then((amount: number) => { buyInput.setValue(amount === 0 ? '0.00' : amount.toFixed(6)) })
     }
     if (buyInput.value) {
-      getSwapInput(Number(buyInput.value), outAsset.id, inAsset.id)
+      getSwapOutput(Number(buyInput.value), outAsset.id, inAsset.id)
         .then((amount: number) => { sellInput.setValue(amount === 0 ? '0.00' : amount.toFixed(6)) })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -90,7 +89,7 @@ export default function Swap () {
       const result = await swap(account.addr, amount, outAsset.id)
       setTransactionId(result.txId)
       sellInput.setValue('')
-      setInAmount(0)
+      buyInput.setValue('')
       reloadBalances()
     } catch (e) {
       console.log(e)
@@ -227,7 +226,7 @@ export default function Swap () {
                 You will receive a minimun of
               </Text>
               <Text size={14} css={{ color: '$kondorGray' }}>
-                {inAmount ? (inAmount * 0.995).toFixed(4) : 0} {inAsset.symbol}
+                {Number(buyInput.value) ? (Number(buyInput.value) * 0.995).toFixed(4) : 0} {inAsset.symbol}
               </Text>
             </Container>
             <Container display='flex' justify='space-between' css={{ p: 0, m: 0 }}>
@@ -255,7 +254,7 @@ export default function Swap () {
           </Container>
           <Container css={{ p: 0 }} display='flex' justify='space-between'>
             <Text size={14} css={{ color: '$kondorGray' }}>In</Text>
-            <Text>≈ {inAmount.toFixed(4)} {inAsset.symbol}</Text>
+            <Text>≈ {Number(buyInput.value).toFixed(4)} {inAsset.symbol}</Text>
           </Container>
           <Container css={{ p: 0 }} display='flex' justify='space-between'>
             <Text size={14} css={{ color: '$kondorGray' }}>Slippage Tolerance</Text>
@@ -263,7 +262,7 @@ export default function Swap () {
           </Container>
           <Container css={{ p: 0 }} display='flex' justify='space-between'>
             <Text size={14} css={{ color: '$kondorGray' }}>You will receive a minimun of</Text>
-            <Text>{(inAmount * 0.995).toFixed(4)} {inAsset.symbol}</Text>
+            <Text>{(Number(buyInput.value) * 0.995).toFixed(4)} {inAsset.symbol}</Text>
           </Container>
           <Spacer y={1} />
           <Container css={{ p: 0 }}>

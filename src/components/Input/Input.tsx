@@ -5,5 +5,5 @@ export const Input = styled('input', {
   border: 'none',
   fontSize: '20px',
   fontWeight: '400',
-  color: '$kondorGray'
+  color: '$kondorLigth'
 })
