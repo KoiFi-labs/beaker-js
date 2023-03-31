@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-vars */
-import { Button, Text, Container, Card, Grid, Input, useInput, Radio, Spacer, Collapse } from '@nextui-org/react'
+import { Button, Text, Container, Card, Grid, useInput, Radio, Spacer, Collapse } from '@nextui-org/react'
+import { Input } from '../../../src/components/Input/Input'
 import PoolSelect from '../../../src/components/PoolSelect/PoolSelect'
 import { PoolType, getPoolBySymbol } from '../../../src/services/poolService'
 import { useState, useEffect } from 'react'
@@ -14,7 +15,7 @@ import { BindingsChangeTarget } from '@nextui-org/react/types/use-input/use-inpu
 
 enum StyleType {
   BY_AMOUNT = 'byAmount',
-  BY_PORCENTAGE = 'byPorcentage'
+  BY_PERCENTAGE = 'byPercentage'
 }
 
 type AssetInput = {
@@ -33,21 +34,21 @@ export default function CreateProduct () {
   const [assetInput2, setAssetInput2] = useState<string>('USDC')
   const [assetInput3, setAssetInput3] = useState<string>('USDT')
   const [assetInput4, setAssetInput4] = useState<string>('PLANET')
-  const [assetPorcentageInput1, setAssetPorcentageInput1] = useState<string>('ALGO')
-  const [assetPorcentageInput2, setAssetPorcentageInput2] = useState<string>('PLANET')
-  const [assetPorcentageInput3, setAssetPorcentageInput3] = useState<string>('USDC')
-  const [assetPorcentageInput4, setAssetPorcentageInput4] = useState<string>('USDT')
-  const [assetSupplyInputByPorcentage, setAssetSupplyInputByPorcentage] = useState<string>('USDC')
+  const [assetPercentageInput1, setAssetPercentageInput1] = useState<string>('ALGO')
+  const [assetPercentageInput2, setAssetPercentageInput2] = useState<string>('PLANET')
+  const [assetPercentageInput3, setAssetPercentageInput3] = useState<string>('USDC')
+  const [assetPercentageInput4, setAssetPercentageInput4] = useState<string>('USDT')
+  const [assetSupplyInputByPercentage, setAssetSupplyInputByPercentage] = useState<string>('USDC')
   const [style, setStyle] = useState<StyleType>(StyleType.BY_AMOUNT)
   const input1 = useInput('')
   const input2 = useInput('')
   const input3 = useInput('')
   const input4 = useInput('')
-  const inputAssetSupplyByPorcentage = useInput('')
-  const inputPorcentage1 = useInput('')
-  const inputPorcentage2 = useInput('')
-  const inputPorcentage3 = useInput('')
-  const inputPorcentage4 = useInput('')
+  const inputAssetSupplyByPercentage = useInput('')
+  const inputPercentage1 = useInput('')
+  const inputPercentage2 = useInput('')
+  const inputPercentage3 = useInput('')
+  const inputPercentage4 = useInput('')
   const [inputWithErrors, setInputWithErrors] = useState<boolean>(false)
   const router = useRouter()
 
@@ -69,16 +70,16 @@ export default function CreateProduct () {
   const handleRemoveInputButton = () => {
     if (inputsAmount === 1) return
     setInputsAmount(inputsAmount - 1)
-    if (style === StyleType.BY_PORCENTAGE) {
+    if (style === StyleType.BY_PERCENTAGE) {
       switch (inputsAmount) {
         case 2:
-          inputPorcentage2.setValue('')
+          inputPercentage2.setValue('')
           break
         case 3:
-          inputPorcentage3.setValue('')
+          inputPercentage3.setValue('')
           break
         case 4:
-          inputPorcentage4.setValue('')
+          inputPercentage4.setValue('')
           break
       }
     }
@@ -106,23 +107,23 @@ export default function CreateProduct () {
   }
 
   const handlePoolSelectButtonAssetSupply = (pool: PoolType) => {
-    setAssetSupplyInputByPorcentage(pool.pool)
+    setAssetSupplyInputByPercentage(pool.pool)
   }
 
-  const handlePoolSelectButtonPorcentage1 = (pool: PoolType) => {
-    setAssetPorcentageInput1(pool.pool)
+  const handlePoolSelectButtonPercentage1 = (pool: PoolType) => {
+    setAssetPercentageInput1(pool.pool)
   }
 
-  const handlePoolSelectButtonPorcentage2 = (pool: PoolType) => {
-    setAssetPorcentageInput2(pool.pool)
+  const handlePoolSelectButtonPercentage2 = (pool: PoolType) => {
+    setAssetPercentageInput2(pool.pool)
   }
 
-  const handlePoolSelectButtonPorcentage3 = (pool: PoolType) => {
-    setAssetPorcentageInput3(pool.pool)
+  const handlePoolSelectButtonPercentage3 = (pool: PoolType) => {
+    setAssetPercentageInput3(pool.pool)
   }
 
-  const handlePoolSelectButtonPorcentage4 = (pool: PoolType) => {
-    setAssetPorcentageInput4(pool.pool)
+  const handlePoolSelectButtonPercentage4 = (pool: PoolType) => {
+    setAssetPercentageInput4(pool.pool)
   }
 
   const handleOkButton = () => {
@@ -134,32 +135,32 @@ export default function CreateProduct () {
     if (style === StyleType.BY_AMOUNT) {
       return { asset: assetInput1, amount: Number(input1.value) }
     }
-    const amount = calculateAssetAmountByPorcentage(assetPorcentageInput1, Number(inputPorcentage1.value))
-    return { asset: assetPorcentageInput1, amount }
+    const amount = calculateAssetAmountByPercentage(assetPercentageInput1, Number(inputPercentage1.value))
+    return { asset: assetPercentageInput1, amount }
   }
 
   const getAsset2Input: () => AssetInput = () => {
     if (style === StyleType.BY_AMOUNT) {
       return { asset: assetInput2, amount: Number(input2.value) }
     }
-    const amount = calculateAssetAmountByPorcentage(assetPorcentageInput2, Number(inputPorcentage2.value))
-    return { asset: assetPorcentageInput2, amount }
+    const amount = calculateAssetAmountByPercentage(assetPercentageInput2, Number(inputPercentage2.value))
+    return { asset: assetPercentageInput2, amount }
   }
 
   const getAsset3Input: () => AssetInput = () => {
     if (style === StyleType.BY_AMOUNT) {
       return { asset: assetInput3, amount: Number(input3.value) }
     }
-    const amount = calculateAssetAmountByPorcentage(assetPorcentageInput3, Number(inputPorcentage3.value))
-    return { asset: assetPorcentageInput3, amount }
+    const amount = calculateAssetAmountByPercentage(assetPercentageInput3, Number(inputPercentage3.value))
+    return { asset: assetPercentageInput3, amount }
   }
 
   const getAsset4Input: () => AssetInput = () => {
     if (style === StyleType.BY_AMOUNT) {
       return { asset: assetInput4, amount: Number(input4.value) }
     }
-    const amount = calculateAssetAmountByPorcentage(assetPorcentageInput3, Number(inputPorcentage3.value))
-    return { asset: assetPorcentageInput4, amount }
+    const amount = calculateAssetAmountByPercentage(assetPercentageInput3, Number(inputPercentage3.value))
+    return { asset: assetPercentageInput4, amount }
   }
 
   const getValueFromAsset = (asset: string) => {
@@ -217,42 +218,39 @@ export default function CreateProduct () {
     const pool = getPoolBySymbol(asset)!
     return (
       <Card key={pool.pool} css={{ $$cardColor: '$colors$gray100', m: '4px 0px' }}>
-        <Grid.Container justify='center' css={{ p: '8px' }}>
-          <Grid xs={8}>
+        <Grid.Container justify='center' css={{ p: '16px' }}>
+          <Grid xs={8} css={{ d: 'flex', flexDirection: 'column' }}>
             <Input
-              {...{ value, onChange }}
-              label={label || `Add ${asset}`}
-              underlined
+              value={value}
+              onChange={onChange}
               placeholder='0.00'
             />
+            <Text size={14} css={{ color: '$kondorGray' }}>Balance {getBalanceFromPool(pool)} {pool.pool}</Text>
           </Grid>
           <Grid xs={4} css={{ d: 'flex', alignItems: 'center' }}>
             <PoolSelect pool={pool} onPress={onSelect} />
           </Grid>
-          <Container display='flex' justify='flex-start' css={{ p: 0 }}>
-            <Text size={14} css={{ color: '$kondorGray' }}>Balance {getBalanceFromPool(pool)} {pool.pool}</Text>
-          </Container>
         </Grid.Container>
       </Card>
     )
   }
 
-  const calculateAssetAmountByPorcentage = (asset: string, porcentage: number) => {
-    const supplyInput = Number(inputAssetSupplyByPorcentage.value)
-    const supplyInputUSD = supplyInput * (prices.find(p => p.assetSymbol === assetSupplyInputByPorcentage)?.price || 0)
-    const assetAmountUDS = (supplyInputUSD * porcentage) / 100
+  const calculateAssetAmountByPercentage = (asset: string, percentage: number) => {
+    const supplyInput = Number(inputAssetSupplyByPercentage.value)
+    const supplyInputUSD = supplyInput * (prices.find(p => p.assetSymbol === assetSupplyInputByPercentage)?.price || 0)
+    const assetAmountUDS = (supplyInputUSD * percentage) / 100
     const assetAmount = assetAmountUDS / (prices.find(p => p.assetSymbol === asset)?.price || 0)
     return assetAmount
   }
 
-  const calculateAssetAmountUSDByPorcentage = (asset: string, porcentage: number) => {
-    const supplyInput = Number(inputAssetSupplyByPorcentage.value)
-    const supplyInputUSD = supplyInput * (prices.find(p => p.assetSymbol === assetSupplyInputByPorcentage)?.price || 0)
-    const assetAmountUDS = (supplyInputUSD * porcentage) / 100
+  const calculateAssetAmountUSDByPercentage = (asset: string, percentage: number) => {
+    const supplyInput = Number(inputAssetSupplyByPercentage.value)
+    const supplyInputUSD = supplyInput * (prices.find(p => p.assetSymbol === assetSupplyInputByPercentage)?.price || 0)
+    const assetAmountUDS = (supplyInputUSD * percentage) / 100
     return assetAmountUDS
   }
 
-  const PoolPorcentageInput = (
+  const PoolPercentageInput = (
     asset: string,
     value:string,
     onChange: (event: BindingsChangeTarget) => void,
@@ -260,10 +258,10 @@ export default function CreateProduct () {
     label?: string
   ) => {
     const pool = getPoolBySymbol(asset)!
-    const supplyAvailable = balances.find(b => b.assetSymbol === assetSupplyInputByPorcentage)?.amount || 0
-    const supplyInput = Number(inputAssetSupplyByPorcentage.value)
-    const assetAmount = calculateAssetAmountByPorcentage(asset, Number(value))
-    const assetAmountUDS = calculateAssetAmountUSDByPorcentage(asset, Number(value))
+    const supplyAvailable = balances.find(b => b.assetSymbol === assetSupplyInputByPercentage)?.amount || 0
+    const supplyInput = Number(inputAssetSupplyByPercentage.value)
+    const assetAmount = calculateAssetAmountByPercentage(asset, Number(value))
+    const assetAmountUDS = calculateAssetAmountUSDByPercentage(asset, Number(value))
     const assetAmountString = abbreviateNumber(assetAmount, 2)
     const assetAmountUSDString = abbreviateNumber(assetAmountUDS, 2)
 
@@ -272,17 +270,13 @@ export default function CreateProduct () {
         <Grid.Container justify='center' css={{ p: '8px' }}>
           <Grid xs={6}>
             <Grid.Container>
-              <Grid xs={6}>
+              <Grid xs={6} css={{ d: 'flex', flexDirection: 'column' }}>
+                <Text size={14} css={{ color: '$kondorGray' }}>{pool.pool} %</Text>
                 <Input
                   {...{ value, onChange }}
-                  label={label || `${asset}`}
-                  underlined
                   placeholder='0.00'
                   color={Number(value) > 100 ? 'error' : 'default'}
                 />
-              </Grid>
-              <Grid xs={2} css={{ d: 'flex', justifyContent: 'flex-end', flexDirection: 'column' }}>
-                <Text size={14} css={{ color: '$kondorGray' }}>%</Text>
               </Grid>
             </Grid.Container>
           </Grid>
@@ -292,7 +286,7 @@ export default function CreateProduct () {
           </Grid>
           <Container display='flex' justify='flex-start' css={{ p: 0 }}>
             {Number(value) > 100
-              ? <Text size={14} b css={{ color: '$error' }}>Porcentage must be less than 100</Text>
+              ? <Text size={14} b css={{ color: '$error' }}>Percentage must be less than 100</Text>
               : (
                 <>
                   <Text size={14} css={{ color: '$kondorGray' }}>≈{assetAmountString} {pool.pool} </Text>
@@ -322,49 +316,49 @@ export default function CreateProduct () {
     )
   }
 
-  const getInputsByPorcentage = () => {
+  const getInputsByPercentage = () => {
     return (
       <>
         {PoolInput(
-          assetSupplyInputByPorcentage,
-          inputAssetSupplyByPorcentage.bindings.value,
-          inputAssetSupplyByPorcentage.bindings.onChange,
+          assetSupplyInputByPercentage,
+          inputAssetSupplyByPercentage.bindings.value,
+          inputAssetSupplyByPercentage.bindings.onChange,
           handlePoolSelectButtonAssetSupply,
           'Total investment amount'
         )}
         <Spacer y={1} />
         <Text size={14} css={{ color: '$kondorGray' }}>Enter the percentages</Text>
-        {PoolPorcentageInput(
-          assetPorcentageInput1,
-          inputPorcentage1.bindings.value,
-          inputPorcentage1.bindings.onChange,
-          handlePoolSelectButtonPorcentage1
+        {PoolPercentageInput(
+          assetPercentageInput1,
+          inputPercentage1.bindings.value,
+          inputPercentage1.bindings.onChange,
+          handlePoolSelectButtonPercentage1
         )}
         {
           inputsAmount > 1
-            ? PoolPorcentageInput(
-              assetPorcentageInput2,
-              inputPorcentage2.bindings.value,
-              inputPorcentage2.bindings.onChange,
-              handlePoolSelectButtonPorcentage2)
+            ? PoolPercentageInput(
+              assetPercentageInput2,
+              inputPercentage2.bindings.value,
+              inputPercentage2.bindings.onChange,
+              handlePoolSelectButtonPercentage2)
             : null
         }
         {
           inputsAmount > 2
-            ? PoolPorcentageInput(
-              assetPorcentageInput3,
-              inputPorcentage3.bindings.value,
-              inputPorcentage3.bindings.onChange,
-              handlePoolSelectButtonPorcentage3)
+            ? PoolPercentageInput(
+              assetPercentageInput3,
+              inputPercentage3.bindings.value,
+              inputPercentage3.bindings.onChange,
+              handlePoolSelectButtonPercentage3)
             : null
         }
         {
           inputsAmount > 3
-            ? PoolPorcentageInput(
-              assetPorcentageInput4,
-              inputPorcentage4.bindings.value,
-              inputPorcentage4.bindings.onChange,
-              handlePoolSelectButtonPorcentage4)
+            ? PoolPercentageInput(
+              assetPercentageInput4,
+              inputPercentage4.bindings.value,
+              inputPercentage4.bindings.onChange,
+              handlePoolSelectButtonPercentage4)
             : null
         }
         <Container display='flex' justify='center' css={{ p: 0 }}>
@@ -377,11 +371,11 @@ export default function CreateProduct () {
     )
   }
 
-  const getResumeDetailByAsset = (asset: string, amount: number, amountUSD: number, porcentage: number) => {
+  const getResumeDetailByAsset = (asset: string, amount: number, amountUSD: number, percentage: number) => {
     return (
       <Grid.Container>
         <Grid xs={6}>
-          <Text size={14} css={{ color: '$kondorGray' }}>{porcentage}% {asset}</Text>
+          <Text size={14} css={{ color: '$kondorGray' }}>{percentage}% {asset}</Text>
         </Grid>
         <Grid xs={6} css={{ d: 'flex', justifyContent: 'flex-end', alignItems: 'flex-end', flexDirection: 'column' }}>
           <Text size={14} css={{ color: '$kondorLight' }}>{abbreviateNumber(amount)} {asset}</Text>
@@ -391,23 +385,23 @@ export default function CreateProduct () {
     )
   }
 
-  const getResumeByPorcentage = () => {
-    const assetSupply = Number(inputAssetSupplyByPorcentage.bindings.value)
-    const porcentage1 = Number(inputPorcentage1.bindings.value)
-    const porcentage2 = Number(inputPorcentage2.bindings.value)
-    const porcentage3 = Number(inputPorcentage3.bindings.value)
-    const porcentage4 = Number(inputPorcentage4.bindings.value)
-    const totalPorcentage = porcentage1 + porcentage2 + porcentage3 + porcentage4
-    const assetAmount1 = calculateAssetAmountByPorcentage(assetPorcentageInput1, porcentage1)
-    const assetAmount2 = calculateAssetAmountByPorcentage(assetPorcentageInput2, porcentage2)
-    const assetAmount3 = calculateAssetAmountByPorcentage(assetPorcentageInput3, porcentage3)
-    const assetAmount4 = calculateAssetAmountByPorcentage(assetPorcentageInput4, porcentage4)
-    const assetAmountUSD1 = calculateAssetAmountUSDByPorcentage(assetPorcentageInput1, porcentage1)
-    const assetAmountUSD2 = calculateAssetAmountUSDByPorcentage(assetPorcentageInput2, porcentage2)
-    const assetAmountUSD3 = calculateAssetAmountUSDByPorcentage(assetPorcentageInput3, porcentage3)
-    const assetAmountUSD4 = calculateAssetAmountUSDByPorcentage(assetPorcentageInput4, porcentage4)
+  const getResumeByPercentage = () => {
+    const assetSupply = Number(inputAssetSupplyByPercentage.bindings.value)
+    const percentage1 = Number(inputPercentage1.bindings.value)
+    const percentage2 = Number(inputPercentage2.bindings.value)
+    const percentage3 = Number(inputPercentage3.bindings.value)
+    const percentage4 = Number(inputPercentage4.bindings.value)
+    const totalPercentage = percentage1 + percentage2 + percentage3 + percentage4
+    const assetAmount1 = calculateAssetAmountByPercentage(assetPercentageInput1, percentage1)
+    const assetAmount2 = calculateAssetAmountByPercentage(assetPercentageInput2, percentage2)
+    const assetAmount3 = calculateAssetAmountByPercentage(assetPercentageInput3, percentage3)
+    const assetAmount4 = calculateAssetAmountByPercentage(assetPercentageInput4, percentage4)
+    const assetAmountUSD1 = calculateAssetAmountUSDByPercentage(assetPercentageInput1, percentage1)
+    const assetAmountUSD2 = calculateAssetAmountUSDByPercentage(assetPercentageInput2, percentage2)
+    const assetAmountUSD3 = calculateAssetAmountUSDByPercentage(assetPercentageInput3, percentage3)
+    const assetAmountUSD4 = calculateAssetAmountUSDByPercentage(assetPercentageInput4, percentage4)
 
-    if (totalPorcentage !== 100 && totalPorcentage !== 0) {
+    if (totalPercentage !== 100 && totalPercentage !== 0) {
       return (
         <Container
           css={{ p: '4px', d: 'flex', justifyContent: 'center' }}
@@ -422,15 +416,15 @@ export default function CreateProduct () {
           <Container css={{ p: 0 }}>
             <Container css={{ p: 0 }} display='flex' justify='space-between'>
               <Text size={16} css={{ color: '$kondorLigth' }}>Total investment amount</Text>
-              <Text size={14} css={{ color: '$kondorLight' }}>{assetSupply} {assetSupplyInputByPorcentage}</Text>
+              <Text size={14} css={{ color: '$kondorLight' }}>{assetSupply} {assetSupplyInputByPercentage}</Text>
             </Container>
             <Container css={{ p: 0 }} display='flex' justify='space-between'>
               <Text size={16} css={{ color: '$kondorLigth' }}>Your investment will be divided into: </Text>
             </Container>
-            {getResumeDetailByAsset(assetPorcentageInput1, assetAmount1, assetAmountUSD1, porcentage1)}
-            {inputsAmount > 1 ? getResumeDetailByAsset(assetPorcentageInput2, assetAmount2, assetAmountUSD2, porcentage2) : null}
-            {inputsAmount > 2 ? getResumeDetailByAsset(assetPorcentageInput3, assetAmount3, assetAmountUSD3, porcentage3) : null}
-            {inputsAmount > 3 ? getResumeDetailByAsset(assetPorcentageInput4, assetAmount4, assetAmountUSD4, porcentage4) : null}
+            {getResumeDetailByAsset(assetPercentageInput1, assetAmount1, assetAmountUSD1, percentage1)}
+            {inputsAmount > 1 ? getResumeDetailByAsset(assetPercentageInput2, assetAmount2, assetAmountUSD2, percentage2) : null}
+            {inputsAmount > 2 ? getResumeDetailByAsset(assetPercentageInput3, assetAmount3, assetAmountUSD3, percentage3) : null}
+            {inputsAmount > 3 ? getResumeDetailByAsset(assetPercentageInput4, assetAmount4, assetAmountUSD4, percentage4) : null}
           </Container>
         </Collapse>
       </Collapse.Group>
@@ -458,13 +452,13 @@ export default function CreateProduct () {
           <Radio value={StyleType.BY_AMOUNT} size='xs'>
             By amount
           </Radio>
-          <Radio value={StyleType.BY_PORCENTAGE} size='xs'>
-            By porcentage
+          <Radio value={StyleType.BY_PERCENTAGE} size='xs'>
+            By percentage
           </Radio>
         </Radio.Group>
         <Spacer y={1} />
-        {style === StyleType.BY_AMOUNT ? getInputsByAmount() : getInputsByPorcentage()}
-        {style === StyleType.BY_AMOUNT ? null : getResumeByPorcentage()}
+        {style === StyleType.BY_AMOUNT ? getInputsByAmount() : getInputsByPercentage()}
+        {style === StyleType.BY_AMOUNT ? null : getResumeByPercentage()}
         <Button
           onPress={() => handleCreateButton()}
           bordered
@@ -484,10 +478,13 @@ export default function CreateProduct () {
             <Text size={16} css={{ color: '$kondorGray' }}>{getAsset1Input().asset} to be added</Text>
             <Text>{abbreviateNumber(getAsset1Input().amount, 4)} {getAsset1Input().asset}</Text>
           </Container>
-          <Container css={{ p: 0 }} display='flex' justify='space-between'>
-            <Text size={16} css={{ color: '$kondorGray' }}>{getAsset2Input().asset} to be added</Text>
-            <Text>{abbreviateNumber(getAsset2Input().amount, 4)} {getAsset2Input().asset}</Text>
-          </Container>
+          {inputsAmount > 1
+            ? (
+              <Container css={{ p: 0 }} display='flex' justify='space-between'>
+                <Text size={16} css={{ color: '$kondorGray' }}>{getAsset2Input().asset} to be added</Text>
+                <Text>{abbreviateNumber(getAsset2Input().amount, 4)} {getAsset2Input().asset}</Text>
+              </Container>)
+            : null}
           {inputsAmount > 2
             ? (
               <Container css={{ p: 0 }} display='flex' justify='space-between'>
@@ -504,7 +501,7 @@ export default function CreateProduct () {
             : null}
           <Container css={{ p: 0 }} display='flex' justify='space-between'>
             <Text size={16} css={{ color: '$kondorGray' }}>Total value</Text>
-            <Text>≈ ${calculateTotalPrice()}</Text>
+            <Text>≈ ${calculateTotalPrice().toFixed(6)}</Text>
           </Container>
         </>
       </ConfirmModal>
