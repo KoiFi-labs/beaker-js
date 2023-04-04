@@ -1,9 +1,9 @@
 /* eslint-disable no-unused-vars */
-import { Button, Text, Container, Card, Grid, useInput, Radio, Spacer, Collapse } from '@nextui-org/react'
+import { Button, Text, Container, Card, Grid, useInput, Radio, Spacer, Collapse, Checkbox } from '@nextui-org/react'
 import { Input } from '../../../src/components/Input/Input'
 import PoolSelect from '../../../src/components/PoolSelect/PoolSelect'
 import { PoolType, getPoolBySymbol } from '../../../src/services/poolService'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Dispatch, MutableRefObject, SetStateAction } from 'react'
 import ConfirmModal from '../../../src/components/modules/Modals/ConfirmModal'
 import SuccessfulTransactionModal from '../../../src/components/modules/Modals/SuccessfulTransactionModal'
 import SendingTransactionModal from '../../../src/components/modules/Modals/SendingTransaction'
@@ -12,15 +12,29 @@ import { useRouter } from 'next/router'
 import { createProduct, getBalances, getPrices } from '../../../src/services/mock'
 import { Balance, Price } from '../../../interfaces'
 import { BindingsChangeTarget } from '@nextui-org/react/types/use-input/use-input'
+import { Asset, config } from '../../../config'
+
+const assets = config.assetList
 
 enum StyleType {
   BY_AMOUNT = 'byAmount',
   BY_PERCENTAGE = 'byPercentage'
 }
 
+type InputType = {
+  value: string;
+  setValue: Dispatch<SetStateAction<string>>;
+  currentRef: MutableRefObject<string>;
+  reset: () => void;
+  bindings: {
+      value: string;
+      onChange: (event: BindingsChangeTarget) => void;
+  }
+}
+
 type AssetInput = {
-  asset: string,
-  amount: number
+  asset: Asset
+  input: InputType
 }
 
 export default function CreateProduct () {
@@ -29,32 +43,64 @@ export default function CreateProduct () {
   const [successfulTransactionModalIsVisible, setSuccessfulTransactionModalIsVisible] = useState<boolean>(false)
   const [sendingTransactionModalIsVisible, setSendingTransactionModalIsVisible] = useState<boolean>(false)
   const [balances, setBalances] = useState<Balance[]>([])
+  const [convertAuto, setConvertAuto] = useState<boolean>(false)
+  const [hasErrorStableQuota, setHasErrorStableQuota] = useState<boolean>(false)
+  const [hasErrorPercentage, setHasErrorPercentage] = useState<boolean>(false)
   const [prices, setPrices] = useState<Price[]>([])
-  const [assetInput1, setAssetInput1] = useState<string>('ALGO')
-  const [assetInput2, setAssetInput2] = useState<string>('USDC')
-  const [assetInput3, setAssetInput3] = useState<string>('USDT')
-  const [assetInput4, setAssetInput4] = useState<string>('PLANET')
-  const [assetPercentageInput1, setAssetPercentageInput1] = useState<string>('ALGO')
-  const [assetPercentageInput2, setAssetPercentageInput2] = useState<string>('PLANET')
-  const [assetPercentageInput3, setAssetPercentageInput3] = useState<string>('USDC')
-  const [assetPercentageInput4, setAssetPercentageInput4] = useState<string>('USDT')
-  const [assetSupplyInputByPercentage, setAssetSupplyInputByPercentage] = useState<string>('USDC')
+  const [asset1, setAsset1] = useState<AssetInput>({
+    asset: assets[0],
+    input: useInput('')
+  })
+  const [asset2, setAsset2] = useState<AssetInput>({
+    asset: assets[1],
+    input: useInput('')
+  })
+  const [asset3, setAsset3] = useState<AssetInput>({
+    asset: assets[2],
+    input: useInput('')
+  })
+  const [asset4, setAsset4] = useState<AssetInput>({
+    asset: assets[3],
+    input: useInput('')
+  })
+  const [assetTotalSupply, setAssetTotalSupply] = useState<AssetInput>({
+    asset: assets[0],
+    input: useInput('')
+  })
+
   const [style, setStyle] = useState<StyleType>(StyleType.BY_AMOUNT)
-  const input1 = useInput('')
-  const input2 = useInput('')
-  const input3 = useInput('')
-  const input4 = useInput('')
-  const inputAssetSupplyByPercentage = useInput('')
-  const inputPercentage1 = useInput('')
-  const inputPercentage2 = useInput('')
-  const inputPercentage3 = useInput('')
-  const inputPercentage4 = useInput('')
-  const [inputWithErrors, setInputWithErrors] = useState<boolean>(false)
   const router = useRouter()
+
+  const handleStyleChange = (value: StyleType) => {
+    setStyle(value)
+    clearInputs()
+  }
+
+  const clearInputs = () => {
+    asset1.input.value = ''
+    asset1.input.setValue('')
+    asset2.input.value = ''
+    asset2.input.setValue('')
+    asset3.input.value = ''
+    asset3.input.setValue('')
+    asset4.input.value = ''
+    asset4.input.setValue('')
+    assetTotalSupply.input.value = ''
+    assetTotalSupply.input.setValue('')
+  }
 
   const getPrice = (asset: string) => {
     const price = prices.find(p => p.assetSymbol === asset)
     return price?.price || 0
+  }
+
+  const getBalance = (asset: string) => {
+    const balance = balances.find(b => b.assetSymbol === asset)
+    return balance?.amount || 0
+  }
+
+  const getAssetByName: (assetSymbol: string) => Asset | undefined = (assetSymbol: string) => {
+    return assets.find(a => a.symbol === assetSymbol)
   }
 
   useEffect(() => {
@@ -73,13 +119,13 @@ export default function CreateProduct () {
     if (style === StyleType.BY_PERCENTAGE) {
       switch (inputsAmount) {
         case 2:
-          inputPercentage2.setValue('')
+          asset1.input.setValue('')
           break
         case 3:
-          inputPercentage3.setValue('')
+          asset2.input.setValue('')
           break
         case 4:
-          inputPercentage4.setValue('')
+          asset3.input.setValue('')
           break
       }
     }
@@ -91,39 +137,33 @@ export default function CreateProduct () {
   }
 
   const handlePoolSelectButton1 = (pool: PoolType) => {
-    setAssetInput1(pool.pool)
+    const asset = getAssetByName(pool.pool)
+    if (!asset) throw new Error(`Invalid asset, ${pool.pool} not found`)
+    setAsset1({ asset, input: asset1.input })
   }
 
   const handlePoolSelectButton2 = (pool: PoolType) => {
-    setAssetInput2(pool.pool)
+    const asset = getAssetByName(pool.pool)
+    if (!asset) throw new Error(`Invalid asset, ${pool.pool} not found`)
+    setAsset2({ asset, input: asset2.input })
   }
 
   const handlePoolSelectButton3 = (pool: PoolType) => {
-    setAssetInput3(pool.pool)
+    const asset = getAssetByName(pool.pool)
+    if (!asset) throw new Error(`Invalid asset, ${pool.pool} not found`)
+    setAsset3({ asset, input: asset3.input })
   }
 
   const handlePoolSelectButton4 = (pool: PoolType) => {
-    setAssetInput4(pool.pool)
+    const asset = getAssetByName(pool.pool)
+    if (!asset) throw new Error(`Invalid asset, ${pool.pool} not found`)
+    setAsset4({ asset, input: asset4.input })
   }
 
   const handlePoolSelectButtonAssetSupply = (pool: PoolType) => {
-    setAssetSupplyInputByPercentage(pool.pool)
-  }
-
-  const handlePoolSelectButtonPercentage1 = (pool: PoolType) => {
-    setAssetPercentageInput1(pool.pool)
-  }
-
-  const handlePoolSelectButtonPercentage2 = (pool: PoolType) => {
-    setAssetPercentageInput2(pool.pool)
-  }
-
-  const handlePoolSelectButtonPercentage3 = (pool: PoolType) => {
-    setAssetPercentageInput3(pool.pool)
-  }
-
-  const handlePoolSelectButtonPercentage4 = (pool: PoolType) => {
-    setAssetPercentageInput4(pool.pool)
+    const asset = getAssetByName(pool.pool)
+    if (!asset) throw new Error(`Invalid asset, ${pool.pool} not found`)
+    setAssetTotalSupply({ asset, input: assetTotalSupply.input })
   }
 
   const handleOkButton = () => {
@@ -131,57 +171,17 @@ export default function CreateProduct () {
     router.push('/product')
   }
 
-  const getAsset1Input: () => AssetInput = () => {
-    if (style === StyleType.BY_AMOUNT) {
-      return { asset: assetInput1, amount: Number(input1.value) }
-    }
-    const amount = calculateAssetAmountByPercentage(assetPercentageInput1, Number(inputPercentage1.value))
-    return { asset: assetPercentageInput1, amount }
-  }
-
-  const getAsset2Input: () => AssetInput = () => {
-    if (style === StyleType.BY_AMOUNT) {
-      return { asset: assetInput2, amount: Number(input2.value) }
-    }
-    const amount = calculateAssetAmountByPercentage(assetPercentageInput2, Number(inputPercentage2.value))
-    return { asset: assetPercentageInput2, amount }
-  }
-
-  const getAsset3Input: () => AssetInput = () => {
-    if (style === StyleType.BY_AMOUNT) {
-      return { asset: assetInput3, amount: Number(input3.value) }
-    }
-    const amount = calculateAssetAmountByPercentage(assetPercentageInput3, Number(inputPercentage3.value))
-    return { asset: assetPercentageInput3, amount }
-  }
-
-  const getAsset4Input: () => AssetInput = () => {
-    if (style === StyleType.BY_AMOUNT) {
-      return { asset: assetInput4, amount: Number(input4.value) }
-    }
-    const amount = calculateAssetAmountByPercentage(assetPercentageInput3, Number(inputPercentage3.value))
-    return { asset: assetPercentageInput4, amount }
-  }
-
-  const getValueFromAsset = (asset: string) => {
-    if (asset === assetInput1) return Number(input1.value)
-    if (asset === assetInput2) return Number(input2.value)
-    if (asset === assetInput3) return Number(input3.value)
-    if (asset === assetInput4) return Number(input4.value)
-    return 0
-  }
-
   const handleConfirmButton = async () => {
     setSendingTransactionModalIsVisible(true)
     await sleep(3000)
-    const assetsList = [assetInput1, assetInput2, assetInput3, assetInput4].slice(0, inputsAmount)
-    const name = assetsList.join('/')
+    const inputsList = [asset1, asset2, asset3, asset4].slice(0, inputsAmount)
+    const name = inputsList.map(i => i.asset.name).join('/')
     await createProduct({
       name,
       id: Math.ceil(Math.random() * 9999999),
-      assets: assetsList.map(asset => ({
-        symbol: asset,
-        amount: getValueFromAsset(asset)
+      assets: inputsList.map(i => ({
+        symbol: i.asset.symbol,
+        amount: Number(i.input.value)
       })),
       value: calculateTotalPrice()
     })
@@ -199,35 +199,37 @@ export default function CreateProduct () {
   }
 
   const calculateTotalPrice = () => {
-    const price1 = prices.find(p => p.assetSymbol === getAsset1Input().asset)
-    const price2 = prices.find(p => p.assetSymbol === getAsset2Input().asset)
-    const price3 = inputsAmount > 2 ? prices.find(p => p.assetSymbol === getAsset3Input().asset) : { price: 0 }
-    const price4 = inputsAmount > 3 ? prices.find(p => p.assetSymbol === getAsset4Input().asset) : { price: 0 }
+    const price1 = getPrice(asset1.asset.symbol)
+    const price2 = getPrice(asset2.asset.symbol)
+    const price3 = inputsAmount > 2 ? getPrice(asset3.asset.symbol) : 0
+    const price4 = inputsAmount > 3 ? getPrice(asset4.asset.symbol) : 0
 
-    const total = getAsset1Input().amount * Number(price1?.price) + getAsset2Input().amount * Number(price2?.price) + getAsset3Input().amount * Number(price3?.price) + getAsset4Input().amount * Number(price4?.price)
+    const total = Number(asset1.input.value) * price1 + Number(asset2.input.value) * price2 + Number(asset3.input.value) * price3 + Number(asset4.input.value) * price4
     return total
   }
 
   const PoolInput = (
-    asset: string,
-    value:string,
-    onChange: (event: BindingsChangeTarget) => void,
-    onSelect: (pool: PoolType) => void,
-    label?: string
+    assetInput: AssetInput,
+    setAsset: (asset: AssetInput) => void,
+    onSelect: (pool: PoolType) => void
   ) => {
-    const pool = getPoolBySymbol(asset)!
+    const pool = getPoolBySymbol(assetInput.asset.symbol)!
+    const onChange = (e: BindingsChangeTarget) => {
+      assetInput.input.bindings.onChange(e)
+      setAsset({ ...assetInput, input: { ...assetInput.input, value: assetInput.input.currentRef.current } })
+    }
     return (
-      <Card key={pool.pool} css={{ $$cardColor: '$colors$gray100', m: '4px 0px' }}>
+      <Card key={`${pool.pool}${Math.random}`} css={{ $$cardColor: '$colors$gray100', m: '8px 0px' }}>
         <Grid.Container justify='center' css={{ p: '16px' }}>
           <Grid xs={8} css={{ d: 'flex', flexDirection: 'column' }}>
             <Input
-              value={value}
+              value={assetInput.input.currentRef.current}
               onChange={onChange}
               placeholder='0.00'
             />
             <Text size={14} css={{ color: '$kondorGray' }}>Balance {getBalanceFromPool(pool)} {pool.pool}</Text>
           </Grid>
-          <Grid xs={4} css={{ d: 'flex', alignItems: 'center' }}>
+          <Grid xs={4} css={{ d: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
             <PoolSelect pool={pool} onPress={onSelect} />
           </Grid>
         </Grid.Container>
@@ -236,65 +238,105 @@ export default function CreateProduct () {
   }
 
   const calculateAssetAmountByPercentage = (asset: string, percentage: number) => {
-    const supplyInput = Number(inputAssetSupplyByPercentage.value)
-    const supplyInputUSD = supplyInput * (prices.find(p => p.assetSymbol === assetSupplyInputByPercentage)?.price || 0)
+    const supplyInput = Number(assetTotalSupply.input.value)
+    const supplyInputUSD = supplyInput * getPrice(assetTotalSupply.asset.symbol)
     const assetAmountUDS = (supplyInputUSD * percentage) / 100
     const assetAmount = assetAmountUDS / (prices.find(p => p.assetSymbol === asset)?.price || 0)
     return assetAmount
   }
 
   const calculateAssetAmountUSDByPercentage = (asset: string, percentage: number) => {
-    const supplyInput = Number(inputAssetSupplyByPercentage.value)
-    const supplyInputUSD = supplyInput * (prices.find(p => p.assetSymbol === assetSupplyInputByPercentage)?.price || 0)
+    const supplyInput = Number(assetTotalSupply.input.value)
+    const supplyInputUSD = supplyInput * getPrice(assetTotalSupply.asset.symbol)
     const assetAmountUDS = (supplyInputUSD * percentage) / 100
     return assetAmountUDS
   }
 
+  // use effect to check errors
+  useEffect(() => {
+    checkErrorStableQuota()
+    style === StyleType.BY_PERCENTAGE && checkErrorPercentage()
+  }, [asset1, asset2, asset3, asset4, assetTotalSupply, convertAuto, style])
+
+  const hasErrors = () => {
+    return (
+      hasErrorStableQuota ||
+      hasErrorPercentage
+    )
+  }
+
+  const checkErrorPercentage = () => {
+    const percentage1 = Number(asset1.input.value)
+    const percentage2 = Number(asset2.input.value)
+    const percentage3 = Number(asset3.input.value)
+    const percentage4 = Number(asset4.input.value)
+    const totalPercentage = percentage1 + percentage2 + percentage3 + percentage4
+    const hasError = totalPercentage !== 100 && totalPercentage !== 0
+    setHasErrorPercentage(hasError)
+  }
+
+  const checkErrorStableQuota = () => {
+    setHasErrorStableQuota(!convertAuto)
+  }
+
+  const errorDetails = () => {
+    return (
+      <>
+        {hasErrorStableQuota && <Text size={16} color='error'>Your investment must have at least 5% stablecoins</Text>}
+        {hasErrorPercentage && <Text size={16} color='error'>The total percentage must be 100%</Text>}
+      </>
+    )
+  }
+
+  const calculateInputStableAmount = () => {
+    return 100
+  }
+
   const PoolPercentageInput = (
-    asset: string,
-    value:string,
-    onChange: (event: BindingsChangeTarget) => void,
-    onSelect: (pool: PoolType) => void,
-    label?: string
+    assetInput: AssetInput,
+    onSelect: (pool: PoolType) => void
   ) => {
-    const pool = getPoolBySymbol(asset)!
-    const supplyAvailable = balances.find(b => b.assetSymbol === assetSupplyInputByPercentage)?.amount || 0
-    const supplyInput = Number(inputAssetSupplyByPercentage.value)
-    const assetAmount = calculateAssetAmountByPercentage(asset, Number(value))
-    const assetAmountUDS = calculateAssetAmountUSDByPercentage(asset, Number(value))
+    const pool = getPoolBySymbol(assetInput.asset.symbol)!
+    const assetAmount = calculateAssetAmountByPercentage(assetInput.asset.symbol, Number(assetInput.input.value))
+    const assetAmountUDS = calculateAssetAmountUSDByPercentage(assetInput.asset.symbol, Number(assetInput.input.value))
     const assetAmountString = abbreviateNumber(assetAmount, 2)
     const assetAmountUSDString = abbreviateNumber(assetAmountUDS, 2)
+    const handleOnChange = (e: BindingsChangeTarget) => {
+      assetInput.input.bindings.onChange(e)
+      setAsset1({ ...asset1, input: { ...assetInput.input, value: assetInput.input.currentRef.current } })
+    }
+    const value = Number(assetInput.input.value)
 
     return (
-      <Card key={pool.pool} css={{ $$cardColor: '$colors$gray100', m: '4px 0px' }}>
-        <Grid.Container justify='center' css={{ p: '8px' }}>
-          <Grid xs={6}>
+      <Card key={pool.pool} css={{ $$cardColor: '$colors$gray100', m: '8px 0px' }}>
+        <Grid.Container justify='center' css={{ p: '16px' }}>
+          <Grid xs={6} css={{ d: 'flex', flexDirection: 'column' }}>
             <Grid.Container>
               <Grid xs={6} css={{ d: 'flex', flexDirection: 'column' }}>
                 <Text size={14} css={{ color: '$kondorGray' }}>{pool.pool} %</Text>
                 <Input
-                  {...{ value, onChange }}
+                  value={assetInput.input.value}
+                  onChange={handleOnChange}
                   placeholder='0.00'
-                  color={Number(value) > 100 ? 'error' : 'default'}
                 />
               </Grid>
             </Grid.Container>
+            <Container display='flex' justify='flex-start' css={{ p: 0 }}>
+              {value > 100
+                ? <Text size={14} b css={{ color: '$error' }}>Percentage must be less than 100</Text>
+                : (
+                  <>
+                    <Text size={14} css={{ color: '$kondorGray' }}>≈{assetAmountString} {pool.pool} </Text>
+                    <Spacer x={1} />
+                    <Text size={14} css={{ color: '$kondorGray' }}>≈{assetAmountUSDString} USD</Text>
+                  </>
+                  )}
+            </Container>
           </Grid>
           <Grid xs={2} />
-          <Grid xs={4} css={{ d: 'flex', alignItems: 'center' }}>
+          <Grid xs={4} css={{ d: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
             <PoolSelect pool={pool} onPress={onSelect} />
           </Grid>
-          <Container display='flex' justify='flex-start' css={{ p: 0 }}>
-            {Number(value) > 100
-              ? <Text size={14} b css={{ color: '$error' }}>Percentage must be less than 100</Text>
-              : (
-                <>
-                  <Text size={14} css={{ color: '$kondorGray' }}>≈{assetAmountString} {pool.pool} </Text>
-                  <Spacer x={1} />
-                  <Text size={14} css={{ color: '$kondorGray' }}>≈{assetAmountUSDString} USD</Text>
-                </>
-                )}
-          </Container>
         </Grid.Container>
       </Card>
     )
@@ -302,16 +344,10 @@ export default function CreateProduct () {
   const getInputsByAmount = () => {
     return (
       <>
-        {PoolInput(assetInput1, input1.bindings.value, input1.bindings.onChange, handlePoolSelectButton1)}
-        {inputsAmount > 1 ? PoolInput(assetInput2, input2.bindings.value, input2.bindings.onChange, handlePoolSelectButton2) : null}
-        {inputsAmount > 2 ? PoolInput(assetInput3, input3.bindings.value, input3.bindings.onChange, handlePoolSelectButton3) : null}
-        {inputsAmount > 3 ? PoolInput(assetInput4, input4.bindings.value, input4.bindings.onChange, handlePoolSelectButton4) : null}
-        <Container display='flex' justify='center' css={{ p: 0 }}>
-          {inputsAmount > 1
-            ? <Button bordered rounded onPress={() => handleRemoveInputButton()} css={{ minWidth: '40px', width: '40px', m: '4px', borderColor: '$kondorPrimary', color: '$kondorPrimary' }}>-</Button>
-            : null}
-          <Button bordered rounded onPress={() => handleAddInputButton()} css={{ minWidth: '40px', width: '40px', m: '4px', borderColor: '$kondorPrimary', color: '$kondorPrimary' }}>+</Button>
-        </Container>
+        {PoolInput(asset1, setAsset1, handlePoolSelectButton1)}
+        {inputsAmount > 1 ? PoolInput(asset2, setAsset2, handlePoolSelectButton2) : null}
+        {inputsAmount > 2 ? PoolInput(asset3, setAsset3, handlePoolSelectButton3) : null}
+        {inputsAmount > 3 ? PoolInput(asset4, setAsset4, handlePoolSelectButton4) : null}
       </>
     )
   }
@@ -320,54 +356,49 @@ export default function CreateProduct () {
     return (
       <>
         {PoolInput(
-          assetSupplyInputByPercentage,
-          inputAssetSupplyByPercentage.bindings.value,
-          inputAssetSupplyByPercentage.bindings.onChange,
-          handlePoolSelectButtonAssetSupply,
-          'Total investment amount'
+          assetTotalSupply,
+          setAssetTotalSupply,
+          handlePoolSelectButtonAssetSupply
         )}
         <Spacer y={1} />
         <Text size={14} css={{ color: '$kondorGray' }}>Enter the percentages</Text>
         {PoolPercentageInput(
-          assetPercentageInput1,
-          inputPercentage1.bindings.value,
-          inputPercentage1.bindings.onChange,
-          handlePoolSelectButtonPercentage1
+          asset1,
+          handlePoolSelectButton1
         )}
         {
           inputsAmount > 1
             ? PoolPercentageInput(
-              assetPercentageInput2,
-              inputPercentage2.bindings.value,
-              inputPercentage2.bindings.onChange,
-              handlePoolSelectButtonPercentage2)
+              asset2,
+              handlePoolSelectButton2)
             : null
         }
         {
           inputsAmount > 2
             ? PoolPercentageInput(
-              assetPercentageInput3,
-              inputPercentage3.bindings.value,
-              inputPercentage3.bindings.onChange,
-              handlePoolSelectButtonPercentage3)
+              asset3,
+              handlePoolSelectButton3)
             : null
         }
         {
           inputsAmount > 3
             ? PoolPercentageInput(
-              assetPercentageInput4,
-              inputPercentage4.bindings.value,
-              inputPercentage4.bindings.onChange,
-              handlePoolSelectButtonPercentage4)
+              asset4,
+              handlePoolSelectButton4)
             : null
         }
-        <Container display='flex' justify='center' css={{ p: 0 }}>
-          {inputsAmount > 1
-            ? <Button bordered rounded onPress={() => handleRemoveInputButton()} css={{ minWidth: '40px', width: '40px', m: '4px', borderColor: '$kondorPrimary', color: '$kondorPrimary' }}>-</Button>
-            : null}
-          <Button bordered rounded onPress={() => handleAddInputButton()} css={{ minWidth: '40px', width: '40px', m: '4px', borderColor: '$kondorPrimary', color: '$kondorPrimary' }}>+</Button>
-        </Container>
       </>
+    )
+  }
+
+  const getAmountInputsControler = () => {
+    return (
+      <Container display='flex' justify='center' css={{ p: 0 }}>
+        {inputsAmount > 1
+          ? <Button bordered rounded onPress={() => handleRemoveInputButton()} css={{ minWidth: '40px', width: '40px', m: '4px', borderColor: '$kondorPrimary', color: '$kondorPrimary' }}>-</Button>
+          : null}
+        <Button bordered rounded onPress={() => handleAddInputButton()} css={{ minWidth: '40px', width: '40px', m: '4px', borderColor: '$kondorPrimary', color: '$kondorPrimary' }}>+</Button>
+      </Container>
     )
   }
 
@@ -386,20 +417,20 @@ export default function CreateProduct () {
   }
 
   const getResumeByPercentage = () => {
-    const assetSupply = Number(inputAssetSupplyByPercentage.bindings.value)
-    const percentage1 = Number(inputPercentage1.bindings.value)
-    const percentage2 = Number(inputPercentage2.bindings.value)
-    const percentage3 = Number(inputPercentage3.bindings.value)
-    const percentage4 = Number(inputPercentage4.bindings.value)
+    const assetSupply = Number(assetTotalSupply.input.value)
+    const percentage1 = Number(asset1.input.value)
+    const percentage2 = Number(asset2.input.value)
+    const percentage3 = Number(asset3.input.value)
+    const percentage4 = Number(asset4.input.value)
     const totalPercentage = percentage1 + percentage2 + percentage3 + percentage4
-    const assetAmount1 = calculateAssetAmountByPercentage(assetPercentageInput1, percentage1)
-    const assetAmount2 = calculateAssetAmountByPercentage(assetPercentageInput2, percentage2)
-    const assetAmount3 = calculateAssetAmountByPercentage(assetPercentageInput3, percentage3)
-    const assetAmount4 = calculateAssetAmountByPercentage(assetPercentageInput4, percentage4)
-    const assetAmountUSD1 = calculateAssetAmountUSDByPercentage(assetPercentageInput1, percentage1)
-    const assetAmountUSD2 = calculateAssetAmountUSDByPercentage(assetPercentageInput2, percentage2)
-    const assetAmountUSD3 = calculateAssetAmountUSDByPercentage(assetPercentageInput3, percentage3)
-    const assetAmountUSD4 = calculateAssetAmountUSDByPercentage(assetPercentageInput4, percentage4)
+    const assetAmount1 = calculateAssetAmountByPercentage(asset1.asset.symbol, percentage1)
+    const assetAmount2 = calculateAssetAmountByPercentage(asset2.asset.symbol, percentage2)
+    const assetAmount3 = calculateAssetAmountByPercentage(asset3.asset.symbol, percentage3)
+    const assetAmount4 = calculateAssetAmountByPercentage(asset4.asset.symbol, percentage4)
+    const assetAmountUSD1 = calculateAssetAmountUSDByPercentage(asset1.asset.symbol, percentage1)
+    const assetAmountUSD2 = calculateAssetAmountUSDByPercentage(asset2.asset.symbol, percentage2)
+    const assetAmountUSD3 = calculateAssetAmountUSDByPercentage(asset3.asset.symbol, percentage3)
+    const assetAmountUSD4 = calculateAssetAmountUSDByPercentage(asset4.asset.symbol, percentage4)
 
     if (totalPercentage !== 100 && totalPercentage !== 0) {
       return (
@@ -411,23 +442,36 @@ export default function CreateProduct () {
       )
     }
     return (
-      <Collapse.Group css={{ fontSize: '$xs' }}>
-        <Collapse title='Resume' css={{ fontSize: '$xs' }}>
+      <Collapse.Group css={{ fontSize: '$xs', p: 0 }}>
+        <Collapse title='Summary' css={{ fontSize: '$xs' }}>
           <Container css={{ p: 0 }}>
             <Container css={{ p: 0 }} display='flex' justify='space-between'>
               <Text size={16} css={{ color: '$kondorLigth' }}>Total investment amount</Text>
-              <Text size={14} css={{ color: '$kondorLight' }}>{assetSupply} {assetSupplyInputByPercentage}</Text>
+              <Text size={14} css={{ color: '$kondorLight' }}>{assetSupply} {assetTotalSupply.asset.symbol}</Text>
             </Container>
             <Container css={{ p: 0 }} display='flex' justify='space-between'>
               <Text size={16} css={{ color: '$kondorLigth' }}>Your investment will be divided into: </Text>
             </Container>
-            {getResumeDetailByAsset(assetPercentageInput1, assetAmount1, assetAmountUSD1, percentage1)}
-            {inputsAmount > 1 ? getResumeDetailByAsset(assetPercentageInput2, assetAmount2, assetAmountUSD2, percentage2) : null}
-            {inputsAmount > 2 ? getResumeDetailByAsset(assetPercentageInput3, assetAmount3, assetAmountUSD3, percentage3) : null}
-            {inputsAmount > 3 ? getResumeDetailByAsset(assetPercentageInput4, assetAmount4, assetAmountUSD4, percentage4) : null}
+            {getResumeDetailByAsset(asset1.asset.symbol, assetAmount1, assetAmountUSD1, percentage1)}
+            {inputsAmount > 1 ? getResumeDetailByAsset(asset2.asset.symbol, assetAmount2, assetAmountUSD2, percentage2) : null}
+            {inputsAmount > 2 ? getResumeDetailByAsset(asset3.asset.symbol, assetAmount3, assetAmountUSD3, percentage3) : null}
+            {inputsAmount > 3 ? getResumeDetailByAsset(asset4.asset.symbol, assetAmount4, assetAmountUSD4, percentage4) : null}
           </Container>
         </Collapse>
       </Collapse.Group>
+    )
+  }
+
+  const getConfirmButton = () => {
+    return (
+      <Button
+        onPress={() => handleCreateButton()}
+        bordered
+        disabled={hasErrors()}
+        rounded
+        css={{ width: '100%', m: '4px 0', borderColor: '$kondorPrimary', color: '$white' }}
+      >Create
+      </Button>
     )
   }
 
@@ -447,7 +491,7 @@ export default function CreateProduct () {
           label='Select style'
           defaultValue='byAmount'
           size='xs'
-          onChange={(value) => { setStyle(value as StyleType) }}
+          onChange={(value) => { handleStyleChange(value as StyleType) }}
         >
           <Radio value={StyleType.BY_AMOUNT} size='xs'>
             By amount
@@ -458,14 +502,14 @@ export default function CreateProduct () {
         </Radio.Group>
         <Spacer y={1} />
         {style === StyleType.BY_AMOUNT ? getInputsByAmount() : getInputsByPercentage()}
-        {style === StyleType.BY_AMOUNT ? null : getResumeByPercentage()}
-        <Button
-          onPress={() => handleCreateButton()}
-          bordered
-          rounded
-          css={{ width: '100%', m: '4px 0', borderColor: '$kondorPrimary', color: '$white' }}
-        >Create
-        </Button>
+        <Spacer y={1} />
+        {getAmountInputsControler()}
+        <Spacer y={1} />
+        <Checkbox size='xs' isSelected={convertAuto} onChange={setConvertAuto}>Convert 5% to stablecoin automatically if needed</Checkbox>
+        {errorDetails()}
+        {style === StyleType.BY_PERCENTAGE && !hasErrors() ? getResumeByPercentage() : null}
+        <Spacer y={1} />
+        {getConfirmButton()}
       </Container>
       <ConfirmModal
         isVisible={confirmModalIsvisible}
@@ -475,28 +519,28 @@ export default function CreateProduct () {
       >
         <>
           <Container css={{ p: 0 }} display='flex' justify='space-between'>
-            <Text size={16} css={{ color: '$kondorGray' }}>{getAsset1Input().asset} to be added</Text>
-            <Text>{abbreviateNumber(getAsset1Input().amount, 4)} {getAsset1Input().asset}</Text>
+            <Text size={16} css={{ color: '$kondorGray' }}>{asset1.asset.symbol} to be added</Text>
+            <Text>{abbreviateNumber(Number(asset1.input.value), 4)} {asset1.asset.symbol}</Text>
           </Container>
           {inputsAmount > 1
             ? (
               <Container css={{ p: 0 }} display='flex' justify='space-between'>
-                <Text size={16} css={{ color: '$kondorGray' }}>{getAsset2Input().asset} to be added</Text>
-                <Text>{abbreviateNumber(getAsset2Input().amount, 4)} {getAsset2Input().asset}</Text>
+                <Text size={16} css={{ color: '$kondorGray' }}>{asset2.asset.symbol} to be added</Text>
+                <Text>{abbreviateNumber(Number(asset2.input.value), 4)} {asset2.asset.symbol}</Text>
               </Container>)
             : null}
           {inputsAmount > 2
             ? (
               <Container css={{ p: 0 }} display='flex' justify='space-between'>
-                <Text size={16} css={{ color: '$kondorGray' }}>{getAsset3Input().asset} to be added</Text>
-                <Text>{abbreviateNumber(getAsset3Input().amount)} {getAsset3Input().asset}</Text>
+                <Text size={16} css={{ color: '$kondorGray' }}>{asset3.asset.symbol} to be added</Text>
+                <Text>{abbreviateNumber(Number(asset3.input.value), 4)} {asset3.asset.symbol}</Text>
               </Container>)
             : null}
           {inputsAmount > 3
             ? (
               <Container css={{ p: 0 }} display='flex' justify='space-between'>
-                <Text size={16} css={{ color: '$kondorGray' }}>{getAsset4Input().asset} to be added</Text>
-                <Text>{abbreviateNumber(getAsset4Input().amount, 4)} {getAsset4Input().asset}</Text>
+                <Text size={16} css={{ color: '$kondorGray' }}>{asset4.asset.symbol} to be added</Text>
+                <Text>{abbreviateNumber(Number(asset4.input.value), 4)} {asset4.asset.symbol}</Text>
               </Container>)
             : null}
           <Container css={{ p: 0 }} display='flex' justify='space-between'>

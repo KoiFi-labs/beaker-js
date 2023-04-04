@@ -43,6 +43,36 @@ export const assetsConfig: AssetsConfig = {
       name: 'bgoBTC',
       symbol: 'bgoBTC',
       icon: 'https://assets.algoexplorer.io/asset-logo-465818547.image'
+    },
+    {
+      id: 7897456,
+      name: 'OPULUS',
+      symbol: 'OPUL',
+      icon: 'https://assets.algoexplorer.io/asset-logo-465818547.image'
+    },
+    {
+      id: 465318554,
+      name: 'XET',
+      symbol: 'XET',
+      icon: 'https://assets.algoexplorer.io/asset-logo-465818547.image'
+    },
+    {
+      id: 465418554,
+      name: 'ARCC',
+      symbol: 'ARCC',
+      icon: 'https://assets.algoexplorer.io/asset-logo-465818547.image'
+    },
+    {
+      id: 465518554,
+      name: 'OBA',
+      symbol: 'OBA',
+      icon: 'https://assets.algoexplorer.io/asset-logo-465818547.image'
+    },
+    {
+      id: 465718554,
+      name: 'PLANET',
+      symbol: 'PLANET',
+      icon: 'https://assets.algoexplorer.io/asset-logo-465818547.image'
     }
   ],
   mainnet: [

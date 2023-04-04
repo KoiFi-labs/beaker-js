@@ -16,7 +16,7 @@ import { config } from '../../../config'
 
 enum StyleType {
   ALIQUOT = 'aliquot',
-  FREE = 'free',
+  CUSTOM = 'custom',
   ASSET_A = 'asset_a',
   ASSET_B = 'asset_b'
 }
@@ -183,7 +183,7 @@ export default function AddLiquidityPool () {
   const getInputs = () => {
     switch (style) {
       case StyleType.ALIQUOT:
-      case StyleType.FREE:
+      case StyleType.CUSTOM:
         return (
           <>
             <Container css={{ p: '16px 0px 8px 0px' }}>
@@ -262,8 +262,8 @@ export default function AddLiquidityPool () {
           <Radio value={StyleType.ALIQUOT} size='xs'>
             Aliquot
           </Radio>
-          <Radio value={StyleType.FREE} size='xs'>
-            Free
+          <Radio value={StyleType.CUSTOM} size='xs'>
+            Custom
           </Radio>
           <Radio value={StyleType.ASSET_A} size='xs'>
             {assetInput1.toUpperCase()}
