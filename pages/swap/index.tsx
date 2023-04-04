@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Button, Text, Container, Card, Grid, useInput, Loading, Spacer } from '@nextui-org/react'
-import { Input } from '../../src/components/LighInput/LigthInput'
+import { LigthInput } from '../../src/components/LighInput/LigthInput'
 import { Asset } from '../../config/Assets'
 import { config } from '../../config'
 import AssetSelect from '../../src/components/AssetSelect/AssetSelect'
@@ -168,7 +168,7 @@ export default function Swap () {
           <Card css={{ p: '16px' }}>
             <Grid.Container justify='center' css={{ p: 0 }}>
               <Grid xs={8} css={{ d: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-                <Input
+                <LigthInput
                   aria-label='Amount to sell'
                   onChange={onChangeSellInput}
                   value={sellInput.value}
@@ -203,7 +203,7 @@ export default function Swap () {
           <Card css={{ p: '16px' }}>
             <Grid.Container justify='center'>
               <Grid xs={8} css={{ d: 'flex', flexDirection: 'column' }}>
-                <Input
+                <LigthInput
                   aria-label='Amount to buy'
                   onChange={onChangeBuyInput}
                   value={buyInput.value}
