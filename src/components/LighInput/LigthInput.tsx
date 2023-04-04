@@ -1,6 +1,6 @@
 import { styled } from '@nextui-org/react'
 
-export const Input = styled('input', {
+export const LigthInput = styled('input', {
   background: 'transparent',
   border: 'none',
   fontSize: '20px',

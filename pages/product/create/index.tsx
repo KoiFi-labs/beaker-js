@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
-import { Button, Text, Container, Card, Grid, useInput, Radio, Spacer, Collapse, Checkbox } from '@nextui-org/react'
-import { Input } from '../../../src/components/Input/Input'
+import { Button, Text, Container, Card, Grid, useInput, Radio, Spacer, Collapse, Checkbox, Input } from '@nextui-org/react'
+import { LigthInput } from '../../../src/components/LighInput/LigthInput'
 import PoolSelect from '../../../src/components/PoolSelect/PoolSelect'
 import { PoolType, getPoolBySymbol } from '../../../src/services/poolService'
 import { useState, useEffect, Dispatch, MutableRefObject, SetStateAction } from 'react'
@@ -47,6 +47,7 @@ export default function CreateProduct () {
   const [hasErrorStableQuota, setHasErrorStableQuota] = useState<boolean>(false)
   const [hasErrorPercentage, setHasErrorPercentage] = useState<boolean>(false)
   const [prices, setPrices] = useState<Price[]>([])
+  const nameInput = useInput('')
   const [asset1, setAsset1] = useState<AssetInput>({
     asset: assets[0],
     input: useInput('')
@@ -175,7 +176,7 @@ export default function CreateProduct () {
     setSendingTransactionModalIsVisible(true)
     await sleep(3000)
     const inputsList = [asset1, asset2, asset3, asset4].slice(0, inputsAmount)
-    const name = inputsList.map(i => i.asset.name).join('/')
+    const name = nameInput.value || inputsList.map(i => i.asset.symbol).join('/')
     await createProduct({
       name,
       id: Math.ceil(Math.random() * 9999999),
@@ -219,10 +220,10 @@ export default function CreateProduct () {
       setAsset({ ...assetInput, input: { ...assetInput.input, value: assetInput.input.currentRef.current } })
     }
     return (
-      <Card key={`${pool.pool}${Math.random}`} css={{ $$cardColor: '$colors$gray100', m: '8px 0px' }}>
+      <Card key={`${pool.pool}${Math.random}`} css={{ $$cardColor: '$colors$gray50', m: '8px 0px' }}>
         <Grid.Container justify='center' css={{ p: '16px' }}>
           <Grid xs={8} css={{ d: 'flex', flexDirection: 'column' }}>
-            <Input
+            <LigthInput
               value={assetInput.input.currentRef.current}
               onChange={onChange}
               placeholder='0.00'
@@ -309,13 +310,13 @@ export default function CreateProduct () {
     const value = Number(assetInput.input.value)
 
     return (
-      <Card key={pool.pool} css={{ $$cardColor: '$colors$gray100', m: '8px 0px' }}>
+      <Card key={pool.pool} css={{ $$cardColor: '$colors$gray50', m: '8px 0px' }}>
         <Grid.Container justify='center' css={{ p: '16px' }}>
           <Grid xs={6} css={{ d: 'flex', flexDirection: 'column' }}>
             <Grid.Container>
               <Grid xs={6} css={{ d: 'flex', flexDirection: 'column' }}>
                 <Text size={14} css={{ color: '$kondorGray' }}>{pool.pool} %</Text>
-                <Input
+                <LigthInput
                   value={assetInput.input.currentRef.current}
                   onChange={onChange}
                   placeholder='0.00'
@@ -467,6 +468,18 @@ export default function CreateProduct () {
     )
   }
 
+  const getNameInput = () => {
+    const handleNameInput = nameInput.bindings.onChange
+    return (
+      <Input
+        labelPlaceholder='Name'
+        value={nameInput.bindings.value}
+        onChange={handleNameInput}
+        css={{ width: '100%', m: '4px 0', color: '#245789' }}
+      />
+    )
+  }
+
   const getConfirmButton = () => {
     return (
       <Button
@@ -490,7 +503,9 @@ export default function CreateProduct () {
       }}
       >
         <Text h1>Create product</Text>
-        <Spacer y={0.5} />
+        <Spacer y={1} />
+        {getNameInput()}
+        <Spacer y={1} />
         <Radio.Group
           orientation='horizontal'
           label='Select style'

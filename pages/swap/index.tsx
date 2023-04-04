@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Button, Text, Container, Card, Grid, useInput, Loading, Spacer } from '@nextui-org/react'
-import { Input } from '../../src/components/Input/Input'
+import { Input } from '../../src/components/LighInput/LigthInput'
 import { Asset } from '../../config/Assets'
 import { config } from '../../config'
 import AssetSelect from '../../src/components/AssetSelect/AssetSelect'
