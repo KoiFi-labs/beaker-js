@@ -252,10 +252,10 @@ export default function CreateProduct () {
     return assetAmountUDS
   }
 
-  // use effect to check errors
   useEffect(() => {
     checkErrorStableQuota()
     style === StyleType.BY_PERCENTAGE && checkErrorPercentage()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [asset1, asset2, asset3, asset4, assetTotalSupply, convertAuto, style])
 
   const hasErrors = () => {
@@ -294,6 +294,7 @@ export default function CreateProduct () {
 
   const PoolPercentageInput = (
     assetInput: AssetInput,
+    setAsset: (asset: AssetInput) => void,
     onSelect: (pool: PoolType) => void
   ) => {
     const pool = getPoolBySymbol(assetInput.asset.symbol)!
@@ -301,9 +302,9 @@ export default function CreateProduct () {
     const assetAmountUDS = calculateAssetAmountUSDByPercentage(assetInput.asset.symbol, Number(assetInput.input.value))
     const assetAmountString = abbreviateNumber(assetAmount, 2)
     const assetAmountUSDString = abbreviateNumber(assetAmountUDS, 2)
-    const handleOnChange = (e: BindingsChangeTarget) => {
+    const onChange = (e: BindingsChangeTarget) => {
       assetInput.input.bindings.onChange(e)
-      setAsset1({ ...asset1, input: { ...assetInput.input, value: assetInput.input.currentRef.current } })
+      setAsset({ ...assetInput, input: { ...assetInput.input, value: assetInput.input.currentRef.current } })
     }
     const value = Number(assetInput.input.value)
 
@@ -315,8 +316,8 @@ export default function CreateProduct () {
               <Grid xs={6} css={{ d: 'flex', flexDirection: 'column' }}>
                 <Text size={14} css={{ color: '$kondorGray' }}>{pool.pool} %</Text>
                 <Input
-                  value={assetInput.input.value}
-                  onChange={handleOnChange}
+                  value={assetInput.input.currentRef.current}
+                  onChange={onChange}
                   placeholder='0.00'
                 />
               </Grid>
@@ -364,12 +365,14 @@ export default function CreateProduct () {
         <Text size={14} css={{ color: '$kondorGray' }}>Enter the percentages</Text>
         {PoolPercentageInput(
           asset1,
+          setAsset1,
           handlePoolSelectButton1
         )}
         {
           inputsAmount > 1
             ? PoolPercentageInput(
               asset2,
+              setAsset2,
               handlePoolSelectButton2)
             : null
         }
@@ -377,6 +380,7 @@ export default function CreateProduct () {
           inputsAmount > 2
             ? PoolPercentageInput(
               asset3,
+              setAsset3,
               handlePoolSelectButton3)
             : null
         }
@@ -384,6 +388,7 @@ export default function CreateProduct () {
           inputsAmount > 3
             ? PoolPercentageInput(
               asset4,
+              setAsset4,
               handlePoolSelectButton4)
             : null
         }
