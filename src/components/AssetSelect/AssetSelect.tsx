@@ -1,7 +1,8 @@
 import React, { useState } from 'react'
-import { Button, Grid, Image, Text, Avatar } from '@nextui-org/react'
+import { Button, Spacer, Image, Text } from '@nextui-org/react'
 import { Asset } from '../../../config/Assets'
 import AssetSelectModal from '../modules/Modals/AssetSelectModal'
+import { RiArrowDropDownLine } from 'react-icons/ri'
 
 export type AssetSelectProps = {
     asset: Asset,
@@ -17,18 +18,11 @@ const AssetSelect = ({ asset, onPress }: AssetSelectProps) => {
 
   return (
     <>
-      <Button onPress={handlerButton} rounded css={{ minWidth: '40px', width: '100px', background: '$gray300', maxWidth: '95px', padding: 0 }}>
-        <Grid.Container css={{ padding: 0, width: '100%' }}>
-          <Grid xs={3} css={{ padding: '8px 0px 0px 0px' }}>
-            <Avatar size='xs' src={asset.icon} />
-          </Grid>
-          <Grid xs={6} css={{ padding: '5px' }}>
-            <Text size={15}>{asset.symbol}</Text>
-          </Grid>
-          <Grid xs={3} css={{ padding: '5px' }}>
-            <Image alt='icon' src='https://cdn-icons-png.flaticon.com/512/32/32195.png' css={{ maxWidth: '10px' }} />
-          </Grid>
-        </Grid.Container>
+      <Button onPress={handlerButton} rounded css={{ bg: '$gray300', d: 'flex', width: 'auto', minWidth: '80px', p: '8px' }}>
+        <Image src={asset.icon} alt={`${asset.symbol} logo`} css={{ height: '28px', width: '28px', maxWidth: '28px', borderRadius: '50%', bgColor: '$white' }} />
+        <Spacer x={0.5} />
+        <Text size={16}>{asset.symbol}</Text>
+        <RiArrowDropDownLine size={36} />
       </Button>
       <AssetSelectModal isVisible={assetSelectModalVisible} onPress={onPress} onHide={() => { setAssetSelectModalVisible(false) }} />
     </>

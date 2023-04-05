@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { Button, Text, Container, Card, Grid, useInput, Radio, Spacer, Collapse, Checkbox, Input } from '@nextui-org/react'
+import { Button, Text, Container, Card, Grid, useInput, Radio, Spacer, Collapse, Checkbox, Input, Modal } from '@nextui-org/react'
 import { LigthInput } from '../../../src/components/LighInput/LigthInput'
 import PoolSelect from '../../../src/components/PoolSelect/PoolSelect'
 import { PoolType, getPoolBySymbol } from '../../../src/services/poolService'
@@ -13,6 +13,8 @@ import { createProduct, getBalances, getPrices } from '../../../src/services/moc
 import { Balance, Price } from '../../../interfaces'
 import { BindingsChangeTarget } from '@nextui-org/react/types/use-input/use-input'
 import { Asset, config } from '../../../config'
+import { BiInfoCircle } from 'react-icons/bi'
+import { IconButton } from '../../../src/components/IconButton/IconButton'
 
 const assets = config.assetList
 
@@ -46,6 +48,7 @@ export default function CreateProduct () {
   const [convertAuto, setConvertAuto] = useState<boolean>(false)
   const [hasErrorStableQuota, setHasErrorStableQuota] = useState<boolean>(false)
   const [hasErrorPercentage, setHasErrorPercentage] = useState<boolean>(false)
+  const [infoStableModalIsVisible, setInfoStableModalIsVisible] = useState<boolean>(false)
   const [prices, setPrices] = useState<Price[]>([])
   const nameInput = useInput('')
   const [asset1, setAsset1] = useState<AssetInput>({
@@ -61,11 +64,11 @@ export default function CreateProduct () {
     input: useInput('')
   })
   const [asset4, setAsset4] = useState<AssetInput>({
-    asset: assets[3],
+    asset: assets[2],
     input: useInput('')
   })
   const [assetTotalSupply, setAssetTotalSupply] = useState<AssetInput>({
-    asset: assets[0],
+    asset: assets[3],
     input: useInput('')
   })
 
@@ -115,21 +118,20 @@ export default function CreateProduct () {
   }, [])
 
   const handleRemoveInputButton = () => {
-    if (inputsAmount === 1) return
-    setInputsAmount(inputsAmount - 1)
-    if (style === StyleType.BY_PERCENTAGE) {
-      switch (inputsAmount) {
-        case 2:
-          asset1.input.setValue('')
-          break
-        case 3:
-          asset2.input.setValue('')
-          break
-        case 4:
-          asset3.input.setValue('')
-          break
-      }
+    switch (inputsAmount) {
+      case 1:
+        return
+      case 2:
+        asset1.input.setValue('')
+        break
+      case 3:
+        asset2.input.setValue('')
+        break
+      case 4:
+        asset3.input.setValue('')
+        break
     }
+    setInputsAmount(inputsAmount - 1)
   }
 
   const handleAddInputButton = () => {
@@ -283,7 +285,7 @@ export default function CreateProduct () {
   const errorDetails = () => {
     return (
       <>
-        {hasErrorStableQuota && <Text size={16} color='error'>Your investment must have at least 5% stablecoins</Text>}
+        {hasErrorStableQuota && <Text size={16} color='error'>Your investment must have at least 5% in our Stable Pool (USDC - USTD)</Text>}
         {hasErrorPercentage && <Text size={16} color='error'>The total percentage must be 100%</Text>}
       </>
     )
@@ -472,11 +474,50 @@ export default function CreateProduct () {
     const handleNameInput = nameInput.bindings.onChange
     return (
       <Input
-        labelPlaceholder='Name'
+        labelPlaceholder='Prouct name'
+        size='lg'
         value={nameInput.bindings.value}
         onChange={handleNameInput}
         css={{ width: '100%', m: '4px 0', color: '#245789' }}
       />
+    )
+  }
+
+  const getStableDetails = () => {
+    return (
+      <Grid.Container>
+        <Grid xs={10}>
+          <Checkbox size='xs' isSelected={convertAuto} onChange={setConvertAuto}>Convert 5% to stablecoin (2.5% USDC - 2.5% USDT) automatically if needed</Checkbox>
+        </Grid>
+        <Grid xs={2} css={{ d: 'flex', justifyContent: 'flex-end' }}>
+          <IconButton onClick={() => { setInfoStableModalIsVisible(true) }}>
+            <BiInfoCircle size={24} />
+          </IconButton>
+        </Grid>
+        <Modal
+          closeButton
+          aria-labelledby='infoStableModal'
+          open={infoStableModalIsVisible}
+          onClose={() => { setInfoStableModalIsVisible(false) }}
+          css={{
+            m: '16px',
+            bgColor: '$black',
+            border: '1px solid $kondorLigth'
+          }}
+        >
+          <Text b size={20} css={{ color: '$kondorLigth' }}>Automatic Stablecoin conversion</Text>
+          <Container css={{ p: '16px', textAlign: 'left' }}>
+            <Text size={14} css={{ color: '$kondorLigth' }}>
+              All products need to have at least 5% invested in our USD Stable Pool (2.5% USDC - 2.5% USDT).
+              You can select this option to automatically convert 2.5% to USDT and 2.5% to USDC.
+            </Text>
+            <Text size={14} css={{ color: '$kondorLigth' }}>
+              The amounts of USDT and USDC must be the same.
+              In case they are not, they will be automatically converted to be balanced.
+            </Text>
+          </Container>
+        </Modal>
+      </Grid.Container>
     )
   }
 
@@ -503,7 +544,7 @@ export default function CreateProduct () {
       }}
       >
         <Text h1>Create product</Text>
-        <Spacer y={1} />
+        <Spacer y={1.5} />
         {getNameInput()}
         <Spacer y={1} />
         <Radio.Group
@@ -525,7 +566,8 @@ export default function CreateProduct () {
         <Spacer y={1} />
         {getAmountInputsControler()}
         <Spacer y={1} />
-        <Checkbox size='xs' isSelected={convertAuto} onChange={setConvertAuto}>Convert 5% to stablecoin automatically if needed</Checkbox>
+        {getStableDetails()}
+        <Spacer y={1} />
         {errorDetails()}
         {style === StyleType.BY_PERCENTAGE && !hasErrors() ? getResumeByPercentage() : null}
         <Spacer y={1} />

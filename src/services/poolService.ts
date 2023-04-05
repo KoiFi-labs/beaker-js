@@ -15,19 +15,21 @@ const pools: PoolType[] = [
     volume: 475504,
     total: 451154177,
     apr: 20.4,
-    icon: 'https://cdn.vectorstock.com/i/1000x1000/12/51/algorand-algo-coin-icon-vector-39911251.webp'
+    icon: 'https://cryptologos.cc/logos/usd-coin-usdc-logo.png?v=024'
   },
   {
     id: '2',
     pool: 'USDT',
     volume: 269740,
     total: 3520000,
+    icon: 'https://seeklogo.com/images/T/tether-usdt-logo-FA55C7F397-seeklogo.com.png',
     apr: 10.70,
     myStake: 4854
   },
   {
     id: '3',
     pool: 'PLANET',
+    icon: 'https://assets.algoexplorer.io/asset-logo-27165954.image',
     volume: 102037,
     total: 1430451,
     apr: 7.30,
@@ -38,20 +40,23 @@ const pools: PoolType[] = [
     pool: 'ALGO',
     volume: 237441,
     total: 1237332,
-    apr: 16.02
+    apr: 16.02,
+    icon: 'https://seeklogo.com/images/A/algorand-algo-logo-267E891DCB-seeklogo.com.png'
   },
   {
     id: '5',
     pool: 'OPUL',
     volume: 1500451,
     total: 900420,
-    apr: 3.23
+    apr: 3.23,
+    icon: 'https://assets.algoexplorer.io/asset-logo-287867876.image'
   },
   {
     id: '6',
     pool: 'XET',
     volume: 150000,
     total: 9500047,
+    icon: 'https://assets.algoexplorer.io/asset-logo-283820866.image',
     apr: 6.55
   },
   {
@@ -59,14 +64,32 @@ const pools: PoolType[] = [
     pool: 'ARCC',
     volume: 15000,
     total: 7844266,
-    apr: 9.53
+    apr: 9.53,
+    icon: 'https://assets.algoexplorer.io/asset-logo-465818554.image'
   },
   {
     id: '8',
     pool: 'OBA',
     volume: 174100,
     total: 8555620,
-    apr: 7.96
+    apr: 7.96,
+    icon: 'https://assets.algoexplorer.io/asset-logo-465818554.image'
+  },
+  {
+    id: '9',
+    pool: 'bgoBTC',
+    volume: 150000,
+    total: 9500047,
+    apr: 6.55,
+    icon: 'https://assets.algoexplorer.io/asset-logo-465818554.image'
+  },
+  {
+    id: '10',
+    pool: 'bgoETH',
+    volume: 15000,
+    total: 7844266,
+    apr: 9.53,
+    icon: 'https://assets.algoexplorer.io/asset-logo-465818554.image'
   }
 ]
 
