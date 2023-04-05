@@ -64,11 +64,11 @@ export default function CreateProduct () {
     input: useInput('')
   })
   const [asset4, setAsset4] = useState<AssetInput>({
-    asset: assets[2],
+    asset: assets[3],
     input: useInput('')
   })
   const [assetTotalSupply, setAssetTotalSupply] = useState<AssetInput>({
-    asset: assets[3],
+    asset: assets[0],
     input: useInput('')
   })
 
@@ -224,7 +224,7 @@ export default function CreateProduct () {
     return (
       <Card key={`${pool.pool}${Math.random}`} css={{ $$cardColor: '$colors$gray50', m: '8px 0px' }}>
         <Grid.Container justify='center' css={{ p: '16px' }}>
-          <Grid xs={8} css={{ d: 'flex', flexDirection: 'column' }}>
+          <Grid xs={6} css={{ d: 'flex', flexDirection: 'column' }}>
             <LigthInput
               value={assetInput.input.currentRef.current}
               onChange={onChange}
@@ -232,7 +232,7 @@ export default function CreateProduct () {
             />
             <Text size={14} css={{ color: '$kondorGray' }}>Balance {getBalanceFromPool(pool)} {pool.pool}</Text>
           </Grid>
-          <Grid xs={4} css={{ d: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
+          <Grid xs={6} css={{ d: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
             <PoolSelect pool={pool} onPress={onSelect} />
           </Grid>
         </Grid.Container>
@@ -244,11 +244,11 @@ export default function CreateProduct () {
     const supplyInput = Number(assetTotalSupply.input.value)
     const supplyInputUSD = supplyInput * getPrice(assetTotalSupply.asset.symbol)
     const assetAmountUDS = (supplyInputUSD * percentage) / 100
-    const assetAmount = assetAmountUDS / (prices.find(p => p.assetSymbol === asset)?.price || 0)
+    const assetAmount = getPrice(asset) === 0 ? 0 : assetAmountUDS / getPrice(asset)
     return assetAmount
   }
 
-  const calculateAssetAmountUSDByPercentage = (asset: string, percentage: number) => {
+  const calculateAssetAmountUSDByPercentage = (percentage: number) => {
     const supplyInput = Number(assetTotalSupply.input.value)
     const supplyInputUSD = supplyInput * getPrice(assetTotalSupply.asset.symbol)
     const assetAmountUDS = (supplyInputUSD * percentage) / 100
@@ -302,7 +302,8 @@ export default function CreateProduct () {
   ) => {
     const pool = getPoolBySymbol(assetInput.asset.symbol)!
     const assetAmount = calculateAssetAmountByPercentage(assetInput.asset.symbol, Number(assetInput.input.value))
-    const assetAmountUDS = calculateAssetAmountUSDByPercentage(assetInput.asset.symbol, Number(assetInput.input.value))
+    console.log(assetAmount)
+    const assetAmountUDS = calculateAssetAmountUSDByPercentage(Number(assetInput.input.value))
     const assetAmountString = abbreviateNumber(assetAmount, 2)
     const assetAmountUSDString = abbreviateNumber(assetAmountUDS, 2)
     const onChange = (e: BindingsChangeTarget) => {
@@ -337,8 +338,7 @@ export default function CreateProduct () {
                   )}
             </Container>
           </Grid>
-          <Grid xs={2} />
-          <Grid xs={4} css={{ d: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
+          <Grid xs={6} css={{ d: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
             <PoolSelect pool={pool} onPress={onSelect} />
           </Grid>
         </Grid.Container>
@@ -403,9 +403,43 @@ export default function CreateProduct () {
     return (
       <Container display='flex' justify='center' css={{ p: 0 }}>
         {inputsAmount > 1
-          ? <Button bordered rounded onPress={() => handleRemoveInputButton()} css={{ minWidth: '40px', width: '40px', m: '4px', borderColor: '$kondorPrimary', color: '$kondorPrimary' }}>-</Button>
+          ? (
+            <Button
+              bordered
+              rounded
+              onPress={() => handleRemoveInputButton()}
+              css={{
+                minWidth: '40px',
+                width: '40px',
+                m: '4px',
+                borderColor: '$kondorPrimary',
+                color: '$kondorPrimary',
+                zIndex: 1
+              }}
+            >
+              -
+            </Button>
+            )
           : null}
-        <Button bordered rounded onPress={() => handleAddInputButton()} css={{ minWidth: '40px', width: '40px', m: '4px', borderColor: '$kondorPrimary', color: '$kondorPrimary' }}>+</Button>
+        {inputsAmount < 4
+          ? (
+            <Button
+              bordered
+              rounded
+              onPress={() => handleAddInputButton()}
+              css={{
+                minWidth: '40px',
+                width: '40px',
+                m: '4px',
+                borderColor: '$kondorPrimary',
+                color: '$kondorPrimary',
+                zIndex: 1
+              }}
+            >
+              +
+            </Button>
+            )
+          : null}
       </Container>
     )
   }
@@ -435,10 +469,10 @@ export default function CreateProduct () {
     const assetAmount2 = calculateAssetAmountByPercentage(asset2.asset.symbol, percentage2)
     const assetAmount3 = calculateAssetAmountByPercentage(asset3.asset.symbol, percentage3)
     const assetAmount4 = calculateAssetAmountByPercentage(asset4.asset.symbol, percentage4)
-    const assetAmountUSD1 = calculateAssetAmountUSDByPercentage(asset1.asset.symbol, percentage1)
-    const assetAmountUSD2 = calculateAssetAmountUSDByPercentage(asset2.asset.symbol, percentage2)
-    const assetAmountUSD3 = calculateAssetAmountUSDByPercentage(asset3.asset.symbol, percentage3)
-    const assetAmountUSD4 = calculateAssetAmountUSDByPercentage(asset4.asset.symbol, percentage4)
+    const assetAmountUSD1 = calculateAssetAmountUSDByPercentage(percentage1)
+    const assetAmountUSD2 = calculateAssetAmountUSDByPercentage(percentage2)
+    const assetAmountUSD3 = calculateAssetAmountUSDByPercentage(percentage3)
+    const assetAmountUSD4 = calculateAssetAmountUSDByPercentage(percentage4)
 
     if (totalPercentage !== 100 && totalPercentage !== 0) {
       return (

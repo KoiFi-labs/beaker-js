@@ -1,5 +1,5 @@
 import React from 'react'
-import { Modal, Button, Divider } from '@nextui-org/react'
+import { Modal, Button, Divider, Image, Container, Spacer } from '@nextui-org/react'
 import { getPools, PoolType } from '../../../services/poolService'
 
 export type PoolSelectModalProps = {
@@ -27,12 +27,26 @@ const PoolSelectModal = ({ isVisible, onHide, onPress }: PoolSelectModalProps) =
     >
       <Modal.Body>
         {pools.map(p => (
-          <div key={p.id}>
-            <Button onPress={() => handleButton(p)} light css={{ margin: 0, minHeight: '40px' }}>{p.pool}</Button>
+          <Container key={p.id} css={{ d: 'flex', justifyContent: 'flex-start' }}>
+            <Button onPress={() => handleButton(p)} light css={{ d: 'flex', justifyContent: 'flex-start', minHeight: '40px', minWidth: '60px' }}>
+              <Image
+                src={p.icon!}
+                alt={`${p.pool} logo`}
+                css={{
+                  height: '28px',
+                  width: '28px',
+                  maxWidth: '28px',
+                  maxHeight: '28px',
+                  borderRadius: '50%',
+                  bgColor: '$white'
+                }}
+              />
+              <Spacer y={1} />
+              {p.pool}
+            </Button>
             <Divider />
-          </div>
+          </Container>
         ))}
-
       </Modal.Body>
     </Modal>
   )

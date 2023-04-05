@@ -6,5 +6,5 @@ export const LigthInput = styled('input', {
   fontSize: '20px',
   fontWeight: '400',
   color: '$kondorLigth',
-  width: '250px'
+  width: 'auto'
 })

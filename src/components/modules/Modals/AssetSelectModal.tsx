@@ -1,5 +1,5 @@
 import React from 'react'
-import { Modal, Button, Divider } from '@nextui-org/react'
+import { Modal, Button, Divider, Image, Spacer, Container } from '@nextui-org/react'
 import { Asset } from '../../../../config/Assets'
 import { config } from '../../../../config'
 
@@ -26,12 +26,26 @@ const AssetSelectModal = ({ isVisible, onHide, onPress }: AssetSelectModalProps)
     >
       <Modal.Body>
         {config.assetList.map(a => (
-          <div key={a.id}>
-            <Button onPress={() => handleButton(a)} light css={{ margin: 0, minHeight: '40px' }}>{a.symbol}</Button>
+          <Container key={a.id} css={{ d: 'flex', justifyContent: 'flex-start' }}>
+            <Button onPress={() => handleButton(a)} light css={{ d: 'flex', justifyContent: 'flex-start', minHeight: '40px', minWidth: '60px' }}>
+              <Image
+                src={a.icon}
+                alt={`${a.symbol} logo`}
+                css={{
+                  height: '28px',
+                  width: '28px',
+                  maxWidth: '28px',
+                  maxHeight: '28px',
+                  borderRadius: '50%',
+                  bgColor: '$white'
+                }}
+              />
+              <Spacer y={1} />
+              {a.symbol}
+            </Button>
             <Divider />
-          </div>
+          </Container>
         ))}
-
       </Modal.Body>
     </Modal>
   )

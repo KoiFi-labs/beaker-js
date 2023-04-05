@@ -208,7 +208,7 @@ const Nav: React.FC = (): JSX.Element => {
   const getResponsiveItems = () => {
     if (isToggleSelected) {
       return (
-        <Navbar.Collapse transitionTime={150}>
+        <Navbar.Collapse disableAnimation>
           {pages.map((item, index) => (
             <Navbar.CollapseItem key={item.label} onClick={() => { setIsToggleSelected(!isToggleSelected) }}>
               <Link href={item.href}>

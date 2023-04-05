@@ -145,7 +145,8 @@ export default function Swap () {
         css={{
           width: '100%',
           color: '$white',
-          borderColor: '$kondorPrimary'
+          borderColor: '$kondorPrimary',
+          zIndex: 1
         }}
         onPress={() => handleSwapButton()}
       >
@@ -167,7 +168,7 @@ export default function Swap () {
         <Container display='flex' justify='center' css={{ p: 0 }}>
           <Card css={{ p: '16px' }}>
             <Grid.Container justify='center' css={{ p: 0 }}>
-              <Grid xs={8} css={{ d: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+              <Grid xs={6} css={{ d: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
                 <LigthInput
                   aria-label='Amount to sell'
                   onChange={onChangeSellInput}
@@ -180,7 +181,7 @@ export default function Swap () {
                   </Text>
                 </Container>
               </Grid>
-              <Grid xs={4} css={{ d: 'flex', justifyContent: 'flex-end' }}>
+              <Grid xs={6} css={{ d: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
                 <AssetSelect asset={outAsset} onPress={handleSellAssetSelect} />
               </Grid>
             </Grid.Container>
@@ -195,14 +196,15 @@ export default function Swap () {
               w: '40px',
               color: '$kondorLigth',
               borderColor: '$kondorPrimary',
-              m: '16px'
+              m: '16px',
+              zIndex: 1
             }}
           >
             <BsArrowDownUp size={20} />
           </Button>
           <Card css={{ p: '16px' }}>
             <Grid.Container justify='center'>
-              <Grid xs={8} css={{ d: 'flex', flexDirection: 'column' }}>
+              <Grid xs={6} css={{ d: 'flex', flexDirection: 'column' }}>
                 <LigthInput
                   aria-label='Amount to buy'
                   onChange={onChangeBuyInput}
@@ -215,7 +217,7 @@ export default function Swap () {
                   </Text>
                 </Container>
               </Grid>
-              <Grid xs={4} css={{ d: 'flex', justifyContent: 'flex-end' }}>
+              <Grid xs={6} css={{ d: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
                 <AssetSelect asset={inAsset} onPress={handleBuyAssetSelect} />
               </Grid>
             </Grid.Container>
