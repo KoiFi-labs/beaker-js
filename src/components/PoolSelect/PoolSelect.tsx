@@ -19,7 +19,7 @@ const PoolSelect = ({ pool, onPress }: PoolSelectProps) => {
   return (
     <>
       <Button onPress={handlerButton} rounded css={{ bg: '$gray300', d: 'flex', width: 'auto', minWidth: '80px', p: '8px' }}>
-        <Image src={pool.icon!} alt={`${pool.pool} logo`} css={{ height: '28px', width: '28px', borderRadius: '50%', bgColor: '$white' }} />
+        <Image src={pool.icon!} alt={`${pool.pool} logo`} css={{ height: '28px', width: '28px', maxWidth: '28px', borderRadius: '50%', bgColor: '$white' }} />
         <Spacer x={0.5} />
         <Text size={16}>{pool.pool}</Text>
         <RiArrowDropDownLine size={36} />
