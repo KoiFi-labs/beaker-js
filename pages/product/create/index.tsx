@@ -8,6 +8,7 @@ import ConfirmModal from '../../../src/components/modules/Modals/ConfirmModal'
 import SuccessfulTransactionModal from '../../../src/components/modules/Modals/SuccessfulTransactionModal'
 import SendingTransactionModal from '../../../src/components/modules/Modals/SendingTransaction'
 import { abbreviateNumber, sleep } from '../../../src/utils/utils'
+import { compareWithTolerance } from '../../../src/utils/math'
 import { useRouter } from 'next/router'
 import { createProduct, getBalances, getPrices } from '../../../src/services/mock'
 import { Balance, Price } from '../../../interfaces'
@@ -45,10 +46,13 @@ export default function CreateProduct () {
   const [successfulTransactionModalIsVisible, setSuccessfulTransactionModalIsVisible] = useState<boolean>(false)
   const [sendingTransactionModalIsVisible, setSendingTransactionModalIsVisible] = useState<boolean>(false)
   const [balances, setBalances] = useState<Balance[]>([])
-  const [convertAuto, setConvertAuto] = useState<boolean>(false)
-  const [hasErrorStableQuota, setHasErrorStableQuota] = useState<boolean>(false)
+  const [converToMinimunStableAuto, setConverToMinimunStableAuto] = useState<boolean>(false)
+  const [converToEqualWeigthStableAuto, setConverToEqualWeigthStableAuto] = useState<boolean>(false)
+  const [hasErrorInsufficentStableQuota, setHasErrorInsufficentStableQuota] = useState<boolean>(false)
+  const [hasErrorDifferentWeightStableQuota, setHasErrorDifferentWeightStableQuota] = useState<boolean>(false)
   const [hasErrorPercentage, setHasErrorPercentage] = useState<boolean>(false)
   const [infoStableModalIsVisible, setInfoStableModalIsVisible] = useState<boolean>(false)
+  const [infoWeigthStableModalIsVisible, setInfoWeightStableModalIsVisible] = useState<boolean>(false)
   const [prices, setPrices] = useState<Price[]>([])
   const nameInput = useInput('')
   const [asset1, setAsset1] = useState<AssetInput>({
@@ -202,6 +206,10 @@ export default function CreateProduct () {
   }
 
   const calculateTotalPrice = () => {
+    if (style === StyleType.BY_PERCENTAGE) {
+      return getPrice(assetTotalSupply.asset.symbol) * Number(assetTotalSupply.input.value)
+    }
+    // STYLE BY AMOUNT
     const price1 = getPrice(asset1.asset.symbol)
     const price2 = getPrice(asset2.asset.symbol)
     const price3 = inputsAmount > 2 ? getPrice(asset3.asset.symbol) : 0
@@ -257,14 +265,16 @@ export default function CreateProduct () {
 
   useEffect(() => {
     checkErrorStableQuota()
+    checkErrorDifferentWeightStableQuota()
     style === StyleType.BY_PERCENTAGE && checkErrorPercentage()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [asset1, asset2, asset3, asset4, assetTotalSupply, convertAuto, style])
+  }, [asset1, asset2, asset3, asset4, assetTotalSupply, converToMinimunStableAuto, style])
 
   const hasErrors = () => {
     return (
-      hasErrorStableQuota ||
-      hasErrorPercentage
+      hasErrorInsufficentStableQuota ||
+      hasErrorPercentage ||
+      hasErrorDifferentWeightStableQuota
     )
   }
 
@@ -279,20 +289,52 @@ export default function CreateProduct () {
   }
 
   const checkErrorStableQuota = () => {
-    setHasErrorStableQuota(!convertAuto)
+    if (converToMinimunStableAuto) return setHasErrorInsufficentStableQuota(false)
+    calculateAmountOfStablePercentage() < 5 ? setHasErrorInsufficentStableQuota(true) : setHasErrorInsufficentStableQuota(false)
+  }
+
+  const checkErrorDifferentWeightStableQuota = () => {
+    if (converToEqualWeigthStableAuto) return setHasErrorDifferentWeightStableQuota(false)
+    isBalancedOnStable() ? setHasErrorDifferentWeightStableQuota(false) : setHasErrorDifferentWeightStableQuota(true)
   }
 
   const errorDetails = () => {
     return (
       <>
-        {hasErrorStableQuota && <Text size={16} color='error'>Your investment must have at least 5% in our Stable Pool (USDC - USTD)</Text>}
         {hasErrorPercentage && <Text size={16} color='error'>The total percentage must be 100%</Text>}
+        {hasErrorInsufficentStableQuota && <Text size={16} color='error'>Your investment must have at least 5% in our Stable Pool (USDC - USTD)</Text>}
+        {hasErrorDifferentWeightStableQuota && <Text size={16} color='error'>Your investment must be balanced in USDC - USTD</Text>}
       </>
     )
   }
 
-  const calculateInputStableAmount = () => {
-    return 100
+  const calculateAmountOfStablePercentage = () => {
+    const inputs = [asset1, asset2, asset3, asset4]
+    const stableInputs = inputs.filter(input => input.asset.symbol === 'USDT' || input.asset.symbol === 'USDC')
+
+    if (style === StyleType.BY_PERCENTAGE) {
+      const stablePercentage = stableInputs.reduce((acc, input) => acc + Number(input.input.value), 0)
+      return stablePercentage
+    }
+    // BY_AMOUNT
+    const totalValue = calculateTotalPrice()
+    const stableValue = stableInputs.reduce((acc, input) => acc + Number(input.input.value) * getPrice(input.asset.symbol), 0)
+    return (stableValue * 100) / totalValue
+  }
+
+  const isBalancedOnStable = () => {
+    const inputs = [asset1, asset2, asset3, asset4]
+    const usdcInputs = inputs.filter(input => input.asset.symbol === 'USDC')
+    const usdtInputs = inputs.filter(input => input.asset.symbol === 'USDT')
+    if (style === StyleType.BY_PERCENTAGE) {
+      const usdcPercentage = usdcInputs.reduce((acc, input) => acc + Number(input.input.value), 0)
+      const usdtPercentage = usdtInputs.reduce((acc, input) => acc + Number(input.input.value), 0)
+      return usdcPercentage === usdtPercentage
+    }
+    // BY_AMOUNT
+    const usdcValue = usdcInputs.reduce((acc, input) => acc + Number(input.input.value) * getPrice(input.asset.symbol), 0)
+    const usdtValue = usdtInputs.reduce((acc, input) => acc + Number(input.input.value) * getPrice(input.asset.symbol), 0)
+    return compareWithTolerance(usdcValue, usdtValue)
   }
 
   const PoolPercentageInput = (
@@ -519,39 +561,70 @@ export default function CreateProduct () {
 
   const getStableDetails = () => {
     return (
-      <Grid.Container>
-        <Grid xs={10}>
-          <Checkbox size='xs' isSelected={convertAuto} onChange={setConvertAuto}>Convert 5% to stablecoin (2.5% USDC - 2.5% USDT) automatically if needed</Checkbox>
-        </Grid>
-        <Grid xs={2} css={{ d: 'flex', justifyContent: 'flex-end' }}>
-          <IconButton onClick={() => { setInfoStableModalIsVisible(true) }}>
-            <BiInfoCircle size={24} />
-          </IconButton>
-        </Grid>
-        <Modal
-          closeButton
-          aria-labelledby='infoStableModal'
-          open={infoStableModalIsVisible}
-          onClose={() => { setInfoStableModalIsVisible(false) }}
-          css={{
-            m: '16px',
-            bgColor: '$black',
-            border: '1px solid $kondorLigth'
-          }}
-        >
-          <Text b size={20} css={{ color: '$kondorLigth' }}>Automatic Stablecoin conversion</Text>
-          <Container css={{ p: '16px', textAlign: 'left' }}>
-            <Text size={14} css={{ color: '$kondorLigth' }}>
-              All products need to have at least 5% invested in our USD Stable Pool (2.5% USDC - 2.5% USDT).
-              You can select this option to automatically convert 2.5% to USDT and 2.5% to USDC.
-            </Text>
-            <Text size={14} css={{ color: '$kondorLigth' }}>
-              The amounts of USDT and USDC must be the same.
-              In case they are not, they will be automatically converted to be balanced.
-            </Text>
-          </Container>
-        </Modal>
-      </Grid.Container>
+      <>
+        <Grid.Container>
+          <Grid xs={10}>
+            <Checkbox size='xs' isSelected={converToMinimunStableAuto} onChange={setConverToMinimunStableAuto}>
+              Convert 5% to stablecoin (2.5% USDC - 2.5% USDT) automatically if needed
+            </Checkbox>
+          </Grid>
+          <Grid xs={2} css={{ d: 'flex', justifyContent: 'flex-end' }}>
+            <IconButton onClick={() => { setInfoStableModalIsVisible(true) }}>
+              <BiInfoCircle size={24} />
+            </IconButton>
+          </Grid>
+          <Modal
+            closeButton
+            aria-labelledby='infoStableModal'
+            open={infoStableModalIsVisible}
+            onClose={() => { setInfoStableModalIsVisible(false) }}
+            css={{
+              m: '16px',
+              bgColor: '$black',
+              border: '1px solid $kondorLigth'
+            }}
+          >
+            <Text b size={20} css={{ color: '$kondorLigth' }}>Automatic Stablecoin conversion</Text>
+            <Container css={{ p: '16px', textAlign: 'left' }}>
+              <Text size={14} css={{ color: '$kondorLigth' }}>
+                All products must have at least 5% invested in our stablecoin USD (2.5% USDC - 2.5% USDT).
+                You can select this option to automatically convert 2.5% to USDT and 2.5% to USDC if you do not have the minimum.
+              </Text>
+            </Container>
+          </Modal>
+        </Grid.Container>
+        <Grid.Container>
+          <Grid xs={10}>
+            <Checkbox size='xs' isSelected={converToEqualWeigthStableAuto} onChange={setConverToEqualWeigthStableAuto}>
+              Balance stablecoin (USDC - USDT) automatically if needed
+            </Checkbox>
+          </Grid>
+          <Grid xs={2} css={{ d: 'flex', justifyContent: 'flex-end' }}>
+            <IconButton onClick={() => { setInfoWeightStableModalIsVisible(true) }}>
+              <BiInfoCircle size={24} />
+            </IconButton>
+          </Grid>
+          <Modal
+            closeButton
+            aria-labelledby='infoWeigthStableModal'
+            open={infoWeigthStableModalIsVisible}
+            onClose={() => { setInfoWeightStableModalIsVisible(false) }}
+            css={{
+              m: '16px',
+              bgColor: '$black',
+              border: '1px solid $kondorLigth'
+            }}
+          >
+            <Text b size={20} css={{ color: '$kondorLigth' }}>Automatic balance stablecoin</Text>
+            <Container css={{ p: '16px', textAlign: 'left' }}>
+              <Text size={14} css={{ color: '$kondorLigth' }}>
+                All products must have the same amount of USDT and USDC.
+                You can select this option to automatically balance your investment in the same amount of USDT and USDC
+              </Text>
+            </Container>
+          </Modal>
+        </Grid.Container>
+      </>
     )
   }
 
