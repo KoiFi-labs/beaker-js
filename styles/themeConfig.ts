@@ -6,7 +6,6 @@ export const themeConfig = {
       primaryLightHover: '$green300',
       primaryLightActive: '$green400',
       primaryLightContrast: '$green600',
-      primary: '#4ADE7B',
       primaryBorder: '$green500',
       primaryBorderHover: '$green600',
       primarySolidHover: '$green700',
@@ -18,6 +17,9 @@ export const themeConfig = {
       kondorGray: '#AFB0B8',
       kondorDark: '#9498A1',
       kondorBlack: '#000000',
+      primary: '#814350',
+      secondary: '#9BA1A6',
+      error: '#bd0013',
 
       gradient: 'linear-gradient(112deg, $blue100 -25%, $pink500 -10%, $purple500 80%)',
       link: '#5E1DAD'

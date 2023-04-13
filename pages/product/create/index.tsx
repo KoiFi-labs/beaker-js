@@ -299,12 +299,13 @@ export default function CreateProduct () {
   }
 
   const errorDetails = () => {
+    if (!hasErrors()) return null
     return (
-      <>
+      <Card css={{ bgColor: '#f59e98', p: '8px 16px', m: '8px 0px' }}>
         {hasErrorPercentage && <Text size={16} color='error'>The total percentage must be 100%</Text>}
         {hasErrorInsufficentStableQuota && <Text size={16} color='error'>Your investment must have at least 5% in our Stable Pool (USDC - USTD)</Text>}
         {hasErrorDifferentWeightStableQuota && <Text size={16} color='error'>Your investment must be balanced in USDC - USTD</Text>}
-      </>
+      </Card>
     )
   }
 
@@ -401,13 +402,14 @@ export default function CreateProduct () {
   const getInputsByPercentage = () => {
     return (
       <>
+        <Text size={16} css={{ color: '$kondorGray' }}>Enter total supply</Text>
         {PoolInput(
           assetTotalSupply,
           setAssetTotalSupply,
           handlePoolSelectButtonAssetSupply
         )}
         <Spacer y={1} />
-        <Text size={14} css={{ color: '$kondorGray' }}>Enter the percentages</Text>
+        <Text size={16} css={{ color: '$kondorGray' }}>Enter the percentages</Text>
         {PoolPercentageInput(
           asset1,
           setAsset1,
@@ -550,11 +552,13 @@ export default function CreateProduct () {
     const handleNameInput = nameInput.bindings.onChange
     return (
       <Input
-        labelPlaceholder='Prouct name'
+        label='Product name'
+        placeholder='Choose a name for your product'
+        color='secondary'
         size='lg'
         value={nameInput.bindings.value}
         onChange={handleNameInput}
-        css={{ width: '100%', m: '4px 0', color: '#245789' }}
+        css={{ width: '100%', m: '4px 0', color: '$kondorPrimary' }}
       />
     )
   }
