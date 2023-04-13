@@ -439,6 +439,16 @@ export default function CreateProduct () {
               handlePoolSelectButton4)
             : null
         }
+        <Card css={{ $$cardColor: '$colors$gray50', m: '8px 0px' }}>
+          <Grid.Container justify='center' css={{ p: '16px' }}>
+            <Grid xs={6} css={{ d: 'flex', flexDirection: 'column' }}>
+              <Text>5%</Text>
+            </Grid>
+            <Grid xs={6} css={{ d: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
+              <Text>Stable (USDC | USDT)</Text>
+            </Grid>
+          </Grid.Container>
+        </Card>
       </>
     )
   }
