@@ -5,11 +5,12 @@ import { PoolType } from '../../services/poolService'
 import { RiArrowDropDownLine } from 'react-icons/ri'
 
 export type PoolSelectProps = {
-    pool: PoolType,
+    selected: PoolType,
+    options: PoolType[],
     onPress: (pool: PoolType) => void
 }
 
-const PoolSelect = ({ pool, onPress }: PoolSelectProps) => {
+const PoolSelect = ({ selected, options, onPress }: PoolSelectProps) => {
   const [poolSelectModalVisible, setPoolSelectModalVisible] = useState<boolean>(false)
 
   const handlerButton = (): void => {
@@ -19,12 +20,12 @@ const PoolSelect = ({ pool, onPress }: PoolSelectProps) => {
   return (
     <>
       <Button onPress={handlerButton} rounded css={{ bg: '$gray300', d: 'flex', width: 'auto', minWidth: '80px', p: '8px' }}>
-        <Image src={pool.icon!} alt={`${pool.pool} logo`} css={{ height: '28px', width: '28px', maxWidth: '28px', borderRadius: '50%', bgColor: '$white' }} />
+        <Image src={selected.icon!} alt={`${selected.pool} logo`} css={{ height: '28px', width: '28px', maxWidth: '28px', borderRadius: '50%', bgColor: '$white' }} />
         <Spacer x={0.5} />
-        <Text size={16}>{pool.pool}</Text>
+        <Text size={16}>{selected.pool}</Text>
         <RiArrowDropDownLine size={36} />
       </Button>
-      <PoolSelectModal isVisible={poolSelectModalVisible} onPress={onPress} onHide={() => { setPoolSelectModalVisible(false) }} />
+      <PoolSelectModal options={options} isVisible={poolSelectModalVisible} onPress={onPress} onHide={() => { setPoolSelectModalVisible(false) }} />
     </>
   )
 }

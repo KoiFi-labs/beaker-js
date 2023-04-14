@@ -1,8 +1,8 @@
 /* eslint-disable no-unused-vars */
-import { Button, Text, Container, Card, Grid, useInput, Radio, Spacer, Collapse, Checkbox, Input, Modal } from '@nextui-org/react'
+import { Button, Text, Container, Card, Grid, useInput, Radio, Spacer, Collapse, Checkbox, Input, Modal, Image } from '@nextui-org/react'
 import { LigthInput } from '../../../src/components/LighInput/LigthInput'
 import PoolSelect from '../../../src/components/PoolSelect/PoolSelect'
-import { PoolType, getPoolBySymbol } from '../../../src/services/poolService'
+import { PoolType, getPoolBySymbol, getPools } from '../../../src/services/poolService'
 import { useState, useEffect, Dispatch, MutableRefObject, SetStateAction } from 'react'
 import ConfirmModal from '../../../src/components/modules/Modals/ConfirmModal'
 import SuccessfulTransactionModal from '../../../src/components/modules/Modals/SuccessfulTransactionModal'
@@ -55,29 +55,34 @@ export default function CreateProduct () {
   const [infoWeigthStableModalIsVisible, setInfoWeightStableModalIsVisible] = useState<boolean>(false)
   const [prices, setPrices] = useState<Price[]>([])
   const nameInput = useInput('')
+  const stablePercentageInput = useInput('5')
+  const usdt = assets[0]
+  const usdc = assets[1]
   const [asset1, setAsset1] = useState<AssetInput>({
-    asset: assets[0],
-    input: useInput('')
-  })
-  const [asset2, setAsset2] = useState<AssetInput>({
-    asset: assets[1],
-    input: useInput('')
-  })
-  const [asset3, setAsset3] = useState<AssetInput>({
     asset: assets[2],
     input: useInput('')
   })
-  const [asset4, setAsset4] = useState<AssetInput>({
+  const [asset2, setAsset2] = useState<AssetInput>({
     asset: assets[3],
     input: useInput('')
   })
+  const [asset3, setAsset3] = useState<AssetInput>({
+    asset: assets[4],
+    input: useInput('')
+  })
+  const [asset4, setAsset4] = useState<AssetInput>({
+    asset: assets[5],
+    input: useInput('')
+  })
   const [assetTotalSupply, setAssetTotalSupply] = useState<AssetInput>({
-    asset: assets[0],
+    asset: assets[1],
     input: useInput('')
   })
 
-  const [style, setStyle] = useState<StyleType>(StyleType.BY_AMOUNT)
+  const [style, setStyle] = useState<StyleType>(StyleType.BY_PERCENTAGE)
   const router = useRouter()
+  const pools = getPools()
+  const poolsNoStable = pools.filter(p => p.pool !== 'USDT' && p.pool !== 'USDC')
 
   const handleStyleChange = (value: StyleType) => {
     setStyle(value)
@@ -241,7 +246,7 @@ export default function CreateProduct () {
             <Text size={14} css={{ color: '$kondorGray' }}>Balance {getBalanceFromPool(pool)} {pool.pool}</Text>
           </Grid>
           <Grid xs={6} css={{ d: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
-            <PoolSelect pool={pool} onPress={onSelect} />
+            <PoolSelect selected={pool} options={pools} onPress={onSelect} />
           </Grid>
         </Grid.Container>
       </Card>
@@ -268,7 +273,7 @@ export default function CreateProduct () {
     checkErrorDifferentWeightStableQuota()
     style === StyleType.BY_PERCENTAGE && checkErrorPercentage()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [asset1, asset2, asset3, asset4, assetTotalSupply, converToMinimunStableAuto, style])
+  }, [asset1, asset2, asset3, asset4, assetTotalSupply, stablePercentageInput, converToMinimunStableAuto, style])
 
   const hasErrors = () => {
     return (
@@ -283,18 +288,19 @@ export default function CreateProduct () {
     const percentage2 = Number(asset2.input.value)
     const percentage3 = Number(asset3.input.value)
     const percentage4 = Number(asset4.input.value)
-    const totalPercentage = percentage1 + percentage2 + percentage3 + percentage4
+    const stablePercentage = Number(stablePercentageInput.value)
+    const totalPercentage = percentage1 + percentage2 + percentage3 + percentage4 + stablePercentage
     const hasError = totalPercentage !== 100 && totalPercentage !== 0
     setHasErrorPercentage(hasError)
   }
 
   const checkErrorStableQuota = () => {
-    if (converToMinimunStableAuto) return setHasErrorInsufficentStableQuota(false)
+    if (converToMinimunStableAuto || style !== StyleType.BY_AMOUNT) return setHasErrorInsufficentStableQuota(false)
     calculateAmountOfStablePercentage() < 5 ? setHasErrorInsufficentStableQuota(true) : setHasErrorInsufficentStableQuota(false)
   }
 
   const checkErrorDifferentWeightStableQuota = () => {
-    if (converToEqualWeigthStableAuto) return setHasErrorDifferentWeightStableQuota(false)
+    if (converToEqualWeigthStableAuto || style !== StyleType.BY_AMOUNT) return setHasErrorDifferentWeightStableQuota(false)
     isBalancedOnStable() ? setHasErrorDifferentWeightStableQuota(false) : setHasErrorDifferentWeightStableQuota(true)
   }
 
@@ -345,7 +351,6 @@ export default function CreateProduct () {
   ) => {
     const pool = getPoolBySymbol(assetInput.asset.symbol)!
     const assetAmount = calculateAssetAmountByPercentage(assetInput.asset.symbol, Number(assetInput.input.value))
-    console.log(assetAmount)
     const assetAmountUDS = calculateAssetAmountUSDByPercentage(Number(assetInput.input.value))
     const assetAmountString = abbreviateNumber(assetAmount, 2)
     const assetAmountUSDString = abbreviateNumber(assetAmountUDS, 2)
@@ -382,7 +387,7 @@ export default function CreateProduct () {
             </Container>
           </Grid>
           <Grid xs={6} css={{ d: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
-            <PoolSelect pool={pool} onPress={onSelect} />
+            <PoolSelect selected={pool} options={poolsNoStable} onPress={onSelect} />
           </Grid>
         </Grid.Container>
       </Card>
@@ -399,6 +404,53 @@ export default function CreateProduct () {
     )
   }
 
+  const getStableInputByPercentage = () => {
+    const value = Number(stablePercentageInput.value)
+    const assetAmountUDS = calculateAssetAmountUSDByPercentage(value)
+    const onChange = (e: BindingsChangeTarget) => {
+      stablePercentageInput.bindings.onChange(e)
+    }
+
+    return (
+      <Card css={{ $$cardColor: '$colors$gray50', m: '8px 0px' }}>
+        <Grid.Container justify='center' css={{ p: '16px' }}>
+          <Grid xs={4} css={{ d: 'flex', flexDirection: 'column' }}>
+            <Text color='secondary'>STABLE %</Text>
+            <LigthInput
+              value={stablePercentageInput.value}
+              onChange={onChange}
+              placeholder='0.00'
+            />
+            <Container display='flex' justify='flex-start' css={{ p: 0 }}>
+              {value > 100
+                ? <Text size={14} b css={{ color: '$error' }}>Max 100%</Text>
+                : value < 5
+                  ? <Text size={14} b css={{ color: '$error' }}>Min 5%</Text>
+                  : (
+                    <>
+                      <Text size={14} css={{ color: '$kondorGray' }}>≈{assetAmountUDS} USD</Text>
+                    </>
+                    )}
+            </Container>
+          </Grid>
+          <Grid xs={8} css={{ d: 'flex', flexDirection: 'column', alignItems: 'flex-end', justifyContent: 'center' }}>
+            <Container css={{ d: 'flex', p: 0, m: 0, justifyContent: 'flex-end' }}>
+              <Container css={{ width: '28px', p: 0, m: 0 }}>
+                <Image src={usdc.icon} alt={`${usdc.symbol} logo`} css={{ height: '28px' }} />
+              </Container>
+              <Container css={{ width: '28px', p: 0, m: 0 }}>
+                <Image src={usdt.icon} alt={`${usdt.symbol} logo`} css={{ height: '28px' }} />
+              </Container>
+              <Spacer x={0.5} />
+              <Text>USDC / USDT</Text>
+            </Container>
+            <Spacer y={0.5} />
+          </Grid>
+        </Grid.Container>
+      </Card>
+    )
+  }
+
   const getInputsByPercentage = () => {
     return (
       <>
@@ -409,7 +461,7 @@ export default function CreateProduct () {
           handlePoolSelectButtonAssetSupply
         )}
         <Spacer y={1} />
-        <Text size={16} css={{ color: '$kondorGray' }}>Enter the percentages</Text>
+        <Text size={16} css={{ color: '$kondorGray' }}>Enter the percentages (minimum 5% Stable)</Text>
         {PoolPercentageInput(
           asset1,
           setAsset1,
@@ -439,16 +491,7 @@ export default function CreateProduct () {
               handlePoolSelectButton4)
             : null
         }
-        <Card css={{ $$cardColor: '$colors$gray50', m: '8px 0px' }}>
-          <Grid.Container justify='center' css={{ p: '16px' }}>
-            <Grid xs={6} css={{ d: 'flex', flexDirection: 'column' }}>
-              <Text>5%</Text>
-            </Grid>
-            <Grid xs={6} css={{ d: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
-              <Text>Stable (USDC | USDT)</Text>
-            </Grid>
-          </Grid.Container>
-        </Card>
+        {getStableInputByPercentage()}
       </>
     )
   }
@@ -518,7 +561,8 @@ export default function CreateProduct () {
     const percentage2 = Number(asset2.input.value)
     const percentage3 = Number(asset3.input.value)
     const percentage4 = Number(asset4.input.value)
-    const totalPercentage = percentage1 + percentage2 + percentage3 + percentage4
+    const stablePercentage = Number(stablePercentageInput.value)
+    const totalPercentage = percentage1 + percentage2 + percentage3 + percentage4 + stablePercentage
     const assetAmount1 = calculateAssetAmountByPercentage(asset1.asset.symbol, percentage1)
     const assetAmount2 = calculateAssetAmountByPercentage(asset2.asset.symbol, percentage2)
     const assetAmount3 = calculateAssetAmountByPercentage(asset3.asset.symbol, percentage3)
@@ -527,13 +571,14 @@ export default function CreateProduct () {
     const assetAmountUSD2 = calculateAssetAmountUSDByPercentage(percentage2)
     const assetAmountUSD3 = calculateAssetAmountUSDByPercentage(percentage3)
     const assetAmountUSD4 = calculateAssetAmountUSDByPercentage(percentage4)
+    const assetAmountUSDStable = calculateAssetAmountUSDByPercentage(stablePercentage)
 
     if (totalPercentage !== 100 && totalPercentage !== 0) {
       return (
         <Container
           css={{ p: '4px', d: 'flex', justifyContent: 'center' }}
         >
-          <Text size={14} css={{ color: '$error' }}>The total percentage must be 100%</Text>
+          <Text size={14} css={{ color: '$error' }}>The total percentage must be 100% {stablePercentage}</Text>
         </Container>
       )
     }
@@ -552,6 +597,7 @@ export default function CreateProduct () {
             {inputsAmount > 1 ? getResumeDetailByAsset(asset2.asset.symbol, assetAmount2, assetAmountUSD2, percentage2) : null}
             {inputsAmount > 2 ? getResumeDetailByAsset(asset3.asset.symbol, assetAmount3, assetAmountUSD3, percentage3) : null}
             {inputsAmount > 3 ? getResumeDetailByAsset(asset4.asset.symbol, assetAmount4, assetAmountUSD4, percentage4) : null}
+            {getResumeDetailByAsset('STABLE', assetAmountUSDStable, assetAmountUSDStable, stablePercentage)}
           </Container>
         </Collapse>
       </Collapse.Group>
@@ -574,6 +620,7 @@ export default function CreateProduct () {
   }
 
   const getStableDetails = () => {
+    if (style !== StyleType.BY_AMOUNT) return
     return (
       <>
         <Grid.Container>
@@ -671,15 +718,15 @@ export default function CreateProduct () {
         <Radio.Group
           orientation='horizontal'
           label='Select style'
-          defaultValue='byAmount'
+          defaultValue={style}
           size='xs'
           onChange={(value) => { handleStyleChange(value as StyleType) }}
         >
-          <Radio value={StyleType.BY_AMOUNT} size='xs'>
-            By amount
-          </Radio>
           <Radio value={StyleType.BY_PERCENTAGE} size='xs'>
             By percentage
+          </Radio>
+          <Radio value={StyleType.BY_AMOUNT} size='xs'>
+            By amount
           </Radio>
         </Radio.Group>
         <Spacer y={1} />

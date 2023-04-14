@@ -1,16 +1,15 @@
 import React from 'react'
 import { Modal, Button, Divider, Image, Container, Spacer } from '@nextui-org/react'
-import { getPools, PoolType } from '../../../services/poolService'
+import { PoolType } from '../../../services/poolService'
 
 export type PoolSelectModalProps = {
+    options: PoolType[],
     isVisible: boolean,
     onHide: () => void,
     onPress: (pool: PoolType) => void
 }
 
-const PoolSelectModal = ({ isVisible, onHide, onPress }: PoolSelectModalProps) => {
-  const pools = getPools()
-
+const PoolSelectModal = ({ options, isVisible, onHide, onPress }: PoolSelectModalProps) => {
   const handleButton = (pool: PoolType) => {
     onPress(pool)
     onHide()
@@ -26,7 +25,7 @@ const PoolSelectModal = ({ isVisible, onHide, onPress }: PoolSelectModalProps) =
       width='270px'
     >
       <Modal.Body>
-        {pools.map(p => (
+        {options.map(p => (
           <Container key={p.id} css={{ d: 'flex', justifyContent: 'flex-start' }}>
             <Button onPress={() => handleButton(p)} light css={{ d: 'flex', justifyContent: 'flex-start', minHeight: '40px', minWidth: '60px' }}>
               <Image
