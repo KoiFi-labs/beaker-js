@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { Button, Text, Container, Card, Grid, useInput, Radio, Spacer, Collapse, Checkbox, Input, Modal, Image } from '@nextui-org/react'
+import { Button, Text, Container, Card, Grid, useInput, Radio, Spacer, Collapse, Checkbox, Input, Modal, Image, Backdrop } from '@nextui-org/react'
 import { LigthInput } from '../../../src/components/LighInput/LigthInput'
 import PoolSelect from '../../../src/components/PoolSelect/PoolSelect'
 import { PoolType, getPoolBySymbol, getPools } from '../../../src/services/poolService'
@@ -14,9 +14,8 @@ import { createProduct, getBalances, getPrices } from '../../../src/services/moc
 import { Balance, Price } from '../../../interfaces'
 import { BindingsChangeTarget } from '@nextui-org/react/types/use-input/use-input'
 import { Asset, config } from '../../../config'
-import { BiInfoCircle } from 'react-icons/bi'
+import { BiInfoCircle, BiDollarCircle } from 'react-icons/bi'
 import { IconButton } from '../../../src/components/IconButton/IconButton'
-
 const assets = config.assetList
 
 enum StyleType {
@@ -435,16 +434,9 @@ export default function CreateProduct () {
           </Grid>
           <Grid xs={8} css={{ d: 'flex', flexDirection: 'column', alignItems: 'flex-end', justifyContent: 'center' }}>
             <Container css={{ d: 'flex', p: 0, m: 0, justifyContent: 'flex-end' }}>
-              <Container css={{ position: 'relative', width: '50px', m: 0 }}>
-                <Container css={{ width: '28px', p: 0, m: 0, position: 'absolute', left: '8px' }}>
-                  <Image src={usdc.icon} alt={`${usdc.symbol} logo`} css={{ height: '28px' }} />
-                </Container>
-                <Container css={{ width: '28px', p: 0, m: 0, position: 'absolute' }}>
-                  <Image src={usdt.icon} alt={`${usdt.symbol} logo`} css={{ height: '28px' }} />
-                </Container>
-              </Container>
               <Spacer x={0.5} />
-              <Text>USDC / USDT</Text>
+              <BiDollarCircle size={32} />
+              <Text>USD Stable</Text>
             </Container>
             <Spacer y={0.5} />
           </Grid>
@@ -621,6 +613,25 @@ export default function CreateProduct () {
     )
   }
 
+  const getRadioInput = () => {
+    return (
+      <Radio.Group
+        orientation='horizontal'
+        label='Select style'
+        defaultValue={style}
+        size='xs'
+        onChange={(value) => { handleStyleChange(value as StyleType) }}
+      >
+        <Radio value={StyleType.BY_PERCENTAGE} size='xs'>
+          By percentage
+        </Radio>
+        <Radio value={StyleType.BY_AMOUNT} size='xs'>
+          By amount
+        </Radio>
+      </Radio.Group>
+    )
+  }
+
   const getStableDetails = () => {
     if (style !== StyleType.BY_AMOUNT) return
     return (
@@ -716,21 +727,6 @@ export default function CreateProduct () {
         <Text h1>Create product</Text>
         <Spacer y={1.5} />
         {getNameInput()}
-        <Spacer y={1} />
-        <Radio.Group
-          orientation='horizontal'
-          label='Select style'
-          defaultValue={style}
-          size='xs'
-          onChange={(value) => { handleStyleChange(value as StyleType) }}
-        >
-          <Radio value={StyleType.BY_PERCENTAGE} size='xs'>
-            By percentage
-          </Radio>
-          <Radio value={StyleType.BY_AMOUNT} size='xs'>
-            By amount
-          </Radio>
-        </Radio.Group>
         <Spacer y={1} />
         {style === StyleType.BY_AMOUNT ? getInputsByAmount() : getInputsByPercentage()}
         <Spacer y={1} />
