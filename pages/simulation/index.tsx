@@ -93,7 +93,7 @@ export default function Simulation () {
         backgroundColor: 'rgb(255, 99, 132)'
       },
       {
-        label: 'Fully',
+        label: 'Free',
         data: [(12 - counterY), (12 - counterD)],
         backgroundColor: 'rgb(53, 162, 235)'
       }
