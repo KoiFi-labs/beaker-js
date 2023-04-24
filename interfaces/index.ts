@@ -19,7 +19,8 @@ export type Price = {
     price: number
 }
 
-export type Pool = {
+export type PoolInterface = {
+    id: string,
     assetA: {
         amount: number,
         id: number,

@@ -21,28 +21,33 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         if (!pool) throw new Error('Pool not found')
         if (assetIdToBuy === assetIdToSell) throw new Error('Asset ids can not be the same')
         if (assetIdToSell !== pool.assetA.id && assetIdToSell !== pool.assetB.id) throw new Error('Invalid assetToSell')
-        if (assetIdToBuy !== pool.asset.id && assetIdToBuy !== pool.assetB.id) throw new Error('Invalid assetToBuy')
+        if (assetIdToBuy !== pool.assetA.id && assetIdToBuy !== pool.assetB.id) throw new Error('Invalid assetToBuy')
         const assetToSellIsAssetA = assetIdToSell === pool.assetA.id
         if (assetToSellIsAssetA && amountToSell > pool.assetA.amount) throw new Error(`Insuffient balance in pool asset a ${pool.assetA.symbol}, ${pool.assetA.amount}`)
         if (!assetToSellIsAssetA && amountToSell > pool.assetB.amount) throw new Error(`Insuffient balance in pool asset b ${pool.assetB.symbol}, ${pool.assetA.amount}`)
+        const assetToSellBalance = assetToSellIsAssetA ? pool.assetA.amount : pool.assetB.amount
+        const assetToBuyBalance = assetToSellIsAssetA ? pool.assetB.amount : pool.assetA.amount
+        const [amountToBuy] = calculateSwap(amountToSell, assetToSellBalance, assetToBuyBalance, assetToSellIsAssetA)
 
-        const updateAssetA = {
+        const amountAssetA = assetToSellIsAssetA ? pool.assetA.amount + amountToSell : pool.assetA.amount - amountToBuy
+        const amountAssetB = assetToSellIsAssetA ? pool.assetB.amount - amountToBuy : pool.assetB.amount + amountToSell
+
+        const updatedAssetA = {
           id: pool.assetA.id,
-          amount: pool.assetA.amount - amountToSell,
+          amount: amountAssetA,
           symbol: pool.assetA.symbol
         }
 
         const updatedAssetB = {
           id: pool.assetB.id,
-          amount: calculateAmountToSell,
-
+          amount: amountAssetB,
+          symbol: pool.assetB.symbol
         }
 
-        const updatedPool = Pool.findOne
-        res.status(200).json({})
+        const updatedPool = await Pool.findOneAndUpdate({ _id: pool._id }, { assetA: updatedAssetA, assetB: updatedAssetB }, { new: true })
+        res.status(200).json({ updatedPool })
       } catch (error) {
-        console.log(error)
-        res.status(400).json({ error: 'No Response for This Request' })
+        res.status(400).json(error?.toString())
       }
       break
     case 'DELETE':
@@ -61,107 +66,95 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 }
 
 const fee: number = 3 // constant fee: Final[Expr] = Int(_fee)
-
-    const assetInBalance: number = poolABalance // balances retrieved from AssetHolding.balance(this.address, assetIn)
-    const assetOutBalance: number = poolBBalance // balances retrieved from AssetHolding.balance(this.address, assetOut)
-
-    return calculate_swap(
-      amt_in,
-      assetIn,
-      assetOut,
-      assetInBalance,
-      assetOutBalance
-    )
-
 const nT: number = 2 // number of assets in the pool
 const scale: number = 1000
-const maxLoopLimit: number = 255
+const maxLoopLimit: number = 1000
 const __A: number = 10
 const A_PRECISION: number = 100
 const A: number = __A * A_PRECISION
 
-function calculate_swap(
+function calculateSwap (
   dx: number,
-  assetIn: number,
-  assetOut: number,
   assetInBalance: number,
-  assetOutBalance: number
+  assetOutBalance: number,
+  assetInIsABalance: boolean
 ): [number, number] {
-  /**
-   * Returns the amount and fee of assetOut given an assetIn amount
-   */
   const x: number = dx + assetInBalance
-  const y: number = get_y(x, assetInBalance, assetOutBalance)
+  const y: number = getY(x, assetInBalance, assetOutBalance, assetInIsABalance)
   let dy: number = assetOutBalance - y
   const dyFee: number = dy * (fee / scale)
   dy = Math.max(dy - dyFee, 0) // If dy negative return 0 assets out
+  // console.log('amount after swap asset_in: ', dx + assetInBalance)
+  // console.log('amount after swap asset_out: ', assetOutBalance - dy)
   return [dy, dyFee]
 }
 
-function difference(a: number, b: number): number {
-  if (a > b) {
-    return a - b
-  } else {
-    return b - a
-  }
+function difference (a: number, b: number): number {
+  return a > b ? a - b : b - a
 }
 
-function within1(a: number, b: number): boolean {
+function within1 (a: number, b: number): boolean {
   return difference(a, b) <= 1
 }
 
-function get_d(poolABalance: number, poolBBalance: number): number {
+function getD (poolABalance: number, poolBBalance: number): number {
   const s: number = poolABalance + poolBBalance
-
-  if (s === 0) {
-    return 0
-  }
-
+  if (s === 0) return 0
   let d: number = s
   const nA: number = A * nT
-
   let dp: number = d
+  let dInitial = 0
   for (let i: number = 0; i < maxLoopLimit; i++) {
     dp *= d / (poolABalance * nT)
     dp *= d / (poolBBalance * nT)
-
     const prevD: number = d
+    if (i === 0) {
+      dInitial = d
+    }
     d =
       ((((nA * s) / A_PRECISION + dp * nT) * d) /
         (((nA - A_PRECISION) * d) / A_PRECISION + (nT + 1) * dp))
-    if (within_1(d, prevD)) {
-      console.log(d)
+    if (within1(d, prevD)) {
+      // console.log('d en la vuelta', i, ': ', d)
+      // console.log('diferencia en d', Math.abs(dInitial - d))
       return d
     }
   }
-
+  console.log('dInitial', dInitial)
+  console.log('A Balance', poolABalance)
+  console.log('B Balance', poolBBalance)
+  console.log('last d value', d)
   throw new Error('D does not converge')
 }
 
-function get_y(x: number, assetInBalance: number, assetOutBalance: number): number {
-  const d = get_d()
+function getY (x: number, assetInBalance: number, assetOutBalance: number, assetInIsABalance: boolean): number {
+  const d = assetInIsABalance ? getD(assetInBalance, assetOutBalance) : getD(assetOutBalance, assetInBalance)
 
-  const nT = 1 // I assume nT value is 1
-  const A = assetOutBalance / assetInBalance
+  const nT = 2
   const nA = nT * A
 
   let c = (d ** 2) / (x * nT)
   c = ((c * d) * A_PRECISION) / (nA * nT)
-
   const b = x + ((d * A_PRECISION) / nA)
 
   let y = d
-
-  const maxLoopLimit = 1000 // I assume maxLoopLimit value is 1000
+  let yInitial = 0
 
   for (let i = 0; i < maxLoopLimit; i++) {
     const yPrev = y
     y = ((y * y) + c) / (((y * 2) + b) - d)
-    if (within_1(y, yPrev)) {
-      console.log('i', i)
+
+    if (i === 0) {
+      yInitial = y
+      // console.log('y en la primer vuelta :', y)
+    }
+
+    if (within1(y, yPrev)) {
+      // console.log('y en la ', i, ': ', y)
+      // console.log('diferencia de y :', Math.abs(yInitial - y))
       return y
     }
   }
-
+  console.log('yInitial value: ', yInitial)
   throw new Error('Approximation did not converge')
 }
