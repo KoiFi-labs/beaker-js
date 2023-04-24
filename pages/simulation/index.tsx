@@ -1,6 +1,6 @@
 // import Pool from '../../src/models/Pool'
 import React, { useEffect, useState } from 'react'
-import { transactions } from './data'
+import { transactions } from '../../config/data'
 import {
   Chart as ChartJS,
   CategoryScale,
