@@ -18,3 +18,23 @@ export type Price = {
     assetSymbol: string,
     price: number
 }
+
+export type PoolInterface = {
+    id: string,
+    assetA: {
+        amount: number,
+        id: number,
+        symbol: string
+    },
+    assetB: {
+        amount: number,
+        id: number,
+        symbol: string
+    },
+    poolAsset: {
+        amount: number,
+        id: number,
+        symbol: string
+    },
+    poolName: string
+}
