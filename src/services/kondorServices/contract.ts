@@ -1,6 +1,13 @@
 export const contract = {
-  name: 'Pond',
+  name: 'SymmetricPool',
   methods: [
+    {
+      name: 'create',
+      args: [],
+      returns: {
+        type: 'void'
+      }
+    },
     {
       name: 'set_governor',
       args: [
@@ -33,7 +40,7 @@ export const contract = {
       returns: {
         type: 'uint64'
       },
-      desc: 'bootstraps the contract by opting into the assets and creating the\npond token. Note this method will fail if it is attempted more than  once on the same contract since the assets and pond token application  state values are marked as static and cannot be overridden. Args:     seed: Initial Payment transaction to the app account so it can opt      in to assets and create pond token.     a_asset: One of the two assets this pond should allow swapping      between.     b_asset: One of the two assets this pond should allow swapping      between. Returns:     The asset id of the pond token created.'
+      desc: 'bootstraps the contract by opting into the assets and creating the\npool token. Note this method will fail if it is attempted more than  once on the same contract since the assets and pool token application  state values are marked as static and cannot be overridden. Args:     seed: Initial Payment transaction to the app account so it can opt      in to assets and create pool token.     a_asset: One of the two assets this pool should allow swapping      between.     b_asset: One of the two assets this pool should allow swapping      between. Returns:     The asset id of the pool token created.'
     },
     {
       name: 'mint',
@@ -48,7 +55,7 @@ export const contract = {
         },
         {
           type: 'asset',
-          name: 'pond_asset'
+          name: 'pool_asset'
         },
         {
           type: 'asset',
@@ -62,7 +69,7 @@ export const contract = {
       returns: {
         type: 'void'
       },
-      desc: "mint pond tokens given some amount of a_asset and b_asset\non commit.\nGiven some amount of stable assets in the transfer, mint some number of  pond tokens calculated with the pond's current balance and  circulating supply of pond tokens.\nArgs:     a_xfer: Asset Transfer Transaction of a_asset as a deposit to the      pond in exchange for pond tokens.     b_xfer: Asset Transfer Transaction of b_asset as a deposit to the      pond in exchange for pond tokens.     pond_asset: The asset ID of the pond token so that we may      a_asset: The asset ID of the asset A token so that we may      distribute it.     b_asset: The asset ID of the asset B token so that we may      distribute it."
+      desc: "mint pool tokens given some amount of a_asset and b_asset\non commit.\nGiven some amount of stable assets in the transfer, mint some number of  pool tokens calculated with the pool's current balance and  circulating supply of pool tokens.\nArgs:     a_xfer: Asset Transfer Transaction of a_asset as a deposit to the      pool in exchange for pool tokens.     b_xfer: Asset Transfer Transaction of b_asset as a deposit to the      pool in exchange for pool tokens.     pool_asset: The asset ID of the pool token so that we may      a_asset: The asset ID of the asset A token so that we may      distribute it.     b_asset: The asset ID of the asset B token so that we may      distribute it."
     },
     {
       name: 'burn',
@@ -113,7 +120,7 @@ export const contract = {
         }
       ],
       returns: {
-        type: 'void'
+        type: 'uint64'
       },
       desc: 'Swap some amount of either asset A or asset B for the other'
     }

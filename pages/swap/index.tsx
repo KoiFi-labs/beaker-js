@@ -7,7 +7,7 @@ import AssetSelect from '../../src/components/AssetSelect/AssetSelect'
 import { useWallet } from '../../src/contexts/useWallet'
 import { Balance } from '../../src/services/algoService'
 import { microToStandard } from '../../src/utils/math'
-import { getSwapInput, getSwapOutput, swap } from '../../src/services/kondorServices/symmetricPoolServise'
+import { getSwapInput, calculateSwap, swap } from '../../src/services/kondorServices/symmetricPoolServise'
 import ConfirmModal from '../../src/components/modules/Modals/ConfirmModal'
 import SuccessfulTransactionModal from '../../src/components/modules/Modals/SuccessfulTransactionModal'
 import { BsArrowDownUp } from 'react-icons/bs'
@@ -34,8 +34,8 @@ export default function Swap () {
         .then((amount: number) => { buyInput.setValue(amount === 0 ? '0.00' : amount.toFixed(6)) })
     }
     if (buyInput.value) {
-      getSwapOutput(Number(buyInput.value), outAsset.id, inAsset.id)
-        .then((amount: number) => { sellInput.setValue(amount === 0 ? '0.00' : amount.toFixed(6)) })
+      calculateSwap(Number(buyInput.value), outAsset.id)
+        .then((res: [number, number]) => { sellInput.setValue(res[0] === 0 ? '0.00' : res[0].toFixed(6)) })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [inAsset, outAsset, flag])
@@ -87,6 +87,7 @@ export default function Swap () {
       setLoading(true)
       const amount = Number(sellInput.value)
       const result = await swap(account.addr, amount, outAsset.id)
+      calculateSwap(amount, outAsset.id)
       setTransactionId(result.txId)
       sellInput.setValue('')
       buyInput.setValue('')

@@ -1,6 +1,6 @@
 import { Text, Container, Card, Grid } from '@nextui-org/react'
 import { useRouter } from 'next/router'
-import { getPoolById } from '../../src/services/poolService'
+import { getPoolById } from '../../src/services/stablePoolService'
 import Link from 'next/link'
 import { LinkButton } from '../../src/components/LinkButton/LinkButton'
 import ItemDetailCard from '../../src/components/ItemDetailCard/ItemDetailCard'

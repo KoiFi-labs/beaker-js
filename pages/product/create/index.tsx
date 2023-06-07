@@ -2,7 +2,7 @@
 import { Button, Text, Container, Card, Grid, useInput, Radio, Spacer, Collapse, Checkbox, Input, Modal, Image, Backdrop } from '@nextui-org/react'
 import { LigthInput } from '../../../src/components/LighInput/LigthInput'
 import PoolSelect from '../../../src/components/PoolSelect/PoolSelect'
-import { PoolType, getPoolBySymbol, getPools } from '../../../src/services/poolService'
+import { PoolType, getPoolBySymbol, getPools } from '../../../src/services/stablePoolService'
 import { useState, useEffect, Dispatch, MutableRefObject, SetStateAction } from 'react'
 import ConfirmModal from '../../../src/components/modules/Modals/ConfirmModal'
 import SuccessfulTransactionModal from '../../../src/components/modules/Modals/SuccessfulTransactionModal'

@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Button, Text, Spacer, Image } from '@nextui-org/react'
 import PoolSelectModal from '../modules/Modals/PoolSelectModal'
-import { PoolType } from '../../services/poolService'
+import { PoolType } from '../../services/stablePoolService'
 import { RiArrowDropDownLine } from 'react-icons/ri'
 
 export type PoolSelectProps = {

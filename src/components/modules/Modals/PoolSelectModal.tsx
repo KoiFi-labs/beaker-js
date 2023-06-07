@@ -1,6 +1,6 @@
 import React from 'react'
 import { Modal, Button, Divider, Image, Container, Spacer } from '@nextui-org/react'
-import { PoolType } from '../../../services/poolService'
+import { PoolType } from '../../../services/stablePoolService'
 
 export type PoolSelectModalProps = {
     options: PoolType[],

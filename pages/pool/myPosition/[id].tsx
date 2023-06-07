@@ -1,6 +1,6 @@
 import { Text, Container, Tooltip, Card, Grid, Spacer } from '@nextui-org/react'
 import { useRouter } from 'next/router'
-import { getPoolById } from '../../../src/services/poolService'
+import { getPoolById } from '../../../src/services/stablePoolService'
 import { IconButton } from '../../../src/components/IconButton/IconButton'
 import { LinkButton } from '../../../src/components/LinkButton/LinkButton'
 import { InfoIcon } from '../../../public/icons/InfoIcon'

@@ -1,7 +1,8 @@
 /* eslint-disable no-unused-vars */
-import { Button, Text, Container, Card, Grid, Input, useInput, Radio, Collapse } from '@nextui-org/react'
+import { Button, Text, Container, Card, Grid, useInput, Radio, Collapse, Loading } from '@nextui-org/react'
+import { LigthInput } from '../../../src/components/LighInput/LigthInput'
 import PoolSelect from '../../../src/components/PoolSelect/PoolSelect'
-import { PoolType, getPoolBySymbol } from '../../../src/services/poolService'
+import { PoolType, getPoolBySymbol } from '../../../src/services/stablePoolService'
 import { useState, useEffect } from 'react'
 import ConfirmModal from '../../../src/components/modules/Modals/ConfirmModal'
 import SuccessfulTransactionModal from '../../../src/components/modules/Modals/SuccessfulTransactionModal'
@@ -9,10 +10,12 @@ import SendingTransactionModal from '../../../src/components/modules/Modals/Send
 import { abbreviateNumber, sleep } from '../../../src/utils/utils'
 import { useRouter } from 'next/router'
 import { createProduct, getBalances, getPrices } from '../../../src/services/mock'
-import { Balance, Price } from '../../../interfaces'
+import { Price } from '../../../interfaces'
+import { Balance } from '../../../src/services/algoService'
 import { BindingsChangeTarget } from '@nextui-org/react/types/use-input/use-input'
-import { getMintAmount } from '../../../src/services/kondorServices/symmetricPoolServise'
+import { getMintAmount, mint } from '../../../src/services/kondorServices/symmetricPoolServise'
 import { config } from '../../../config'
+import { useWallet } from '../../../src/contexts/useWallet'
 
 enum StyleType {
   ALIQUOT = 'aliquot',
@@ -31,7 +34,7 @@ export default function AddLiquidityPool () {
   const [confirmModalIsvisible, setConfirmModalIsVisible] = useState<boolean>(false)
   const [successfulTransactionModalIsVisible, setSuccessfulTransactionModalIsVisible] = useState<boolean>(false)
   const [sendingTransactionModalIsVisible, setSendingTransactionModalIsVisible] = useState<boolean>(false)
-  const [balances, setBalances] = useState<Balance[]>([])
+  const { isConnected, balances, account, reloadBalances } = useWallet()
   const [prices, setPrices] = useState<Price[]>([])
   const [style, setStyle] = useState<StyleType>(StyleType.ALIQUOT)
   const input1 = useInput('')
@@ -39,8 +42,11 @@ export default function AddLiquidityPool () {
   const [inputWithErrors, setInputWithErrors] = useState<boolean>(false)
   const router = useRouter()
   const [flag, setFlag] = useState<boolean>(false)
+  const [transactionId, setTransactionId] = useState<string>('')
+  const [loading, setLoading] = useState<boolean>(false)
   const assetInput1 = ('USDC')
   const assetInput2 = ('USDT')
+  const DECIMALS = 1000000
 
   const getPrice = (asset: string) => {
     const price = prices.find(p => p.assetSymbol === asset)
@@ -48,25 +54,23 @@ export default function AddLiquidityPool () {
   }
 
   useEffect(() => {
-    const fetchBalancesAndPrices = async () => {
-      const balances = await getBalances()
+    const fetchPrices = async () => {
       const prices = await getPrices()
-      setBalances(balances)
       setPrices(prices)
     }
-    fetchBalancesAndPrices()
+    fetchPrices()
   }, [])
 
   useEffect(() => {
     switch (style) {
       case StyleType.ALIQUOT: {
         if (input1.value) {
-          getMintAmount(Number(input1.value), config.pond.assetIdB)
-            .then((amount: number) => { input2.setValue(abbreviateNumber(amount)) })
+          getMintAmount(Number(input1.value), config.stablePool.assetIdB)
+            .then((amount: number) => { input2.setValue(amount.toFixed(6).toString()) })
         }
         if (input2.value) {
-          getMintAmount(Number(input2.value), config.pond.assetIdA)
-            .then((amount: number) => { input1.setValue(abbreviateNumber(amount)) })
+          getMintAmount(Number(input2.value), config.stablePool.assetIdA)
+            .then((amount: number) => { input1.setValue(amount.toFixed(6).toString()) })
         }
         break
       }
@@ -112,20 +116,10 @@ export default function AddLiquidityPool () {
   }
 
   const handleConfirmButton = async () => {
-    setSendingTransactionModalIsVisible(true)
-    await sleep(3000)
-    const assetsList = [assetInput1, assetInput2].slice(0, inputsAmount)
-    const name = assetsList.join('/')
-    await createProduct({
-      name,
-      id: Math.ceil(Math.random() * 9999999),
-      assets: assetsList.map(asset => ({
-        symbol: asset,
-        amount: getValueFromAsset(asset)
-      })),
-      value: calculateTotalPrice()
-    })
-    setSendingTransactionModalIsVisible(false)
+    setLoading(true)
+    const result = await mint(account.addr, Number(input1.value), Number(input2.value))
+    setTransactionId(result.txId)
+    setLoading(false)
     setSuccessfulTransactionModalIsVisible(true)
   }
 
@@ -134,8 +128,8 @@ export default function AddLiquidityPool () {
   }
 
   const getBalanceFromPool = (pool: PoolType) => {
-    const balance = balances.find(b => b.assetSymbol === pool.pool)
-    return balance?.amount || 0
+    const balance = balances.find((b: Balance) => b.symbol === pool.pool)
+    return balance?.amount / DECIMALS || 0
   }
 
   const calculateTotalPrice = () => {
@@ -155,11 +149,12 @@ export default function AddLiquidityPool () {
     return (
       <Card key={pool.pool} css={{ $$cardColor: '$colors$gray100', m: '4px 0px' }}>
         <Grid.Container justify='center' css={{ p: '8px' }}>
-          <Grid xs={12}>
-            <Input
-              {...{ value, onChange }}
-              label={label || `Add ${asset}`}
-              underlined
+          <Grid xs={12} css={{ d: 'flex', flexDirection: 'column' }}>
+            <Text>{label || `Add ${asset}`}</Text>
+            <LigthInput
+              value={value}
+              onChange={onChange}
+              aria-label={label || `Add ${asset}`}
               placeholder='0.00'
             />
           </Grid>
@@ -278,7 +273,7 @@ export default function AddLiquidityPool () {
           bordered
           rounded
           css={{ width: '100%', color: '$white', borderColor: '$kondorPrimary' }}
-        >Add liquidity
+        >{loading ? <Loading /> : 'Add liquidity'}
         </Button>
       </Container>
       {getConfirmModal()}
@@ -291,7 +286,7 @@ export default function AddLiquidityPool () {
         isVisible={successfulTransactionModalIsVisible}
         onHide={() => setSuccessfulTransactionModalIsVisible(false)}
         onPress={() => { handleOkButton() }}
-        transactionId='4UEKQ5H2YBDPW3FFXM36QDFT2AR6I7X4ZIPW7P32X3YHPTXVOHZQ'
+        transactionId={transactionId}
       />
     </Container>
   )

@@ -14,18 +14,19 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   switch (method) {
     case 'POST':
       try {
+        console.log('restarting')
         const pool = await Pool.findOne({ _id: id })
 
         const updatedPool = await Pool.findOneAndUpdate({ _id: id }, {
           assetA: {
             id: pool.assetA.id,
             symbol: pool.assetA.symbol,
-            amount: 100000000000000
+            amount: 1000000000000
           },
           assetB: {
             id: pool.assetB.id,
             symbol: pool.assetB.symbol,
-            amount: 100000000000000
+            amount: 1000000000000
           },
           poolAsset: pool.poolAsset,
           poolName: pool.poolName

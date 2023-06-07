@@ -4,7 +4,7 @@ export const transactions = [
     fromAddress: '0x000000000dfde7deaf24138722987c9a6991e2d4',
     toAddress: '0xbebc44782c7db0a1a60cb6fe97d0b483032ff1c7',
     contract: '0xdac17f958d2ee523a2206206994597c13d831ec7',
-    value: 2000000,
+    value: 50000,
     asset: 'USDT',
     date: '2023-04-21T12:29:35.000Z'
   },
@@ -13,7 +13,7 @@ export const transactions = [
     fromAddress: '0x000000000dfde7deaf24138722987c9a6991e2d4',
     toAddress: '0xbebc44782c7db0a1a60cb6fe97d0b483032ff1c7',
     contract: '0xdac17f958d2ee523a2206206994597c13d831ec7',
-    value: 3000000,
+    value: 45000,
     asset: 'USDT',
     date: '2023-04-21T12:25:35.000Z'
   },
@@ -22,8 +22,8 @@ export const transactions = [
     fromAddress: '0xceaf7747579696a2f0bb206a14210e3c9e6fb269',
     toAddress: '0xbebc44782c7db0a1a60cb6fe97d0b483032ff1c7',
     contract: '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48',
-    value: 769.233556,
-    asset: 'USDC',
+    value: 500000,
+    asset: 'USDT',
     date: '2023-04-21T12:22:59.000Z'
   },
   {

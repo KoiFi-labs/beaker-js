@@ -15,13 +15,13 @@ export type AssetsConfig = {
 export const assetsConfig: AssetsConfig = {
   testnet: [
     {
-      id: 159703771,
+      id: 210124674,
       name: 'Theter USDt',
       symbol: 'USDT',
       icon: 'https://seeklogo.com/images/T/tether-usdt-logo-FA55C7F397-seeklogo.com.png'
     },
     {
-      id: 159719100,
+      id: 210125266,
       name: 'USD Coin',
       symbol: 'USDC',
       icon: 'https://cryptologos.cc/logos/usd-coin-usdc-logo.png?v=024'

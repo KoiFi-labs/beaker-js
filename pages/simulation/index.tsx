@@ -13,11 +13,13 @@ import {
 import { Bar } from 'react-chartjs-2'
 import { Container, Text, Button, Grid, Spacer } from '@nextui-org/react'
 const SCALE_DECIMALS = 1000000
-const INITAL_A = 10000000 * SCALE_DECIMALS
-const INITAL_B = 10000000 * SCALE_DECIMALS
+// const INITAL_A = 10000000 * SCALE_DECIMALS
+// const INITAL_B = 10000000 * SCALE_DECIMALS
+const INITAL_A = 100
+const INITAL_B = 100
 const fee = 3
 const nT = 2 // number of assets in the pool
-const maxLoopLimit = 1000
+const maxLoopLimit = 15
 const __A = 10
 const A_PRECISION: number = 100
 const A: number = __A * A_PRECISION
@@ -48,7 +50,7 @@ export default function Simulation () {
       setPreventFirts(false)
       return
     }
-    runSimulation(counter)
+    // runSimulation(counter)
     console.log('assetASupply in useEffect', assetASupply)
     console.log('assetBSupply in useEffect', assetBSupply)
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -56,8 +58,10 @@ export default function Simulation () {
 
   const runSimulation = async (i: number) => {
     setAmountToSell(transactions[i].value as number)
-    const amountToSell = transactions[i].value
-    const assetIdToSell = transactions[i].asset === 'USDC' ? 159719100 : 159703771
+    // const amountToSell = transactions[i].value
+    const amountToSell = 10
+    // const assetIdToSell = transactions[i].asset === 'USDC' ? 159719100 : 159703771
+    const assetIdToSell = 159703771
     setSellingAssetA(assetIdToSell === 159703771)
     const [amountToBuy, fee, counterY, counterD] = calculateSwap(amountToSell, assetASupply, assetBSupply, sellingAssetA)
     setAmountToBuy(amountToBuy)
@@ -128,8 +132,10 @@ export default function Simulation () {
   }
 
   const swappingText = `Swaped ${amountToSell.toFixed(3)} ${sellingAssetA ? 'USDT' : 'USDC'} to ${amountToBuy.toFixed(3)} ${sellingAssetA ? 'USDC' : 'USDT'}`
-  const usdtPrinceText = `1 USDT = ${(calculateSwap(1 * SCALE_DECIMALS, assetASupply, assetBSupply, true)[0] / SCALE_DECIMALS).toFixed(3)} USDC`
-  const usdcPrinceText = `1 USDC = ${(calculateSwap(1 * SCALE_DECIMALS, assetASupply, assetBSupply, false)[0] / SCALE_DECIMALS).toFixed(3)} USDT`
+  // const usdtPrinceText = `1 USDT = ${(calculateSwap(1 * SCALE_DECIMALS, assetASupply, assetBSupply, true)[0] / SCALE_DECIMALS).toFixed(3)} USDC`
+  // const usdcPrinceText = `1 USDC = ${(calculateSwap(1 * SCALE_DECIMALS, assetASupply, assetBSupply, false)[0] / SCALE_DECIMALS).toFixed(3)} USDT`
+  const usdtPrinceText = 's'
+  const usdcPrinceText = 's'
   const handleResetButton = () => {
     setAssetASupply(INITAL_A)
     setAssetBSupply(INITAL_B)
@@ -151,7 +157,7 @@ export default function Simulation () {
           <Text size={18}>{usdcPrinceText}</Text>
         </Grid>
         <Grid xs={3} css={{ d: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-          <Button bordered rounded css={{ color: '$white' }} onPress={() => { setCounter(counter + 1) }}>Run swap</Button>
+          <Button bordered rounded css={{ color: '$white' }} onPress={() => { runSimulation(1) }}>Run swap</Button>
           <Spacer y={0.5} />
           <Button bordered rounded css={{ color: '$white' }} onPress={() => { handleResetButton() }}>Reset pools</Button>
         </Grid>
@@ -168,15 +174,19 @@ function calculateSwap (
   assetOutBalance: number,
   assetInIsABalance: boolean
 ): [number, number, number, number] {
+  console.log('assetInbalance', assetInBalance)
+  console.log('assetOutbalance', assetOutBalance)
   const amountInBalance = assetInIsABalance ? assetInBalance : assetOutBalance
   const x: number = dx + amountInBalance
   const [y, counterY, counterD] = getY(x, assetInBalance, assetOutBalance, assetInIsABalance)
   const amountOutBalance = assetInIsABalance ? assetOutBalance : assetInBalance
   let dy: number = amountOutBalance - y
-  const dyFee: number = dy * (fee / SCALE_DECIMALS)
+  const dyFee: number = dy * (fee / 1000)
   dy = Math.max(dy - dyFee, 0) // If dy negative return 0 assets out
-  // console.log('amount after swap asset_in: ', dx + assetInBalance)
-  // console.log('amount after swap asset_out: ', assetOutBalance - dy)
+  console.log('amount after swap asset_in: ', dx + assetInBalance)
+  console.log('amount after swap asset_out: ', assetOutBalance - dy)
+  console.log('toTransfer: ', dy)
+  console.log('fee: ', dyFee)
   return [dy, dyFee, counterY, counterD]
 }
 

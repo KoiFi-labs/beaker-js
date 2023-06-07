@@ -2,9 +2,23 @@ import { Button, Grid, Spacer, Text } from '@nextui-org/react'
 import MyStake from '../../../src/components/MyStake/MyStake'
 import MultiDetails from '../../../src/components/MultiDetails/MultiDetails'
 import { useRouter } from 'next/router'
+import { useState, useEffect } from 'react'
+import { getParticipation } from '../../../src/services/kondorServices/symmetricPoolServise'
+import { useWallet } from '../../../src/contexts/useWallet'
 
 const MyPosition = () => {
+  const { account } = useWallet()
   const router = useRouter()
+  const [participation, setParticipation] = useState<number>(0)
+
+  useEffect(() => {
+    if (account?.addr) {
+      getParticipation(account.addr)
+        .then(p => setParticipation(p))
+    } else {
+      setParticipation(0)
+    }
+  }, [account])
 
   const details = [
     {
@@ -13,7 +27,7 @@ const MyPosition = () => {
     },
     {
       title: 'Your Pool participation',
-      value: '0.21%'
+      value: `${participation} %`
     }
   ]
 

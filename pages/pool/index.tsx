@@ -1,7 +1,7 @@
 import { Text, Container, Switch, Grid } from '@nextui-org/react'
 import React, { useEffect, useState } from 'react'
 import PoolsTable from '../../src/components/modules/Tables/PoolsTable'
-import { getPools, PoolType } from '../../src/services/poolService'
+import { getPools, PoolType } from '../../src/services/stablePoolService'
 
 export default function Pool () {
   const [myPoolsFilter, setMyPoolsFilter] = useState(false)

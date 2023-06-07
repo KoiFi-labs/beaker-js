@@ -1,12 +1,13 @@
 import { networks } from './Networks'
 import { assetsConfig } from './Assets'
-import { pondsConfig } from './Pond'
+import { stablePoolsConfig } from './StablePool'
 export type { Asset } from './Assets'
 
 export const config = {
   network: networks.testnet,
   assetList: assetsConfig.testnet,
-  pond: pondsConfig.testnet,
+  stablePool: stablePoolsConfig.testnet,
   scale: 1000,
-  fee: 5
+  decimalScale: 1000000,
+  fee: 3
 }

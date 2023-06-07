@@ -3,7 +3,7 @@ import React from 'react'
 import { IconButton } from '../../IconButton/IconButton'
 import { PlusCircleIcon } from '../../../../public/icons/PlusCircleIcon'
 import Link from 'next/link'
-import { PoolType } from '../../../services/poolService'
+import { PoolType } from '../../../services/stablePoolService'
 import { useRouter } from 'next/router'
 
 export default function PoolsTable ({ pools }: { pools: PoolType[] }) {
