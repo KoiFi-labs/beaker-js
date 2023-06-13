@@ -39,7 +39,7 @@ export default function Simulation () {
   const [amountToBuy, setAmountToBuy] = useState<number>(0)
   const [amountToSell, setAmountToSell] = useState<number>(0)
   const [sellingAssetA, setSellingAssetA] = useState<boolean>(true)
-  const [counter, setCounter] = useState<number>(0)
+  const [counter] = useState<number>(0)
   const [preventFirst, setPreventFirts] = useState<boolean>(true)
   const [counterY, setCounterY] = useState<number>(0)
   const [counterD, setCounterD] = useState<number>(0)
