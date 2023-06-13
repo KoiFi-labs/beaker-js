@@ -62,14 +62,9 @@ export const mint = async (addr: string, aAmount: number, bAmount: number) => {
   const abiContract = new algosdk.ABIContract(contract)
   const signer = await mySigner(addr)
 
-  // const commonParams = {
-  //   appID: config.stablePool.appId,
-  //   sender: addr,
-  //   suggestedParams: sp,
-  //   signer
-  // }
-
   const comp = new algosdk.AtomicTransactionComposer()
+
+  if (aAmount <= 0 && bAmount <= 0) throw new Error('aAmount or bAmount should be a positive number')
 
   const assetTransferTxnA = algosdk.makeAssetTransferTxnWithSuggestedParamsFromObject({
     from: addr,
@@ -87,26 +82,47 @@ export const mint = async (addr: string, aAmount: number, bAmount: number) => {
     suggestedParams: sp
   })
 
-  comp.addMethodCall({
-    method: abiContract.getMethodByName('mint'),
-    methodArgs: [
-      {
-        txn: assetTransferTxnA,
-        signer
-      },
-      {
-        txn: assetTransferTxnB,
-        signer
-      },
-      config.stablePool.stablePoolAssetId,
-      config.stablePool.assetIdA,
-      config.stablePool.assetIdB
-    ],
-    appID: config.stablePool.appId,
-    sender: addr,
-    suggestedParams: { ...sp, fee: 4000 },
-    signer
-  })
+  if (aAmount > 0 && bAmount > 0) {
+    comp.addMethodCall({
+      method: abiContract.getMethodByName('mint_custom'),
+      methodArgs: [
+        {
+          txn: assetTransferTxnA,
+          signer
+        },
+        {
+          txn: assetTransferTxnB,
+          signer
+        },
+        config.stablePool.stablePoolAssetId,
+        config.stablePool.assetIdA,
+        config.stablePool.assetIdB
+      ],
+      appID: config.stablePool.appId,
+      sender: addr,
+      suggestedParams: { ...sp, fee: 4000 },
+      signer
+    })
+  } else {
+    const txn = aAmount > 0 ? assetTransferTxnA : assetTransferTxnB
+    comp.addMethodCall({
+      method: abiContract.getMethodByName('mint_single'),
+      methodArgs: [
+        {
+          txn,
+          signer
+        },
+        config.stablePool.stablePoolAssetId,
+        config.stablePool.assetIdA,
+        config.stablePool.assetIdB
+      ],
+      appID: config.stablePool.appId,
+      sender: addr,
+      suggestedParams: { ...sp, fee: 4000 },
+      signer
+    })
+  }
+
   const results = await comp.execute(client, 2)
   console.log(results)
   return {

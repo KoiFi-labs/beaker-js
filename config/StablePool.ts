@@ -26,9 +26,9 @@ export const stablePoolsConfig: StablePoolsConfig = {
     fee: 5
   },
   testnet: {
-    appId: 227319452,
-    appAddress: 'K4MZBYJQMNZDAMTIHWASJV74PY4DWTMYR6IOSWDOPYYYYDC3PONAQ7WJNA',
-    stablePoolAssetId: 227324538,
+    appId: 237365897,
+    appAddress: 'TAM4BPYCJXST6NPUA2JWYLNHQBOOVY6WZFMSY46L3NS7YA6ZIDAFNU7LUQ',
+    stablePoolAssetId: 237370333,
     assetIdA: 210124674,
     assetIdB: 210125266,
     scale: 1000000,

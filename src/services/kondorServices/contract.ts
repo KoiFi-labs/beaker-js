@@ -43,7 +43,7 @@ export const contract = {
       desc: 'bootstraps the contract by opting into the assets and creating the\npool token. Note this method will fail if it is attempted more than  once on the same contract since the assets and pool token application  state values are marked as static and cannot be overridden. Args:     seed: Initial Payment transaction to the app account so it can opt      in to assets and create pool token.     a_asset: One of the two assets this pool should allow swapping      between.     b_asset: One of the two assets this pool should allow swapping      between. Returns:     The asset id of the pool token created.'
     },
     {
-      name: 'mint',
+      name: 'mint_custom',
       args: [
         {
           type: 'axfer',
@@ -70,6 +70,31 @@ export const contract = {
         type: 'void'
       },
       desc: "mint pool tokens given some amount of a_asset and b_asset\non commit.\nGiven some amount of stable assets in the transfer, mint some number of  pool tokens calculated with the pool's current balance and  circulating supply of pool tokens.\nArgs:     a_xfer: Asset Transfer Transaction of a_asset as a deposit to the      pool in exchange for pool tokens.     b_xfer: Asset Transfer Transaction of b_asset as a deposit to the      pool in exchange for pool tokens.     pool_asset: The asset ID of the pool token so that we may      a_asset: The asset ID of the asset A token so that we may      distribute it.     b_asset: The asset ID of the asset B token so that we may      distribute it."
+    },
+    {
+      name: 'mint_single',
+      args: [
+        {
+          type: 'axfer',
+          name: 'xfer'
+        },
+        {
+          type: 'asset',
+          name: 'pool_asset'
+        },
+        {
+          type: 'asset',
+          name: 'a_asset'
+        },
+        {
+          type: 'asset',
+          name: 'b_asset'
+        }
+      ],
+      returns: {
+        type: 'void'
+      },
+      desc: "mint pool tokens given some amount of asset on commit.\nGiven some amount of stable assets in the transfer, mint some number of  pool tokens calculated with the pool's current balance and  circulating supply of pool tokens.\nArgs:     xfer: Asset Transfer Transaction of asset as a deposit to the      pool in exchange for pool tokens.     pool_asset: The asset ID of the pool token so that we may      asset: The asset ID so that we may distribute it."
     },
     {
       name: 'burn',
