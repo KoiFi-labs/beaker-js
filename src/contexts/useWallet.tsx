@@ -76,6 +76,11 @@ export const WalletProvider: React.FC<Props> = ({ children }: Props): JSX.Elemen
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  const getAssetBalance = (assetId: number) => {
+    const balance = balances.find((b: Balance) => b.assetId === assetId)
+    return balance?.amount || 0
+  }
+
   const handleDisconnectWalletClick = () => {
     switch (walletProvider) {
       case WALLET_PROVIDER.PERA:
@@ -120,7 +125,8 @@ export const WalletProvider: React.FC<Props> = ({ children }: Props): JSX.Elemen
       isConnected,
       balances,
       reloadBalances,
-      connectWallet
+      connectWallet,
+      getAssetBalance
     }}
     >
       <ConnectWalletModal isVisible={connectWalletModalVisible} onHide={() => setConnectWalletModalVisible(false)} />

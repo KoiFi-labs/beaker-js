@@ -32,7 +32,7 @@ export default function AddLiquidityPool () {
   const [step, setStep] = useState<Step>(Step.WALLET_CONNECT_NEEDED)
   const [isOptedinA, setIsOptedinA] = useState<boolean>(false)
   const [isOptedinB, setIsOptedinB] = useState<boolean>(false)
-  const { isConnected, balances, account, reloadBalances, connectWallet } = useWallet()
+  const { isConnected, balances, account, getAssetBalance, connectWallet } = useWallet()
   const input = useInput('')
   const router = useRouter()
   const [transactionId, setTransactionId] = useState<string>('')
@@ -46,11 +46,10 @@ export default function AddLiquidityPool () {
   }, [account, balances])
 
   useEffect(() => {
-    if (getAssetBalance(lpAsset.id) < Number(input.value)) {
-      setStep(Step.INSUFFICIENT_BALANCE)
-    } else {
-      updateStep()
+    if (getAssetBalance(lpAsset.id) / DECIMALS < Number(input.value)) {
+      return setStep(Step.INSUFFICIENT_BALANCE)
     }
+    updateStep()
   }, [input])
 
   const reloadState = async () => {
@@ -64,7 +63,7 @@ export default function AddLiquidityPool () {
 
   const updateStep = () => {
     if (!isConnected) return setStep(Step.WALLET_CONNECT_NEEDED)
-    if (getAssetBalance(lpAsset.id) < Number(input.value)) return setStep(Step.INSUFFICIENT_BALANCE)
+    if (getAssetBalance(lpAsset.id) / DECIMALS < Number(input.value)) return setStep(Step.INSUFFICIENT_BALANCE)
     if (!isOptedinA) return setStep(Step.OPT_IN_A_NEEDED)
     if (!isOptedinB) return setStep(Step.OPT_IN_B_NEEDED)
     setStep(Step.READY)
@@ -140,11 +139,6 @@ export default function AddLiquidityPool () {
     setConfirmOptinBModalIsVisible(true)
   }
 
-  const getAssetBalance = (assetId: number) => {
-    const balance = balances.find((b: Balance) => b.assetId === assetId)
-    return balance?.amount / DECIMALS || 0
-  }
-
   const AssetInput = (
     asset: Asset,
     value:string,
@@ -164,7 +158,7 @@ export default function AddLiquidityPool () {
             />
           </Grid>
           <Container display='flex' justify='flex-start' css={{ p: 0 }}>
-            <Text size={14} css={{ color: '$kondorGray' }}>Balance {getAssetBalance(asset.id)} {asset.symbol}</Text>
+            <Text size={14} css={{ color: '$kondorGray' }}>Balance {getAssetBalance(asset.id) / DECIMALS} {asset.symbol}</Text>
           </Container>
         </Grid.Container>
       </Card>
