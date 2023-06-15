@@ -1,20 +1,33 @@
 import { Text, Grid, Button, Spacer } from '@nextui-org/react'
-import React from 'react'
+import { useState, useEffect } from 'react'
 import ItemDetailCard from '../../src/components/ItemDetailCard/ItemDetailCard'
 import { abbreviateNumber } from '../../src/utils/utils'
 import { BiTransfer, BiDollar, BiCalculator, BiData } from 'react-icons/bi'
 import { FaCoins } from 'react-icons/fa'
 import { AiOutlineGlobal } from 'react-icons/ai'
 import { useRouter } from 'next/router'
+import { getPoolSupply } from '../../src/services/kondorServices/symmetricPoolServise'
+
+const DECIMALS = 1000000
 
 export default function Stable () {
   const router = useRouter()
+  const [aSupply, setASupply] = useState<number>(0)
+  const [bSupply, setBSupply] = useState<number>(0)
   const pool = {
     pool: 'USDC/USDT',
     total: 1200420,
     volume: 562330,
     apr: 12
   }
+
+  useEffect(() => {
+    getPoolSupply()
+      .then(res => {
+        setASupply(res[0])
+        setBSupply(res[1])
+      })
+  }, [])
 
   const data = [
     {
@@ -29,7 +42,7 @@ export default function Stable () {
     },
     {
       title: 'Total liquidity',
-      value: `$${abbreviateNumber(pool.total)}`,
+      value: `$${abbreviateNumber((aSupply + bSupply) / DECIMALS)}`,
       icon: <AiOutlineGlobal size={40} />
     },
     {

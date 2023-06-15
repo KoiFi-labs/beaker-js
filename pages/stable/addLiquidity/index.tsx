@@ -35,7 +35,7 @@ export default function AddLiquidityPool () {
   const [sendingTransactionModalIsVisible, setSendingTransactionModalIsVisible] = useState<boolean>(false)
   const [step, setStep] = useState<Step>(Step.WALLET_CONNECT_NEEDED)
   const [isOptedin, setIsOptedin] = useState<boolean>(false)
-  const { isConnected, balances, account, reloadBalances } = useWallet()
+  const { isConnected, balances, account, reloadBalances, connectWallet } = useWallet()
   const [style, setStyle] = useState<StyleType>(StyleType.ALIQUOT)
   const input1 = useInput('')
   const input2 = useInput('')
@@ -118,7 +118,7 @@ export default function AddLiquidityPool () {
   const buttonOptions = [
     {
       text: 'Connect your wallet',
-      onPress: () => { console.log('connect your wallet') }
+      onPress: () => { connectWallet() }
     },
     {
       text: 'Opt-in pool token',
@@ -140,7 +140,7 @@ export default function AddLiquidityPool () {
 
   const handleConfirmOptinButton = async () => {
     setLoading(true)
-    const result = await optin(account.addr)
+    const result = await optin(account.addr, config.stablePool.stablePoolAssetId)
     setTransactionId(result.txId)
     setLoading(false)
     setSuccessfulTransactionModalIsVisible(true)

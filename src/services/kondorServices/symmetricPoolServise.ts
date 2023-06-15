@@ -130,7 +130,46 @@ export const mint = async (addr: string, aAmount: number, bAmount: number) => {
   }
 }
 
-export const optin = async (addr: string) => {
+export const burn = async (addr: string, amount: number) => {
+  const sp = await client.getTransactionParams().do()
+  const abiContract = new algosdk.ABIContract(contract)
+  const signer = await mySigner(addr)
+  const comp = new algosdk.AtomicTransactionComposer()
+
+  const assetTransferTxn = algosdk.makeAssetTransferTxnWithSuggestedParamsFromObject({
+    from: addr,
+    to: config.stablePool.appAddress,
+    amount: amount * SCALE_DECIMALS,
+    assetIndex: config.stablePool.stablePoolAssetId,
+    suggestedParams: sp
+  })
+
+  comp.addMethodCall({
+    method: abiContract.getMethodByName('burn'),
+    methodArgs: [
+      {
+        txn: assetTransferTxn,
+        signer
+      },
+      config.stablePool.stablePoolAssetId,
+      config.stablePool.assetIdA,
+      config.stablePool.assetIdB
+    ],
+    appID: config.stablePool.appId,
+    sender: addr,
+    suggestedParams: { ...sp, flatFee: true, fee: 3 * 1000 },
+    signer
+  })
+
+  const results = await comp.execute(client, 2)
+  console.log(results)
+  return {
+    result: results.methodResults[0].returnValue,
+    txId: results.methodResults[0].txID
+  }
+}
+
+export const optin = async (addr: string, asset: number) => {
   const sp = await client.getTransactionParams().do()
   const signer = await mySigner(addr)
 
@@ -147,7 +186,7 @@ export const optin = async (addr: string) => {
     from: addr,
     to: addr,
     amount: 0,
-    assetIndex: config.stablePool.stablePoolAssetId,
+    assetIndex: asset,
     suggestedParams: sp
   })
 
@@ -158,7 +197,6 @@ export const optin = async (addr: string) => {
 
   const results = await comp.execute(client, 2)
 
-  console.log('results', results)
   return {
     txId: results.txIDs[0]
   }

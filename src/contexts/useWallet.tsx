@@ -4,6 +4,7 @@ import { peraService } from '../services/walletServices/peraService'
 import { myAlgoService } from '../services/walletServices/myAlgoService'
 import { useSandbox } from './useSandbox'
 import { getBalances, Balance } from '../services/algoService'
+import ConnectWalletModal from '../components/modules/Modals/ConnectWalletModal'
 
 const WalletContext = createContext({})
 
@@ -27,6 +28,7 @@ export const WalletProvider: React.FC<Props> = ({ children }: Props): JSX.Elemen
   const [walletProvider, setWalletProvider] = useState<WALLET_PROVIDER | null>(null)
   const [isConnected, setIsConnected] = useState<boolean>(false)
   const [balances, setBalances] = useState<Balance[]>([])
+  const [connectWalletModalVisible, setConnectWalletModalVisible] = useState<boolean>(false)
 
   useEffect(() => {
     if (account?.addr) {
@@ -36,9 +38,11 @@ export const WalletProvider: React.FC<Props> = ({ children }: Props): JSX.Elemen
     }
     setBalances([])
   }, [account, isConnected])
-
   const { handleConnectSandboxWalletClick, handleDisconnectSandboxWalletClick, sandboxAccountAddress } = useSandbox()
 
+  const connectWallet = (): void => {
+    setConnectWalletModalVisible(true)
+  }
   const reloadBalances = () => {
     if (account?.addr) {
       getBalances(account.addr).then((balances) => {
@@ -109,7 +113,17 @@ export const WalletProvider: React.FC<Props> = ({ children }: Props): JSX.Elemen
   }
 
   return (
-    <WalletContext.Provider value={{ account, handleConnectWalletClick, handleDisconnectWalletClick, isConnected, balances, reloadBalances }}>
+    <WalletContext.Provider value={{
+      account,
+      handleConnectWalletClick,
+      handleDisconnectWalletClick,
+      isConnected,
+      balances,
+      reloadBalances,
+      connectWallet
+    }}
+    >
+      <ConnectWalletModal isVisible={connectWalletModalVisible} onHide={() => setConnectWalletModalVisible(false)} />
       {children}
     </WalletContext.Provider>
   )

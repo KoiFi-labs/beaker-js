@@ -1,4 +1,5 @@
 import { NETWORK } from './Networks'
+import { stablePoolsConfig } from './StablePool'
 
 export type Asset = {
     id: number;
@@ -73,6 +74,12 @@ export const assetsConfig: AssetsConfig = {
       name: 'PLANET',
       symbol: 'PLANET',
       icon: 'https://assets.algoexplorer.io/asset-logo-27165954.image'
+    },
+    {
+      id: stablePoolsConfig.testnet.stablePoolAssetId,
+      name: 'KF-V1-SPOOL-USDT-USDT',
+      symbol: 'KF-V1-SPOOL-USDT-USDT',
+      icon: 'https://assets.algoexplorer.io/asset-logo-465818554.image'
     }
   ],
   mainnet: [

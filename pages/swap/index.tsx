@@ -178,7 +178,7 @@ export default function Swap () {
                 />
                 <Container display='flex' justify='flex-start' css={{ p: 0 }}>
                   <Text size={14} css={{ color: '$kondorGray' }}>
-                    Balance {balanceToSell ? balanceToSell.toFixed(4) : 0} {outAsset.symbol}
+                    Balance {balanceToSell ? balanceToSell.toFixed(6) : 0} {outAsset.symbol}
                   </Text>
                 </Container>
               </Grid>

@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react'
 import { Button, Navbar, Popover, Text, Card, Avatar, Container, Divider, Spacer, Grid, Tooltip } from '@nextui-org/react'
-import ConnectWalletModal from '../Modals/ConnectWalletModal'
 import { useWallet } from '../../../contexts/useWallet'
 import { ChevronIcon } from '../../../../public/icons/chevron-down'
 import { Balance } from '../../../services/algoService'
@@ -13,8 +12,7 @@ import { BiCopy, BiLinkExternal } from 'react-icons/bi'
 import Image from 'next/image'
 
 const Nav: React.FC = (): JSX.Element => {
-  const { isConnected, handleDisconnectWalletClick, account, balances } = useWallet()
-  const [connectWalletModalVisible, setConnectWalletModalVisible] = useState<boolean>(false)
+  const { isConnected, handleDisconnectWalletClick, account, balances, connectWallet } = useWallet()
   const [isToggleSelected, setIsToggleSelected] = useState<boolean>(false)
   const balancesToShow = balances.filter((b: Balance) => config.assetList.map(a => a.id).includes(b.assetId))
 
@@ -43,7 +41,7 @@ const Nav: React.FC = (): JSX.Element => {
   }, [isToggleSelected])
 
   const handlerConnect = (): void => {
-    setConnectWalletModalVisible(true)
+    connectWallet()
   }
 
   const handlerDisconnect = (): void => {
@@ -144,7 +142,6 @@ const Nav: React.FC = (): JSX.Element => {
             >
               <BsWallet2 size={20} />
             </Button>
-            <ConnectWalletModal isVisible={connectWalletModalVisible} onHide={() => setConnectWalletModalVisible(false)} />
           </Grid>
         </Grid.Container>
       )
@@ -241,7 +238,6 @@ const Nav: React.FC = (): JSX.Element => {
           <Link href={page.href} key={page.label}>{page.label}</Link>
         ))}
       </Navbar.Content>
-
       <Navbar.Content>
         <Navbar.Item>
           <div>
