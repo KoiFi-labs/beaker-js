@@ -2,7 +2,8 @@ import { Button, CSS, Loading } from '@nextui-org/react'
 
 type Item = {
     text: string,
-    onPress: () => void,
+    onPress?: () => void,
+    disabled?: boolean,
 }
 
 type Props = {
@@ -11,7 +12,6 @@ type Props = {
         bordered?: boolean
         rounded?: boolean
         loading?: boolean
-        disabled?: boolean
         css?: CSS
     };
 
@@ -21,14 +21,14 @@ export const DynamicButton = ({
   bordered = true,
   rounded = true,
   loading = false,
-  disabled = false,
   css
 }: Props) => {
   const cssProps = css || { width: '100%', color: '$white', borderColor: '$kondorPrimary' }
-  if (loading) disabled = true
+  const disabled = items[index]?.disabled || loading
+  const onPress = items[index]?.onPress || (() => {})
   return (
     <Button
-      onPress={() => items[index].onPress()}
+      onPress={onPress}
       bordered={bordered}
       rounded={rounded}
       disabled={disabled}

@@ -33,3 +33,7 @@ export const copyToClipboard = (text: string) => {
 export const sleep = (ms: number) => {
   return new Promise((resolve) => setTimeout(resolve, ms))
 }
+
+export const isNumber = (c: string) => {
+  return !isNaN(Number(c))
+}

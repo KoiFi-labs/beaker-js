@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-unused-vars */
 import { Text, Container, Card, Grid, useInput } from '@nextui-org/react'
 import { LigthInput } from '../../../src/components/LighInput/LigthInput'
@@ -12,9 +13,11 @@ import { BindingsChangeTarget } from '@nextui-org/react/types/use-input/use-inpu
 import { burn, optin } from '../../../src/services/kondorServices/symmetricPoolServise'
 import { Asset, config } from '../../../config'
 import { useWallet } from '../../../src/contexts/useWallet'
+import { isNumber } from '../../../src/utils/utils'
 
 enum Step {
   WALLET_CONNECT_NEEDED,
+  INSUFFICIENT_BALANCE,
   OPT_IN_A_NEEDED,
   OPT_IN_B_NEEDED,
   READY
@@ -40,8 +43,15 @@ export default function AddLiquidityPool () {
   useEffect(() => {
     reloadState()
       .then(() => updateStep())
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [account, balances])
+
+  useEffect(() => {
+    if (getAssetBalance(lpAsset.id) < Number(input.value)) {
+      setStep(Step.INSUFFICIENT_BALANCE)
+    } else {
+      updateStep()
+    }
+  }, [input])
 
   const reloadState = async () => {
     if (isConnected) {
@@ -49,19 +59,21 @@ export default function AddLiquidityPool () {
         .then((res: boolean) => setIsOptedinA(res))
         .then(() => hasOptin(account.addr, config.stablePool.assetIdB))
         .then((res: boolean) => setIsOptedinB(res))
-        .then(() => reloadBalances())
     }
   }
 
   const updateStep = () => {
     if (!isConnected) return setStep(Step.WALLET_CONNECT_NEEDED)
+    if (getAssetBalance(lpAsset.id) < Number(input.value)) return setStep(Step.INSUFFICIENT_BALANCE)
     if (!isOptedinA) return setStep(Step.OPT_IN_A_NEEDED)
     if (!isOptedinB) return setStep(Step.OPT_IN_B_NEEDED)
     setStep(Step.READY)
   }
 
   const onChangeInput = (e: any) => {
-    input.setValue(e.target.value)
+    if (isNumber(e.target.value)) {
+      input.setValue(e.target.value)
+    }
   }
 
   const handleOkButton = () => {
@@ -73,6 +85,10 @@ export default function AddLiquidityPool () {
     {
       text: 'Connect your wallet',
       onPress: () => { connectWallet() }
+    },
+    {
+      text: `Insufficient ${lpAsset.symbol} balance`,
+      disabled: true
     },
     {
       text: 'Opt-in A token',
