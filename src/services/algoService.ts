@@ -11,7 +11,7 @@ export type Balance = {
     icon?: string;
 }
 
-const getBalances: (account: string) => Promise<Balance[]> = async (account) => {
+export const getBalances: (account: string) => Promise<Balance[]> = async (account) => {
   const accountInfo = await algoClient.accountInformation(account).do()
   const algorandTokenInfo = config.assetList.find((assetItem) => assetItem.id === 0)
 
@@ -42,21 +42,20 @@ const getBalances: (account: string) => Promise<Balance[]> = async (account) => 
   })
 }
 
-const healthCheck = async () => {
+export const healthCheck = async () => {
   await algoClient.status().do()
 }
 
-const generateAccount = () => {
+export const generateAccount = () => {
   return algoSdk.generateAccount()
 }
 
-const secretKeyToMnemonic = (secretKey: Uint8Array) => {
+export const secretKeyToMnemonic = (secretKey: Uint8Array) => {
   return algoSdk.secretKeyToMnemonic(secretKey)
 }
 
-export const algoService = {
-  getBalances,
-  healthCheck,
-  generateAccount,
-  secretKeyToMnemonic
-}
+export const hasOptin: (account: string, asset: number) => Promise<boolean> =
+  async (account: string, asset: number) => {
+    const accountInfo = await algoClient.accountInformation(account).do()
+    return accountInfo.assets.some((assetItem: any) => assetItem['asset-id'] === asset)
+  }

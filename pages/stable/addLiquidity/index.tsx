@@ -1,19 +1,17 @@
 /* eslint-disable no-unused-vars */
-import { Button, Text, Container, Card, Grid, useInput, Radio, Collapse, Loading } from '@nextui-org/react'
+import { Text, Container, Card, Grid, useInput, Radio, Loading } from '@nextui-org/react'
 import { LigthInput } from '../../../src/components/LighInput/LigthInput'
-import PoolSelect from '../../../src/components/PoolSelect/PoolSelect'
 import { PoolType, getPoolBySymbol } from '../../../src/services/stablePoolService'
+import { DynamicButton } from '../../../src/components/DynamicButton/DynamicButton'
 import { useState, useEffect } from 'react'
 import ConfirmModal from '../../../src/components/modules/Modals/ConfirmModal'
 import SuccessfulTransactionModal from '../../../src/components/modules/Modals/SuccessfulTransactionModal'
 import SendingTransactionModal from '../../../src/components/modules/Modals/SendingTransaction'
-import { abbreviateNumber, sleep } from '../../../src/utils/utils'
+import { abbreviateNumber } from '../../../src/utils/utils'
 import { useRouter } from 'next/router'
-import { createProduct, getBalances, getPrices } from '../../../src/services/mock'
-import { Price } from '../../../interfaces'
-import { Balance } from '../../../src/services/algoService'
+import { Balance, hasOptin } from '../../../src/services/algoService'
 import { BindingsChangeTarget } from '@nextui-org/react/types/use-input/use-input'
-import { getMintAmount, mint } from '../../../src/services/kondorServices/symmetricPoolServise'
+import { getMintAmount, mint, optin } from '../../../src/services/kondorServices/symmetricPoolServise'
 import { config } from '../../../config'
 import { useWallet } from '../../../src/contexts/useWallet'
 
@@ -24,42 +22,50 @@ enum StyleType {
   ASSET_B = 'asset_b'
 }
 
-type AssetInput = {
-  asset: string,
-  amount: number
+enum Step {
+  WALLET_CONNECT_NEEDED,
+  OPT_IN_NEEDED,
+  READY
 }
 
 export default function AddLiquidityPool () {
-  const [inputsAmount, setInputsAmount] = useState<number>(1)
   const [confirmModalIsvisible, setConfirmModalIsVisible] = useState<boolean>(false)
+  const [confirmOptinModalIsvisible, setConfirmOptinModalIsVisible] = useState<boolean>(false)
   const [successfulTransactionModalIsVisible, setSuccessfulTransactionModalIsVisible] = useState<boolean>(false)
   const [sendingTransactionModalIsVisible, setSendingTransactionModalIsVisible] = useState<boolean>(false)
+  const [step, setStep] = useState<Step>(Step.WALLET_CONNECT_NEEDED)
+  const [isOptedin, setIsOptedin] = useState<boolean>(false)
   const { isConnected, balances, account, reloadBalances } = useWallet()
-  const [prices, setPrices] = useState<Price[]>([])
   const [style, setStyle] = useState<StyleType>(StyleType.ALIQUOT)
   const input1 = useInput('')
   const input2 = useInput('')
-  const [inputWithErrors, setInputWithErrors] = useState<boolean>(false)
   const router = useRouter()
   const [flag, setFlag] = useState<boolean>(false)
   const [transactionId, setTransactionId] = useState<string>('')
   const [loading, setLoading] = useState<boolean>(false)
-  const assetInput1 = ('USDC')
-  const assetInput2 = ('USDT')
+  const assetInput1 = ('USDT')
+  const assetInput2 = ('USDC')
   const DECIMALS = 1000000
 
-  const getPrice = (asset: string) => {
-    const price = prices.find(p => p.assetSymbol === asset)
-    return price?.price || 0
+  useEffect(() => {
+    reloadState()
+      .then(() => updateStep())
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [account, balances])
+
+  const reloadState = async () => {
+    if (isConnected) {
+      hasOptin(account.addr, config.stablePool.stablePoolAssetId)
+        .then((res: boolean) => setIsOptedin(res))
+        .then(() => reloadBalances())
+    }
   }
 
-  useEffect(() => {
-    const fetchPrices = async () => {
-      const prices = await getPrices()
-      setPrices(prices)
-    }
-    fetchPrices()
-  }, [])
+  const updateStep = () => {
+    if (!isConnected) return setStep(Step.WALLET_CONNECT_NEEDED)
+    if (!isOptedin) return setStep(Step.OPT_IN_NEEDED)
+    setStep(Step.READY)
+  }
 
   useEffect(() => {
     switch (style) {
@@ -109,11 +115,20 @@ export default function AddLiquidityPool () {
     router.push('/stable')
   }
 
-  const getValueFromAsset = (asset: string) => {
-    if (asset === assetInput1) return Number(input1.value)
-    if (asset === assetInput2) return Number(input2.value)
-    return 0
-  }
+  const buttonOptions = [
+    {
+      text: 'Connect your wallet',
+      onPress: () => { console.log('connect your wallet') }
+    },
+    {
+      text: 'Opt-in pool token',
+      onPress: () => { handleOptinButton() }
+    },
+    {
+      text: 'Add liquidity',
+      onPress: () => { handleAddLiquidityButton() }
+    }
+  ]
 
   const handleConfirmButton = async () => {
     setLoading(true)
@@ -123,20 +138,25 @@ export default function AddLiquidityPool () {
     setSuccessfulTransactionModalIsVisible(true)
   }
 
-  const handleCreateButton = () => {
+  const handleConfirmOptinButton = async () => {
+    setLoading(true)
+    const result = await optin(account.addr)
+    setTransactionId(result.txId)
+    setLoading(false)
+    setSuccessfulTransactionModalIsVisible(true)
+  }
+
+  const handleAddLiquidityButton = () => {
     setConfirmModalIsVisible(true)
+  }
+
+  const handleOptinButton = () => {
+    setConfirmOptinModalIsVisible(true)
   }
 
   const getBalanceFromPool = (pool: PoolType) => {
     const balance = balances.find((b: Balance) => b.symbol === pool.pool)
     return balance?.amount / DECIMALS || 0
-  }
-
-  const calculateTotalPrice = () => {
-    const price1 = prices.find(p => p.assetSymbol === assetInput1)
-    const price2 = prices.find(p => p.assetSymbol === assetInput2)
-    const total = Number(input1.value) * Number(price1?.price) + Number(input2.value) * Number(price2?.price)
-    return total
   }
 
   const PoolInput = (
@@ -227,12 +247,22 @@ export default function AddLiquidityPool () {
                 assetInput2,
                 `${abbreviateNumber(Number(input2.value), 2)} ${assetInput2}`)
           }
-          {
-            getResumeDetails(
-              'Total value',
-              `≈ $${abbreviateNumber(calculateTotalPrice())}`)
-          }
         </>
+      </ConfirmModal>
+    )
+  }
+
+  const getConfirmOptinModal = () => {
+    return (
+      <ConfirmModal
+        isVisible={confirmOptinModalIsvisible}
+        onHide={() => setConfirmOptinModalIsVisible(false)}
+        onPress={handleConfirmOptinButton}
+        title='Confirm transaction'
+      >
+        <Text>
+          Opt-in stable pool asset {config.stablePool.stablePoolAssetId}
+        </Text>
       </ConfirmModal>
     )
   }
@@ -268,15 +298,10 @@ export default function AddLiquidityPool () {
           </Radio>
         </Radio.Group>
         {getInputs()}
-        <Button
-          onPress={() => handleCreateButton()}
-          bordered
-          rounded
-          css={{ width: '100%', color: '$white', borderColor: '$kondorPrimary' }}
-        >{loading ? <Loading /> : 'Add liquidity'}
-        </Button>
+        <DynamicButton items={buttonOptions} index={step} loading={loading} />
       </Container>
       {getConfirmModal()}
+      {getConfirmOptinModal()}
       <SendingTransactionModal
         isVisible={sendingTransactionModalIsVisible}
         onHide={() => setSendingTransactionModalIsVisible(false)}

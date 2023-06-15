@@ -2,7 +2,7 @@ import { Button, Spacer, Text, Badge, Container } from '@nextui-org/react'
 import React, { useState } from 'react'
 import AccountCreatedModal from '../../src/components/modules/Modals/AccountCreatedModal'
 import { useSandbox } from '../../src/contexts/useSandbox'
-import { algoService } from '../../src/services/algoService'
+import { healthCheck, generateAccount, secretKeyToMnemonic } from '../../src/services/algoService'
 
 export default function Sandbox () {
   const [sandboxStatus, setSanboxStatus] = useState('disconnected')
@@ -18,7 +18,7 @@ export default function Sandbox () {
 
   const verifySanboxStatus = async () => {
     try {
-      await algoService.healthCheck()
+      await healthCheck()
       setSanboxStatus('success')
     } catch (error) {
       setSanboxStatus('error')
@@ -33,10 +33,10 @@ export default function Sandbox () {
 
   const createAccount = function () {
     try {
-      const myaccount = algoService.generateAccount()
+      const myaccount = generateAccount()
       console.log('Account Address = ' + myaccount.addr)
       setAccount(myaccount.addr)
-      const accountMnemonic = algoService.secretKeyToMnemonic(myaccount.sk)
+      const accountMnemonic = secretKeyToMnemonic(myaccount.sk)
       console.log('Account Mnemonic = ' + accountMnemonic)
       setSeed(accountMnemonic.split(' ') as unknown as never[])
       return myaccount

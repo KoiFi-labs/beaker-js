@@ -3,7 +3,7 @@ import React, { createContext, useContext, useEffect, useState } from 'react'
 import { peraService } from '../services/walletServices/peraService'
 import { myAlgoService } from '../services/walletServices/myAlgoService'
 import { useSandbox } from './useSandbox'
-import { algoService, Balance } from '../services/algoService'
+import { getBalances, Balance } from '../services/algoService'
 
 const WalletContext = createContext({})
 
@@ -30,7 +30,7 @@ export const WalletProvider: React.FC<Props> = ({ children }: Props): JSX.Elemen
 
   useEffect(() => {
     if (account?.addr) {
-      algoService.getBalances(account.addr).then((balances) => {
+      getBalances(account.addr).then((balances) => {
         setBalances(balances)
       })
     }
@@ -41,7 +41,7 @@ export const WalletProvider: React.FC<Props> = ({ children }: Props): JSX.Elemen
 
   const reloadBalances = () => {
     if (account?.addr) {
-      algoService.getBalances(account.addr).then((balances) => {
+      getBalances(account.addr).then((balances) => {
         setBalances(balances)
       })
     }
@@ -69,6 +69,7 @@ export const WalletProvider: React.FC<Props> = ({ children }: Props): JSX.Elemen
         setAccount({ addr: acc.addr })
         setIsConnected(true)
       })
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const handleDisconnectWalletClick = () => {

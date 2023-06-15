@@ -61,7 +61,6 @@ export const mint = async (addr: string, aAmount: number, bAmount: number) => {
   const sp = await client.getTransactionParams().do()
   const abiContract = new algosdk.ABIContract(contract)
   const signer = await mySigner(addr)
-
   const comp = new algosdk.AtomicTransactionComposer()
 
   if (aAmount <= 0 && bAmount <= 0) throw new Error('aAmount or bAmount should be a positive number')
@@ -100,7 +99,7 @@ export const mint = async (addr: string, aAmount: number, bAmount: number) => {
       ],
       appID: config.stablePool.appId,
       sender: addr,
-      suggestedParams: { ...sp, fee: 4000 },
+      suggestedParams: { ...sp, flatFee: true, fee: 4 * 1000 },
       signer
     })
   } else {
@@ -118,7 +117,7 @@ export const mint = async (addr: string, aAmount: number, bAmount: number) => {
       ],
       appID: config.stablePool.appId,
       sender: addr,
-      suggestedParams: { ...sp, fee: 4000 },
+      suggestedParams: { ...sp, flatFee: true, fee: 4 * 1000 },
       signer
     })
   }
@@ -131,7 +130,7 @@ export const mint = async (addr: string, aAmount: number, bAmount: number) => {
   }
 }
 
-export const optin = async (addr: string, amount: number, assetA: number) => {
+export const optin = async (addr: string) => {
   const sp = await client.getTransactionParams().do()
   const signer = await mySigner(addr)
 
@@ -161,8 +160,7 @@ export const optin = async (addr: string, amount: number, assetA: number) => {
 
   console.log('results', results)
   return {
-    result: results.methodResults[0].returnValue,
-    txId: results.methodResults[0].txID
+    txId: results.txIDs[0]
   }
 }
 
