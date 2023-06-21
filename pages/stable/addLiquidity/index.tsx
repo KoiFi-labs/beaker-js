@@ -1,8 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-unused-vars */
-import { Text, Container, Card, Grid, useInput, Radio, Loading } from '@nextui-org/react'
+import { Text, Container, Card, Grid, useInput, Radio } from '@nextui-org/react'
 import { LigthInput } from '../../../src/components/LighInput/LigthInput'
-import { PoolType, getPoolBySymbol } from '../../../src/services/stablePoolService'
 import { DynamicButton } from '../../../src/components/DynamicButton/DynamicButton'
 import { useState, useEffect } from 'react'
 import ConfirmModal from '../../../src/components/modules/Modals/ConfirmModal'
@@ -10,11 +9,12 @@ import SuccessfulTransactionModal from '../../../src/components/modules/Modals/S
 import SendingTransactionModal from '../../../src/components/modules/Modals/SendingTransaction'
 import { abbreviateNumber, isNumber } from '../../../src/utils/utils'
 import { useRouter } from 'next/router'
-import { Balance, hasOptin } from '../../../src/services/algoService'
+import { hasOptin } from '../../../src/services/algoService'
 import { BindingsChangeTarget } from '@nextui-org/react/types/use-input/use-input'
 import { getMintAmount, mint, optin } from '../../../src/services/kondorServices/symmetricPoolServise'
 import { Asset, config } from '../../../config'
 import { useWallet } from '../../../src/contexts/useWallet'
+import useTimer from '../../../src/hooks/useTimmer'
 
 enum StyleType {
   ALIQUOT = 'aliquot',
@@ -39,11 +39,11 @@ export default function AddLiquidityPool () {
   const [step, setStep] = useState<Step>(Step.WALLET_CONNECT_NEEDED)
   const [isOptedin, setIsOptedin] = useState<boolean>(false)
   const { isConnected, balances, account, reloadBalances, connectWallet, getAssetBalance } = useWallet()
+  const { timerFlag, runTimer } = useTimer()
   const [style, setStyle] = useState<StyleType>(StyleType.ALIQUOT)
   const inputA = useInput('')
   const inputB = useInput('')
   const router = useRouter()
-  const [flag, setFlag] = useState<boolean>(false)
   const [transactionId, setTransactionId] = useState<string>('')
   const [loading, setLoading] = useState<boolean>(false)
   const assetA = config.assetList.filter(a => a.id === config.stablePool.assetIdA)[0]
@@ -53,16 +53,9 @@ export default function AddLiquidityPool () {
   useEffect(() => {
     reloadState()
       .then(() => updateStep())
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [account, balances])
 
   useEffect(() => {
-    if (getAssetBalance(assetA.id) / DECIMALS < Number(inputA.value)) {
-      return setStep(Step.INSUFFICIENT_A_BALANCE)
-    }
-    if (getAssetBalance(assetB.id) / DECIMALS < Number(inputB.value)) {
-      return setStep(Step.INSUFFICIENT_B_BALANCE)
-    }
     updateStep()
   }, [inputA, inputB])
 
@@ -100,27 +93,23 @@ export default function AddLiquidityPool () {
         inputA.setValue('')
         break
     }
-  }, [style, flag])
+  }, [style, timerFlag])
 
   const onChangeInputA = (e: any) => {
     if (!isNumber(e.target.value)) return
     inputA.setValue(e.target.value)
-    switch (style) {
-      case StyleType.ALIQUOT:
-        inputB.setValue('')
-        setFlag(!flag)
-        break
+    if (style === StyleType.ALIQUOT) {
+      inputB.setValue('')
+      runTimer()
     }
   }
 
   const onChangeInputB = (e: any) => {
     if (!isNumber(e.target.value)) return
     inputB.setValue(e.target.value)
-    switch (style) {
-      case StyleType.ALIQUOT:
-        inputB.setValue('')
-        setFlag(!flag)
-        break
+    if (style === StyleType.ALIQUOT) {
+      inputA.setValue('')
+      runTimer()
     }
   }
 

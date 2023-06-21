@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react'
 import { Button, Text, Container, Card, Grid, useInput, Loading, Spacer } from '@nextui-org/react'
 import { LigthInput } from '../../src/components/LighInput/LigthInput'
@@ -7,10 +8,11 @@ import AssetSelect from '../../src/components/AssetSelect/AssetSelect'
 import { useWallet } from '../../src/contexts/useWallet'
 import { Balance } from '../../src/services/algoService'
 import { microToStandard } from '../../src/utils/math'
-import { getSwapInput, calculateSwap, swap } from '../../src/services/kondorServices/symmetricPoolServise'
+import { calculateInSwap, calculateOutSwap, swap } from '../../src/services/kondorServices/symmetricPoolServise'
 import ConfirmModal from '../../src/components/modules/Modals/ConfirmModal'
 import SuccessfulTransactionModal from '../../src/components/modules/Modals/SuccessfulTransactionModal'
 import { BsArrowDownUp } from 'react-icons/bs'
+import useTimer from '../../src/hooks/useTimmer'
 
 export default function Swap () {
   const [outAsset, setOutAsset] = useState<Asset>(config.assetList[0])
@@ -22,50 +24,33 @@ export default function Swap () {
   const [transactionId, setTransactionId] = useState<string>('')
   const [loading, setLoading] = useState<boolean>(false)
   const { isConnected, balances, account, reloadBalances } = useWallet()
-  const [flag, setFlag] = useState<boolean>(false)
-  const [timerId, setTimerId] = useState<NodeJS.Timeout | null>(null)
-  const sellInput = useInput('0.00')
-  const buyInput = useInput('0.00')
+  const { timerFlag, runTimer } = useTimer()
+  const sellInput = useInput('')
+  const buyInput = useInput('')
   const slippageText = 'If the price changes by more than your slippage tolerance your transaction will revert.'
 
   useEffect(() => {
     if (sellInput.value) {
-      getSwapInput(Number(sellInput.value), outAsset.id, inAsset.id)
+      calculateInSwap(Number(sellInput.value), inAsset.id)
         .then((amount: number) => { buyInput.setValue(amount === 0 ? '0.00' : amount.toFixed(6)) })
     }
     if (buyInput.value) {
-      calculateSwap(Number(buyInput.value), outAsset.id)
-        .then((res: [number, number]) => { sellInput.setValue(res[0] === 0 ? '0.00' : res[0].toFixed(6)) })
+      calculateOutSwap(Number(buyInput.value), outAsset.id)
+        .then((amount: number) => { sellInput.setValue(amount === 0 ? '0.00' : amount.toFixed(6)) })
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [inAsset, outAsset, flag])
-
-  const runTimmer = () => {
-    if (timerId) {
-      clearTimeout(timerId)
-      setTimerId(null)
-    }
-    const newTimerId = setTimeout(() => {
-      setFlag(!flag)
-      setTimerId(null)
-    }, 2000)
-    setTimerId(newTimerId)
-  }
+  }, [inAsset, outAsset, timerFlag])
 
   const onChangeSellInput = (e: any) => {
     sellInput.setValue(e.target.value)
     buyInput.setValue('')
-    runTimmer()
+    runTimer()
   }
 
   const onChangeBuyInput = (e: any) => {
     buyInput.setValue(e.target.value)
     sellInput.setValue('')
-    runTimmer()
+    runTimer()
   }
-
-  // RUN TIMMER se encargara de setear el flag despues de un segundo. Esto es para evitar que se hagan muchas peticiones al servidor,
-  // si el timmer esta corriendo, este volvera a correr y se cancelara la peticion anterior.
 
   const handleSellAssetSelect = (asset: Asset) => asset === inAsset
     ? (setInAsset(outAsset), setOutAsset(asset))
@@ -87,7 +72,6 @@ export default function Swap () {
       setLoading(true)
       const amount = Number(sellInput.value)
       const result = await swap(account.addr, amount, outAsset.id)
-      calculateSwap(amount, outAsset.id)
       setTransactionId(result.txId)
       sellInput.setValue('')
       buyInput.setValue('')

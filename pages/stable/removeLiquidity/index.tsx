@@ -46,9 +46,6 @@ export default function AddLiquidityPool () {
   }, [account, balances])
 
   useEffect(() => {
-    if (getAssetBalance(lpAsset.id) / DECIMALS < Number(input.value)) {
-      return setStep(Step.INSUFFICIENT_BALANCE)
-    }
     updateStep()
   }, [input])
 
