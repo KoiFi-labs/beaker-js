@@ -213,7 +213,9 @@ export default function AddLiquidityPool () {
   }
 
   const handleAddLiquidityButton = () => {
-    setConfirmModalIsVisible(true)
+    if (Number(inputA.value) > 0 || Number(inputB.value) > 0) {
+      setConfirmModalIsVisible(true)
+    }
   }
 
   const handleOptinButton = () => {
