@@ -22,10 +22,6 @@ const MyPosition = () => {
 
   const details = [
     {
-      title: 'Your Pool USD balance',
-      value: '≈$24120'
-    },
-    {
       title: 'Your Pool participation',
       value: `${participation} %`
     }

@@ -1,11 +1,12 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-unused-vars */
-import { Text, Container, Card, Grid, useInput, Radio } from '@nextui-org/react'
+import { Text, Container, Card, Grid, useInput, Radio, Spacer, Tooltip } from '@nextui-org/react'
 import { LigthInput } from '../../../src/components/LighInput/LigthInput'
 import { DynamicButton } from '../../../src/components/DynamicButton/DynamicButton'
 import { useState, useEffect } from 'react'
 import ConfirmModal from '../../../src/components/modules/Modals/ConfirmModal'
 import SuccessfulTransactionModal from '../../../src/components/modules/Modals/SuccessfulTransactionModal'
+import InfoModal from '../../../src/components/modules/Modals/InfoModal'
 import SendingTransactionModal from '../../../src/components/modules/Modals/SendingTransaction'
 import { abbreviateNumber, isNumber } from '../../../src/utils/utils'
 import { useRouter } from 'next/router'
@@ -15,6 +16,7 @@ import { getMintAmount, mint, optin } from '../../../src/services/kondorServices
 import { Asset, config } from '../../../config'
 import { useWallet } from '../../../src/contexts/useWallet'
 import useTimer from '../../../src/hooks/useTimmer'
+import { BiInfoCircle } from 'react-icons/bi'
 
 enum StyleType {
   ALIQUOT = 'aliquot',
@@ -36,6 +38,7 @@ export default function AddLiquidityPool () {
   const [confirmOptinModalIsvisible, setConfirmOptinModalIsVisible] = useState<boolean>(false)
   const [successfulTransactionModalIsVisible, setSuccessfulTransactionModalIsVisible] = useState<boolean>(false)
   const [sendingTransactionModalIsVisible, setSendingTransactionModalIsVisible] = useState<boolean>(false)
+  const [infoModalIsVisible, setInfoModalIsVisible] = useState<boolean>(false)
   const [step, setStep] = useState<Step>(Step.WALLET_CONNECT_NEEDED)
   const [isOptedin, setIsOptedin] = useState<boolean>(false)
   const { isConnected, balances, account, reloadBalances, connectWallet, getAssetBalance } = useWallet()
@@ -239,26 +242,31 @@ export default function AddLiquidityPool () {
       }}
       >
         <Text h1>Add USD liquidity</Text>
-        <Radio.Group
-          orientation='horizontal'
-          label='Select style'
-          defaultValue={StyleType.ALIQUOT}
-          size='xs'
-          onChange={(value) => { setStyle(value as StyleType) }}
-        >
-          <Radio value={StyleType.ALIQUOT} size='xs'>
-            Aliquot
-          </Radio>
-          <Radio value={StyleType.CUSTOM} size='xs'>
-            Custom
-          </Radio>
-          <Radio value={StyleType.ASSET_A} size='xs'>
-            {assetA.symbol.toUpperCase()}
-          </Radio>
-          <Radio value={StyleType.ASSET_B} size='xs'>
-            {assetB.symbol.toUpperCase()}
-          </Radio>
-        </Radio.Group>
+        <Container css={{ p: 0, d: 'flex', justifyContent: 'space-between' }}>
+          <Radio.Group
+            orientation='horizontal'
+            label='Select style'
+            defaultValue={StyleType.ALIQUOT}
+            size='xs'
+            onChange={(value) => { setStyle(value as StyleType) }}
+          >
+            <Radio value={StyleType.ALIQUOT} size='xs'>
+              Aliquot
+            </Radio>
+            <Radio value={StyleType.CUSTOM} size='xs'>
+              Custom
+            </Radio>
+            <Radio value={StyleType.ASSET_A} size='xs'>
+              {assetA.symbol.toUpperCase()}
+            </Radio>
+            <Radio value={StyleType.ASSET_B} size='xs'>
+              {assetB.symbol.toUpperCase()}
+            </Radio>
+          </Radio.Group>
+          <Tooltip content='Style info'>
+            <BiInfoCircle size={20} onClick={() => setInfoModalIsVisible(true)} />
+          </Tooltip>
+        </Container>
         {getInputs()}
         <DynamicButton items={buttonOptions} index={step} loading={loading} />
       </Container>
@@ -306,6 +314,36 @@ export default function AddLiquidityPool () {
         onPress={() => { handleOkButton() }}
         transactionId={transactionId}
       />
+      <InfoModal
+        isVisible={infoModalIsVisible}
+        onHide={() => setInfoModalIsVisible(false)}
+        title='Add liquidity styles'
+      >
+        <Container css={{ p: 0, textAlign: 'initial' }}>
+          <Text b>Aliquot</Text>
+          <Text size={14}>
+            Commit two assets simultaneously in the liquidity pool.
+            You specify the quantity of one asset, and the platform
+            calculates the corresponding quantity of the other asset for an efficient commit based on market conditions.
+          </Text>
+          <Spacer y={0.5} />
+          <Text b>Custom</Text>
+          <Text size={14}>
+            You have complete control over the proportion in which you contribute the assets. This provides flexibility to
+            customize your contribution according to your preferences.
+          </Text>
+          <Spacer y={0.5} />
+          <Text b>USDT</Text>
+          <Text size={14}>
+            Commit only USDT asset in the liquidity pool.
+          </Text>
+          <Spacer y={0.5} />
+          <Text b>USDC</Text>
+          <Text size={14}>
+            Commit only USDC asset in the liquidity pool.
+          </Text>
+        </Container>
+      </InfoModal>
     </Container>
   )
 }
