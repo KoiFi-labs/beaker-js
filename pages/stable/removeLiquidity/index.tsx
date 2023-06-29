@@ -8,12 +8,13 @@ import ConfirmModal from '../../../src/components/modules/Modals/ConfirmModal'
 import SuccessfulTransactionModal from '../../../src/components/modules/Modals/SuccessfulTransactionModal'
 import SendingTransactionModal from '../../../src/components/modules/Modals/SendingTransaction'
 import { useRouter } from 'next/router'
-import { Balance, hasOptin } from '../../../src/services/algoService'
+import { hasOptin } from '../../../src/services/algoService'
 import { BindingsChangeTarget } from '@nextui-org/react/types/use-input/use-input'
 import { burn, optin } from '../../../src/services/kondorServices/symmetricPoolServise'
 import { Asset, config } from '../../../config'
 import { useWallet } from '../../../src/contexts/useWallet'
 import { isNumber } from '../../../src/utils/utils'
+import ErrorModal from '../../../src/components/modules/Modals/ErrorModal'
 
 enum Step {
   WALLET_CONNECT_NEEDED,
@@ -29,6 +30,7 @@ export default function AddLiquidityPool () {
   const [confirmOptinBModalIsvisible, setConfirmOptinBModalIsVisible] = useState<boolean>(false)
   const [successfulTransactionModalIsVisible, setSuccessfulTransactionModalIsVisible] = useState<boolean>(false)
   const [sendingTransactionModalIsVisible, setSendingTransactionModalIsVisible] = useState<boolean>(false)
+  const [errorModalIsVisible, setErrorModalIsVisible] = useState<boolean>(false)
   const [step, setStep] = useState<Step>(Step.WALLET_CONNECT_NEEDED)
   const [isOptedinA, setIsOptedinA] = useState<boolean>(false)
   const [isOptedinB, setIsOptedinB] = useState<boolean>(false)
@@ -77,6 +79,10 @@ export default function AddLiquidityPool () {
     router.push('/stable')
   }
 
+  const handleOkErrorButton = () => {
+    setErrorModalIsVisible(false)
+  }
+
   const buttonOptions = [
     {
       text: 'Connect your wallet',
@@ -101,11 +107,16 @@ export default function AddLiquidityPool () {
   ]
 
   const handleConfirmButton = async () => {
-    setLoading(true)
-    const result = await burn(account.addr, Number(input.value))
-    setTransactionId(result.txId)
-    setLoading(false)
-    setSuccessfulTransactionModalIsVisible(true)
+    try {
+      setLoading(true)
+      const result = await burn(account.addr, Number(input.value))
+      setTransactionId(result.txId)
+      setLoading(false)
+      setSuccessfulTransactionModalIsVisible(true)
+    } catch (e) {
+      setLoading(false)
+      setErrorModalIsVisible(true)
+    }
   }
 
   const handleConfirmOptinAButton = async () => {
@@ -248,6 +259,11 @@ export default function AddLiquidityPool () {
         onHide={() => setSuccessfulTransactionModalIsVisible(false)}
         onPress={() => { handleOkButton() }}
         transactionId={transactionId}
+      />
+      <ErrorModal
+        isVisible={errorModalIsVisible}
+        onHide={() => setErrorModalIsVisible(false)}
+        onPress={() => { handleOkErrorButton() }}
       />
     </Container>
   )

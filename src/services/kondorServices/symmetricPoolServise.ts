@@ -14,8 +14,7 @@ const A: number = __A * A_PRECISION
 
 const client = new algosdk.Algodv2(config.network.token, config.network.server, config.network.port)
 
-export const swap = async (addr: string, amount: number, assetOutput: number) => {
-  console.log('amount in swap', amount)
+export const stableForStableSwap = async (addr: string, amount: number, assetOutput: number) => {
   const sp = await client.getTransactionParams().do()
   const abiContract = new algosdk.ABIContract(contract)
   const signer = await mySigner(addr)
@@ -46,6 +45,7 @@ export const swap = async (addr: string, amount: number, assetOutput: number) =>
   })
 
   const results = await comp.execute(client, 2)
+  console.log(results)
   return {
     result: results.methodResults[0].returnValue,
     txId: results.methodResults[0].txID
@@ -53,8 +53,6 @@ export const swap = async (addr: string, amount: number, assetOutput: number) =>
 }
 
 export const mint = async (addr: string, aAmount: number, bAmount: number) => {
-  console.log('aamount:', aAmount)
-  console.log('bamount:', bAmount)
   const sp = await client.getTransactionParams().do()
   const abiContract = new algosdk.ABIContract(contract)
   const signer = await mySigner(addr)
@@ -64,17 +62,17 @@ export const mint = async (addr: string, aAmount: number, bAmount: number) => {
 
   const assetTransferTxnA = algosdk.makeAssetTransferTxnWithSuggestedParamsFromObject({
     from: addr,
-    to: config.stablePool.appAddress,
+    to: config.pools[0].appAddress,
     amount: aAmount * SCALE_DECIMALS,
-    assetIndex: config.stablePool.assetIdA,
+    assetIndex: config.pools[0].assetIdA,
     suggestedParams: sp
   })
 
   const assetTransferTxnB = algosdk.makeAssetTransferTxnWithSuggestedParamsFromObject({
     from: addr,
-    to: config.stablePool.appAddress,
+    to: config.pools[0].appAddress,
     amount: bAmount * SCALE_DECIMALS,
-    assetIndex: config.stablePool.assetIdB,
+    assetIndex: config.pools[0].assetIdB,
     suggestedParams: sp
   })
 
@@ -90,11 +88,11 @@ export const mint = async (addr: string, aAmount: number, bAmount: number) => {
           txn: assetTransferTxnB,
           signer
         },
-        config.stablePool.stablePoolAssetId,
-        config.stablePool.assetIdA,
-        config.stablePool.assetIdB
+        config.pools[0].lpId,
+        config.pools[0].assetIdA,
+        config.pools[0].assetIdB
       ],
-      appID: config.stablePool.appId,
+      appID: config.pools[0].appId,
       sender: addr,
       suggestedParams: { ...sp, flatFee: true, fee: 4 * 1000 },
       signer
@@ -108,11 +106,11 @@ export const mint = async (addr: string, aAmount: number, bAmount: number) => {
           txn,
           signer
         },
-        config.stablePool.stablePoolAssetId,
-        config.stablePool.assetIdA,
-        config.stablePool.assetIdB
+        config.pools[0].lpId,
+        config.pools[0].assetIdA,
+        config.pools[0].assetIdB
       ],
-      appID: config.stablePool.appId,
+      appID: config.pools[0].appId,
       sender: addr,
       suggestedParams: { ...sp, flatFee: true, fee: 4 * 1000 },
       signer
@@ -310,10 +308,10 @@ export const getMintAmount = async (amount: number, assetToKnow: number) => {
 const getAssetBalance = async (assetId: number, address: string) => {
   const accountInfo = await client.accountInformation(address).do()
   const assetInfo = accountInfo.assets.find((asset: any) => asset['asset-id'] === assetId)
-  return assetInfo.amount || 0
+  return assetInfo?.amount || 0
 }
 
-export const calculateOutSwap = async (outAmount: number, assetIn: number) => {
+export const calculateOutStableSwap = async (outAmount: number, assetIn: number) => {
   const assetOut = assetIn === config.stablePool.assetIdA ? config.stablePool.assetIdA : config.stablePool.assetIdB
   const [outSupply, inSupply] = await Promise.all([
     getAssetBalance(assetOut, config.stablePool.appAddress),
@@ -323,12 +321,12 @@ export const calculateOutSwap = async (outAmount: number, assetIn: number) => {
   return (outAmount * inSupply * config.stablePool.scale) / ((outSupply - outAmount) * factor)
 }
 
-export const calculateInSwap = async (
+export const calculateInStableSwap = async (
   amount: number,
   assetOut: number
 ): Promise<number> => {
   const amountToSwap = Math.round(amount * config.decimalScale)
-  const [aSupply, bSupply] = await getPoolSupply()
+  const [aSupply, bSupply] = await getStablePoolSupply()
   const outSupply = assetOut === config.stablePool.assetIdA ? aSupply : bSupply
   const inSupply = assetOut === config.stablePool.assetIdA ? bSupply : aSupply
   const fee = config.stablePool.fee
@@ -337,7 +335,7 @@ export const calculateInSwap = async (
   let dy: number = outSupply - y
   const dyFee: number = dy * (Math.round(fee / SCALE_FEE))
   dy = Math.max(dy - dyFee, 0)
-  return dy
+  return dy / config.decimalScale
 }
 
 function difference (a: number, b: number): number {
@@ -391,17 +389,17 @@ function getY (x: number, assetInBalance: number, assetOutBalance: number): numb
   throw new Error('Approximation did not converge')
 }
 
-export const getPoolSupply = async (): Promise<[number, number]> => {
+export const getStablePoolSupply = async (): Promise<[number, number]> => {
   const aSupply = await getAssetBalance(config.stablePool.assetIdA, config.stablePool.appAddress)
   const bSupply = await getAssetBalance(config.stablePool.assetIdB, config.stablePool.appAddress)
   return [aSupply, bSupply]
 }
 
-export const getParticipation = async (address: string): Promise<number> => {
+export const getStableParticipation = async (address: string): Promise<number> => {
   const [poolBalance, addressBalance] = await Promise.all([
     await getAssetBalance(config.stablePool.stablePoolAssetId, config.stablePool.appAddress),
     await getAssetBalance(config.stablePool.stablePoolAssetId, address)
   ])
   const issued = TOTAL_SUPPLY - poolBalance
-  return (addressBalance * 100) / issued
+  return Number(((addressBalance * 100) / issued).toFixed(8))
 }

@@ -2,11 +2,11 @@ import { Text, Grid, Button, Spacer } from '@nextui-org/react'
 import { useState, useEffect } from 'react'
 import ItemDetailCard from '../../src/components/ItemDetailCard/ItemDetailCard'
 import { abbreviateNumber } from '../../src/utils/utils'
-import { BiTransfer, BiDollar, BiCalculator, BiData } from 'react-icons/bi'
 import { FaCoins } from 'react-icons/fa'
 import { AiOutlineGlobal } from 'react-icons/ai'
 import { useRouter } from 'next/router'
-import { getPoolSupply } from '../../src/services/kondorServices/symmetricPoolServise'
+import { getStablePoolSupply } from '../../src/services/kondorServices/symmetricPoolServise'
+// import { BiTransfer, BiDollar, BiCalculator, BiData } from 'react-icons/bi'
 
 const DECIMALS = 1000000
 
@@ -14,15 +14,15 @@ export default function Stable () {
   const router = useRouter()
   const [aSupply, setASupply] = useState<number>(0)
   const [bSupply, setBSupply] = useState<number>(0)
-  const pool = {
-    pool: 'USDC/USDT',
-    total: 1200420,
-    volume: 562330,
-    apr: 12
-  }
+  // const pool = {
+  //   pool: 'USDC/USDT',
+  //   total: 1200420,
+  //   volume: 562330,
+  //   apr: 12
+  // }
 
   useEffect(() => {
-    getPoolSupply()
+    getStablePoolSupply()
       .then(res => {
         setASupply(res[0])
         setBSupply(res[1])
@@ -35,31 +35,31 @@ export default function Stable () {
       value: 'USDC/USDT',
       icon: <FaCoins size={40} />
     },
-    {
-      title: 'APR',
-      value: `${pool.apr} %`,
-      icon: <BiCalculator size={40} />
-    },
+    // {
+    //   title: 'APR',
+    //   value: `${pool.apr} %`,
+    //   icon: <BiCalculator size={40} />
+    // },
     {
       title: 'Total liquidity',
       value: `$${abbreviateNumber((aSupply + bSupply) / DECIMALS)}`,
       icon: <AiOutlineGlobal size={40} />
-    },
-    {
-      title: 'Volume 24H',
-      value: `$${abbreviateNumber(1532)}`,
-      icon: <BiData size={40} />
-    },
-    {
-      title: 'Fees 24H',
-      value: `$${abbreviateNumber(pool.volume * 0.003)}`,
-      icon: <BiDollar size={40} />
-    },
-    {
-      title: 'Transactions 24H',
-      value: '12.3K',
-      icon: <BiTransfer size={40} />
     }
+    // {
+    //   title: 'Volume 24H',
+    //   value: `$${abbreviateNumber(1532)}`,
+    //   icon: <BiData size={40} />
+    // },
+    // {
+    //   title: 'Fees 24H',
+    //   value: `$${abbreviateNumber(pool.volume * 0.003)}`,
+    //   icon: <BiDollar size={40} />
+    // },
+    // {
+    //   title: 'Transactions 24H',
+    //   value: '12.3K',
+    //   icon: <BiTransfer size={40} />
+    // }
   ]
 
   return (

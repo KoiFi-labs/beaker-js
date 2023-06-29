@@ -4,14 +4,18 @@ const peraWallet = new PeraWalletConnect()
 
 export const peraService = {
   connect: async (handleDisconect: () => void) => {
-    return peraWallet
-      .connect()
-      .then((accounts) => {
-        peraWallet.connector?.on('disconnect', () => {
-          handleDisconect()
+    try {
+      return peraWallet
+        .connect()
+        .then((accounts) => {
+          peraWallet.connector?.on('disconnect', () => {
+            handleDisconect()
+          })
+          return { addr: accounts[0] }
         })
-        return { addr: accounts[0] }
-      })
+    } catch (error) {
+      console.log('error en connect...')
+    }
   },
   signTransaction: async (txs: SignerTransaction[][], signerAddress?: string | undefined) => {
     return await peraWallet.signTransaction(txs, signerAddress)
@@ -20,13 +24,17 @@ export const peraService = {
     peraWallet.disconnect()
   },
   reconnectSession: async (handleDisconect: () => void) => {
-    return peraWallet
-      .reconnectSession()
-      .then((accounts) => {
-        peraWallet.connector?.on('disconnect', () => {
-          handleDisconect()
+    try {
+      return peraWallet
+        .reconnectSession()
+        .then((accounts) => {
+          peraWallet.connector?.on('disconnect', () => {
+            handleDisconect()
+          })
+          return { addr: accounts[0] }
         })
-        return { addr: accounts[0] }
-      })
+    } catch (error) {
+      console.log(error)
+    }
   }
 }

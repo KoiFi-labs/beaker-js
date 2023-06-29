@@ -1,18 +1,29 @@
 /* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from 'react'
-import { Button, Text, Container, Card, Grid, useInput, Loading, Spacer } from '@nextui-org/react'
+import { Button, Text, Container, Card, Grid, useInput, Spacer } from '@nextui-org/react'
 import { LigthInput } from '../../src/components/LighInput/LigthInput'
 import { Asset } from '../../config/Assets'
 import { config } from '../../config'
 import AssetSelect from '../../src/components/AssetSelect/AssetSelect'
 import { useWallet } from '../../src/contexts/useWallet'
-import { Balance } from '../../src/services/algoService'
+import { Balance, hasOptin } from '../../src/services/algoService'
 import { microToStandard } from '../../src/utils/math'
-import { calculateInSwap, calculateOutSwap, swap } from '../../src/services/kondorServices/symmetricPoolServise'
+import { calculateInStableSwap, calculateOutStableSwap, optin } from '../../src/services/kondorServices/symmetricPoolServise'
+import { swap } from '../../src/services/kondorServices/swap'
 import ConfirmModal from '../../src/components/modules/Modals/ConfirmModal'
 import SuccessfulTransactionModal from '../../src/components/modules/Modals/SuccessfulTransactionModal'
+import ErrorModal from '../../src/components/modules/Modals/ErrorModal'
 import { BsArrowDownUp } from 'react-icons/bs'
 import useTimer from '../../src/hooks/useTimmer'
+import { DynamicButton } from '../../src/components/DynamicButton/DynamicButton'
+
+enum Step {
+  WALLET_CONNECT_NEEDED,
+  INSUFFICIENT_BALANCE,
+  OPT_IN_NEEDED,
+  READY
+}
 
 export default function Swap () {
   const [outAsset, setOutAsset] = useState<Asset>(config.assetList[0])
@@ -20,10 +31,14 @@ export default function Swap () {
   const [confirmModalVisible, setConfirmModalVisible] = useState<boolean>(false)
   const [balanceToSell, setBalanceToSell] = useState<number>(0)
   const [balanceToBuy, setBalanceToBuy] = useState<number>(0)
-  const [successfulTransactionModalVisible, setSuccessfulTransactionModalVisible] = useState<boolean>(false)
+  const [confirmOptinModalIsvisible, setConfirmOptinModalIsVisible] = useState<boolean>(false)
+  const [successfulTransactionModalIsVisible, setSuccessfulTransactionModalIsVisible] = useState<boolean>(false)
+  const [errorModalVisible, setErrorModalVisible] = useState<boolean>(false)
   const [transactionId, setTransactionId] = useState<string>('')
   const [loading, setLoading] = useState<boolean>(false)
-  const { isConnected, balances, account, reloadBalances } = useWallet()
+  const [step, setStep] = useState<Step>(Step.WALLET_CONNECT_NEEDED)
+  const [isOptedin, setIsOptedin] = useState<boolean>(false)
+  const { isConnected, balances, account, reloadBalances, connectWallet } = useWallet()
   const { timerFlag, runTimer } = useTimer()
   const sellInput = useInput('')
   const buyInput = useInput('')
@@ -31,14 +46,37 @@ export default function Swap () {
 
   useEffect(() => {
     if (sellInput.value) {
-      calculateInSwap(Number(sellInput.value), inAsset.id)
+      calculateInStableSwap(Number(sellInput.value), outAsset.id)
         .then((amount: number) => { buyInput.setValue(amount === 0 ? '0.00' : amount.toFixed(6)) })
     }
     if (buyInput.value) {
-      calculateOutSwap(Number(buyInput.value), outAsset.id)
+      calculateOutStableSwap(Number(buyInput.value), inAsset.id)
         .then((amount: number) => { sellInput.setValue(amount === 0 ? '0.00' : amount.toFixed(6)) })
     }
   }, [inAsset, outAsset, timerFlag])
+
+  useEffect(() => {
+    reloadState()
+      .then(() => updateStep())
+  }, [account, balances])
+
+  useEffect(() => {
+    updateStep()
+  }, [sellInput, buyInput])
+
+  const reloadState = async () => {
+    if (isConnected) {
+      hasOptin(account.addr, inAsset.id)
+        .then((res: boolean) => setIsOptedin(res))
+        .then(() => reloadBalances())
+    }
+  }
+
+  const updateStep = () => {
+    if (!isConnected) return setStep(Step.WALLET_CONNECT_NEEDED)
+    if (!isOptedin) return setStep(Step.OPT_IN_NEEDED)
+    setStep(Step.READY)
+  }
 
   const onChangeSellInput = (e: any) => {
     sellInput.setValue(e.target.value)
@@ -71,16 +109,18 @@ export default function Swap () {
       setConfirmModalVisible(false)
       setLoading(true)
       const amount = Number(sellInput.value)
-      const result = await swap(account.addr, amount, outAsset.id)
+      const result = await swap(account.addr, amount, inAsset.id, outAsset.id)
       setTransactionId(result.txId)
       sellInput.setValue('')
       buyInput.setValue('')
       reloadBalances()
+      setLoading(false)
+      setSuccessfulTransactionModalIsVisible(true)
     } catch (e) {
+      setLoading(false)
+      setErrorModalVisible(true)
       console.log(e)
     }
-    setLoading(false)
-    setSuccessfulTransactionModalVisible(true)
   }
 
   const handleSwapButton = () => {
@@ -88,6 +128,41 @@ export default function Swap () {
       setConfirmModalVisible(true)
     }
   }
+
+  const handleOkButton = () => {
+    setSuccessfulTransactionModalIsVisible(false)
+  }
+
+  const handleOptinButton = () => {
+    setConfirmOptinModalIsVisible(true)
+  }
+
+  const handleConfirmOptinButton = async () => {
+    setLoading(true)
+    const result = await optin(account.addr, inAsset.id)
+    setTransactionId(result.txId)
+    setLoading(false)
+    setSuccessfulTransactionModalIsVisible(true)
+  }
+
+  const buttonOptions = [
+    {
+      text: 'Connect your wallet',
+      onPress: () => { connectWallet() }
+    },
+    {
+      text: `Insufficient ${outAsset.symbol} balance`,
+      disabled: true
+    },
+    {
+      text: `Opt-in ${inAsset.symbol} token`,
+      onPress: () => { handleOptinButton() }
+    },
+    {
+      text: 'Swap',
+      onPress: () => { handleSwapButton() }
+    }
+  ]
 
   useEffect(() => {
     if (isConnected) {
@@ -102,43 +177,6 @@ export default function Swap () {
       setBalanceToBuy(0)
     }
   }, [outAsset, inAsset, isConnected, balances])
-
-  const handleOkButton = () => {
-    setSuccessfulTransactionModalVisible(false)
-  }
-
-  const getActionButton = () => {
-    if (!isConnected) {
-      return (
-        <Button
-          disabled
-          bordered
-          rounded
-          css={{ borderColor: '$kondorPrimary', color: '$kondorLigth', width: '100%' }}
-        >
-          Connect your wallet
-        </Button>
-      )
-    }
-    if (loading) {
-      return <Button disabled bordered rounded css={{ borderColor: '$kondorPrimary', color: '$kondorLigth', width: '100%' }}><Loading css={{ color: '$kondorGray' }} /></Button>
-    }
-    return (
-      <Button
-        rounded
-        bordered
-        css={{
-          width: '100%',
-          color: '$white',
-          borderColor: '$kondorPrimary',
-          zIndex: 1
-        }}
-        onPress={() => handleSwapButton()}
-      >
-        Swap
-      </Button>
-    )
-  }
 
   return (
     <Container display='flex' justify='center' css={{ p: 0, width: '100%' }}>
@@ -225,7 +263,7 @@ export default function Swap () {
               </Text>
             </Container>
           </Container>
-          {getActionButton()}
+          <DynamicButton items={buttonOptions} index={step} loading={loading} />
         </Container>
       </Container>
       <ConfirmModal
@@ -241,7 +279,7 @@ export default function Swap () {
           </Container>
           <Container css={{ p: 0 }} display='flex' justify='space-between'>
             <Text size={14} css={{ color: '$kondorGray' }}>In</Text>
-            <Text>≈ {Number(buyInput.value).toFixed(4)} {inAsset.symbol}</Text>
+            <Text>≈ {Number(buyInput.value).toFixed(6)} {inAsset.symbol}</Text>
           </Container>
           <Container css={{ p: 0 }} display='flex' justify='space-between'>
             <Text size={14} css={{ color: '$kondorGray' }}>Slippage Tolerance</Text>
@@ -249,7 +287,7 @@ export default function Swap () {
           </Container>
           <Container css={{ p: 0 }} display='flex' justify='space-between'>
             <Text size={14} css={{ color: '$kondorGray' }}>You will receive a minimun of</Text>
-            <Text>{(Number(buyInput.value) * 0.995).toFixed(4)} {inAsset.symbol}</Text>
+            <Text>{(Number(buyInput.value) * 0.995).toFixed(6)} {inAsset.symbol}</Text>
           </Container>
           <Spacer y={1} />
           <Container css={{ p: 0 }}>
@@ -257,11 +295,24 @@ export default function Swap () {
           </Container>
         </>
       </ConfirmModal>
+      <ConfirmModal
+        isVisible={confirmOptinModalIsvisible}
+        onHide={() => setConfirmOptinModalIsVisible(false)}
+        onPress={handleConfirmOptinButton}
+        title='Confirm transaction'
+      >
+        <Text>Opt-in {inAsset.symbol} asset</Text>
+      </ConfirmModal>
       <SuccessfulTransactionModal
-        isVisible={successfulTransactionModalVisible}
-        onHide={() => setSuccessfulTransactionModalVisible(false)}
+        isVisible={successfulTransactionModalIsVisible}
+        onHide={() => setSuccessfulTransactionModalIsVisible(false)}
         onPress={() => { handleOkButton() }}
         transactionId={transactionId}
+      />
+      <ErrorModal
+        isVisible={errorModalVisible}
+        onHide={() => setErrorModalVisible(false)}
+        onPress={() => { setErrorModalVisible(false) }}
       />
     </Container>
   )

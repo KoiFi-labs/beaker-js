@@ -229,49 +229,6 @@ export default function AddLiquidityPool () {
     }
   }
 
-  const getConfirmModal = () => {
-    return (
-      <ConfirmModal
-        isVisible={confirmModalIsvisible}
-        onHide={() => setConfirmModalIsVisible(false)}
-        onPress={handleConfirmButton}
-        title='Confirm transaction'
-      >
-        <>
-          {
-            style === StyleType.ASSET_B
-              ? null
-              : getResumeDetails(
-                assetA.name,
-                `${abbreviateNumber(Number(inputA.value), 2)} ${assetA.symbol}`)
-          }
-          {
-            style === StyleType.ASSET_A
-              ? null
-              : getResumeDetails(
-                assetB.name,
-                `${abbreviateNumber(Number(inputB.value), 2)} ${assetB.symbol}`)
-          }
-        </>
-      </ConfirmModal>
-    )
-  }
-
-  const getConfirmOptinModal = () => {
-    return (
-      <ConfirmModal
-        isVisible={confirmOptinModalIsvisible}
-        onHide={() => setConfirmOptinModalIsVisible(false)}
-        onPress={handleConfirmOptinButton}
-        title='Confirm transaction'
-      >
-        <Text>
-          Opt-in stable pool asset {config.stablePool.stablePoolAssetId}
-        </Text>
-      </ConfirmModal>
-    )
-  }
-
   return (
     <Container display='flex' justify='center' css={{ p: 0, width: '100%' }}>
       <Container css={{
@@ -305,8 +262,39 @@ export default function AddLiquidityPool () {
         {getInputs()}
         <DynamicButton items={buttonOptions} index={step} loading={loading} />
       </Container>
-      {getConfirmModal()}
-      {getConfirmOptinModal()}
+      <ConfirmModal
+        isVisible={confirmModalIsvisible}
+        onHide={() => setConfirmModalIsVisible(false)}
+        onPress={handleConfirmButton}
+        title='Confirm transaction'
+      >
+        <>
+          {
+            style === StyleType.ASSET_B
+              ? null
+              : getResumeDetails(
+                assetA.name,
+                `${abbreviateNumber(Number(inputA.value), 2)} ${assetA.symbol}`)
+          }
+          {
+            style === StyleType.ASSET_A
+              ? null
+              : getResumeDetails(
+                assetB.name,
+                `${abbreviateNumber(Number(inputB.value), 2)} ${assetB.symbol}`)
+          }
+        </>
+      </ConfirmModal>
+      <ConfirmModal
+        isVisible={confirmOptinModalIsvisible}
+        onHide={() => setConfirmOptinModalIsVisible(false)}
+        onPress={handleConfirmOptinButton}
+        title='Confirm transaction'
+      >
+        <Text>
+          Opt-in stable pool asset {config.stablePool.stablePoolAssetId}
+        </Text>
+      </ConfirmModal>
       <SendingTransactionModal
         isVisible={sendingTransactionModalIsVisible}
         onHide={() => setSendingTransactionModalIsVisible(false)}

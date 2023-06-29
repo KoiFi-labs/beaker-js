@@ -38,3 +38,14 @@ export type PoolInterface = {
     },
     poolName: string
 }
+
+export type Pool = {
+    name: string
+    appId: number
+    appAddress: string
+    lpId: number
+    assetIdA: number
+    assetIdB: number
+    scale: number
+    fee: number
+}

@@ -1,9 +1,8 @@
 import React from 'react'
 import { Modal, Text, Button, Container, Link, Tooltip, Spacer } from '@nextui-org/react'
 import { config } from '../../../../config'
-import { abbreviateTransactionHash, copyToClipboard } from '../../../../src/utils/utils'
-import { ClipboardIcon } from '../../../../public/icons/clipboard'
-import { IconButton } from '../../../../src/components/IconButton/IconButton'
+import { abbreviateTransactionHash } from '../../../../src/utils/utils'
+import { BiCopy } from 'react-icons/bi'
 
 export type SuccessfulTransactionModalProps = {
     isVisible: boolean,
@@ -25,7 +24,7 @@ const SuccessfulTransactionModal = ({ isVisible, onHide, onPress, transactionId 
       aria-labelledby='modal-title'
       open={isVisible}
       onClose={() => onHide()}
-      css={{ minWidth: '300px', m: '16px', p: '8px', bc: '$black' }}
+      css={{ minWidth: '300px', m: '16px', p: '8px', bc: '$kondorDark' }}
     >
       <Text b size={20}>
         Successful Transaction
@@ -33,7 +32,7 @@ const SuccessfulTransactionModal = ({ isVisible, onHide, onPress, transactionId 
       <Spacer y={1} />
       <Container display='flex' justify='flex-start' alignItems='center' css={{ padding: '8px' }}>
         <Tooltip content='Copy to clipboard'>
-          <IconButton onClick={() => copyToClipboard(transactionId)}><ClipboardIcon /></IconButton>
+          <BiCopy />
         </Tooltip>
         <Spacer x={0.5} />
         <Text>Transaction ID: {abbreviateTransactionHash(transactionId)}</Text>

@@ -15,7 +15,7 @@ export const themeConfig = {
       kondorPrimary: '#814350',
       kondorLigth: '#DAD9D9',
       kondorGray: '#AFB0B8',
-      kondorDark: '#9498A1',
+      kondorDark: '#060606',
       kondorBlack: '#000000',
       primary: '#814350',
       secondary: '#9BA1A6',

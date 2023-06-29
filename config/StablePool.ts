@@ -28,7 +28,7 @@ export const stablePoolsConfig: StablePoolsConfig = {
   testnet: {
     appId: 247111479,
     appAddress: 'YLI2L3FATWL46OTUGBFLKK5OXN5X26RCZD6XCCU2N6LRTLUHMT5NDNRKYY',
-    stablePoolAssetId: 247126011,
+    stablePoolAssetId: 250299512,
     assetIdA: 210124674,
     assetIdB: 210125266,
     scale: 1000000,

@@ -3,7 +3,7 @@ import MyStake from '../../../src/components/MyStake/MyStake'
 import MultiDetails from '../../../src/components/MultiDetails/MultiDetails'
 import { useRouter } from 'next/router'
 import { useState, useEffect } from 'react'
-import { getParticipation } from '../../../src/services/kondorServices/symmetricPoolServise'
+import { getStableParticipation } from '../../../src/services/kondorServices/symmetricPoolServise'
 import { useWallet } from '../../../src/contexts/useWallet'
 
 const MyPosition = () => {
@@ -13,7 +13,7 @@ const MyPosition = () => {
 
   useEffect(() => {
     if (account?.addr) {
-      getParticipation(account.addr)
+      getStableParticipation(account.addr)
         .then(p => setParticipation(p))
     } else {
       setParticipation(0)

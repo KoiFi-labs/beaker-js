@@ -68,7 +68,7 @@ export const WalletProvider: React.FC<Props> = ({ children }: Props): JSX.Elemen
     peraService
       .reconnectSession(handleDisconnectWalletClick)
       .then((acc) => {
-        if (!acc.addr) return
+        if (!acc?.addr) return
         setWalletProvider(walletProvider)
         setAccount({ addr: acc.addr })
         setIsConnected(true)
@@ -98,10 +98,16 @@ export const WalletProvider: React.FC<Props> = ({ children }: Props): JSX.Elemen
   const handleConnectWalletClick = async (walletProvider: WALLET_PROVIDER) => {
     switch (walletProvider) {
       case WALLET_PROVIDER.PERA: {
-        const peraAccount = await peraService.connect(handleDisconnectWalletClick)
-        setWalletProvider(walletProvider)
-        setAccount(peraAccount)
-        setIsConnected(true)
+        try {
+          const peraAccount = await peraService.connect(handleDisconnectWalletClick)
+          if (!peraAccount) return
+          setWalletProvider(walletProvider)
+          setAccount(peraAccount)
+          setIsConnected(true)
+          break
+        } catch (error) {
+          console.log(error)
+        }
         break
       }
       case WALLET_PROVIDER.MY_ALGO: {

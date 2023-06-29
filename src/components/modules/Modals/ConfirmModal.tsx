@@ -25,7 +25,7 @@ const ConfirmModal = ({ isVisible, onHide, title, onPress, children }: ConfirmMo
       aria-labelledby='modal-title'
       open={isVisible}
       onClose={() => onHide()}
-      css={{ minWidth: '300px', m: '16px', bc: '$black' }}
+      css={{ minWidth: '300px', m: '16px', backgroundColor: '$kondorDark' }}
     >
       <Text b size={20}>
         {title}

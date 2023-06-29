@@ -34,9 +34,9 @@ export const assetsConfig: AssetsConfig = {
       icon: 'https://seeklogo.com/images/A/algorand-algo-logo-267E891DCB-seeklogo.com.png'
     },
     {
-      id: 465818554,
-      name: 'bgoBTC',
-      symbol: 'bgoBTC',
+      id: 249671352,
+      name: 'wBTC',
+      symbol: 'WBTC',
       icon: 'https://assets.algoexplorer.io/asset-logo-465818554.image'
     },
     {

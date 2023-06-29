@@ -21,6 +21,7 @@ const ConnectWalletModal = ({ isVisible, onHide }: ConnectWalletModalProps) => {
       aria-labelledby='modal-title'
       open={isVisible}
       onClose={() => onHide()}
+      css={{ bc: '$kondorDark' }}
     >
       <Modal.Header>
         <Text b id='modal-title' size={18}>
@@ -54,7 +55,7 @@ const ConnectWalletModal = ({ isVisible, onHide }: ConnectWalletModalProps) => {
         </Button> */}
       </Modal.Body>
       <Modal.Footer>
-        <Text>
+        <Text size={14}>
           By connecting a wallet, you agree to the Kondor Labs Terms of Service and agree to their Privacy Policy.
         </Text>
       </Modal.Footer>
