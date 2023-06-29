@@ -14,12 +14,6 @@ export default function Stable () {
   const router = useRouter()
   const [aSupply, setASupply] = useState<number>(0)
   const [bSupply, setBSupply] = useState<number>(0)
-  // const pool = {
-  //   pool: 'USDC/USDT',
-  //   total: 1200420,
-  //   volume: 562330,
-  //   apr: 12
-  // }
 
   useEffect(() => {
     getStablePoolSupply()
@@ -35,31 +29,11 @@ export default function Stable () {
       value: 'USDC/USDT',
       icon: <FaCoins size={40} />
     },
-    // {
-    //   title: 'APR',
-    //   value: `${pool.apr} %`,
-    //   icon: <BiCalculator size={40} />
-    // },
     {
       title: 'Total liquidity',
       value: `$${abbreviateNumber((aSupply + bSupply) / DECIMALS)}`,
       icon: <AiOutlineGlobal size={40} />
     }
-    // {
-    //   title: 'Volume 24H',
-    //   value: `$${abbreviateNumber(1532)}`,
-    //   icon: <BiData size={40} />
-    // },
-    // {
-    //   title: 'Fees 24H',
-    //   value: `$${abbreviateNumber(pool.volume * 0.003)}`,
-    //   icon: <BiDollar size={40} />
-    // },
-    // {
-    //   title: 'Transactions 24H',
-    //   value: '12.3K',
-    //   icon: <BiTransfer size={40} />
-    // }
   ]
 
   return (

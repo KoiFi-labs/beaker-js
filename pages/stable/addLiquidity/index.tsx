@@ -12,11 +12,13 @@ import { abbreviateNumber, isNumber } from '../../../src/utils/utils'
 import { useRouter } from 'next/router'
 import { hasOptin } from '../../../src/services/algoService'
 import { BindingsChangeTarget } from '@nextui-org/react/types/use-input/use-input'
-import { getMintAmount, mint, optin } from '../../../src/services/kondorServices/symmetricPoolServise'
+import { getMintAmount, mint, optin, calculateMint } from '../../../src/services/kondorServices/symmetricPoolServise'
 import { Asset, config } from '../../../config'
 import { useWallet } from '../../../src/contexts/useWallet'
 import useTimer from '../../../src/hooks/useTimmer'
 import { BiInfoCircle } from 'react-icons/bi'
+import ExpectedAmountInfo from '../../../src/components/modules/Modals/ExpectedAmountInfo'
+import ErrorModal from '../../../src/components/modules/Modals/ErrorModal'
 
 enum StyleType {
   ALIQUOT = 'aliquot',
@@ -38,9 +40,11 @@ export default function AddLiquidityPool () {
   const [confirmOptinModalIsvisible, setConfirmOptinModalIsVisible] = useState<boolean>(false)
   const [successfulTransactionModalIsVisible, setSuccessfulTransactionModalIsVisible] = useState<boolean>(false)
   const [sendingTransactionModalIsVisible, setSendingTransactionModalIsVisible] = useState<boolean>(false)
+  const [errorModalIsVisible, setErrorModalIsVisible] = useState<boolean>(false)
   const [infoModalIsVisible, setInfoModalIsVisible] = useState<boolean>(false)
   const [step, setStep] = useState<Step>(Step.WALLET_CONNECT_NEEDED)
   const [isOptedin, setIsOptedin] = useState<boolean>(false)
+  const [expectedAmount, setExpectedAmount] = useState<number>(0)
   const { isConnected, balances, account, reloadBalances, connectWallet, getAssetBalance } = useWallet()
   const { timerFlag, runTimer } = useTimer()
   const [style, setStyle] = useState<StyleType>(StyleType.ALIQUOT)
@@ -51,6 +55,7 @@ export default function AddLiquidityPool () {
   const [loading, setLoading] = useState<boolean>(false)
   const assetA = config.assetList.filter(a => a.id === config.stablePool.assetIdA)[0]
   const assetB = config.assetList.filter(a => a.id === config.stablePool.assetIdB)[0]
+  const poolAsset = config.assetList.filter(a => a.id === config.stablePool.stablePoolAssetId)[0]
   const DECIMALS = 1000000
 
   useEffect(() => {
@@ -81,38 +86,73 @@ export default function AddLiquidityPool () {
       case StyleType.ALIQUOT: {
         if (inputA.value) {
           getMintAmount(Number(inputA.value), config.stablePool.assetIdB)
-            .then((amount: number) => { inputB.setValue(amount.toFixed(6).toString()) })
+            .then((amount: number) => {
+              inputB.setValue(amount.toFixed(6).toString())
+              getExpectedAmount(Number(inputA.value), amount)
+                .then((lpAmount: number) => setExpectedAmount(lpAmount))
+            })
         }
         if (inputB.value) {
           getMintAmount(Number(inputB.value), config.stablePool.assetIdA)
-            .then((amount: number) => { inputA.setValue(amount.toFixed(6).toString()) })
+            .then((amount: number) => {
+              inputA.setValue(amount.toFixed(6).toString())
+              getExpectedAmount(amount, Number(inputB.value))
+                .then((lpAmount: number) => setExpectedAmount(lpAmount))
+            })
         }
         break
       }
       case StyleType.ASSET_A:
         inputB.setValue('')
+        getExpectedAmount(Number(inputA.value), 0)
+          .then((lpAmount: number) => setExpectedAmount(lpAmount))
         break
       case StyleType.ASSET_B:
         inputA.setValue('')
+        getExpectedAmount(0, Number(inputB.value))
+          .then((lpAmount: number) => setExpectedAmount(lpAmount))
         break
+      case StyleType.CUSTOM:
+        getExpectedAmount(Number(inputA.value), Number(inputB.value))
+          .then((lpAmount: number) => setExpectedAmount(lpAmount))
     }
   }, [style, timerFlag])
+
+  const getExpectedAmount = async (aAmount: number, bAmount: number) => {
+    if (aAmount > 0 || bAmount > 0) {
+      return await calculateMint(aAmount || 0, bAmount || 0)
+    } return 0
+  }
 
   const onChangeInputA = (e: any) => {
     if (!isNumber(e.target.value)) return
     inputA.setValue(e.target.value)
-    if (style === StyleType.ALIQUOT) {
-      inputB.setValue('')
-      runTimer()
+    switch (style) {
+      case StyleType.ALIQUOT:
+        inputB.setValue('')
+        runTimer()
+        break
+      case StyleType.CUSTOM:
+      case StyleType.ASSET_A:
+      case StyleType.ASSET_B:
+        runTimer()
+        break
     }
   }
 
   const onChangeInputB = (e: any) => {
     if (!isNumber(e.target.value)) return
     inputB.setValue(e.target.value)
-    if (style === StyleType.ALIQUOT) {
-      inputA.setValue('')
-      runTimer()
+    switch (style) {
+      case StyleType.ALIQUOT:
+        inputA.setValue('')
+        runTimer()
+        break
+      case StyleType.CUSTOM:
+      case StyleType.ASSET_A:
+      case StyleType.ASSET_B:
+        runTimer()
+        break
     }
   }
 
@@ -145,19 +185,31 @@ export default function AddLiquidityPool () {
   ]
 
   const handleConfirmButton = async () => {
-    setLoading(true)
-    const result = await mint(account.addr, Number(inputA.value), Number(inputB.value))
-    setTransactionId(result.txId)
-    setLoading(false)
-    setSuccessfulTransactionModalIsVisible(true)
+    try {
+      setLoading(true)
+      const result = await mint(account.addr, Number(inputA.value), Number(inputB.value))
+      setTransactionId(result.txId)
+      setLoading(false)
+      setSuccessfulTransactionModalIsVisible(true)
+    } catch (e) {
+      setLoading(false)
+      setErrorModalIsVisible(true)
+      console.log(e)
+    }
   }
 
   const handleConfirmOptinButton = async () => {
-    setLoading(true)
-    const result = await optin(account.addr, config.stablePool.stablePoolAssetId)
-    setTransactionId(result.txId)
-    setLoading(false)
-    setSuccessfulTransactionModalIsVisible(true)
+    try {
+      setLoading(true)
+      const result = await optin(account.addr, config.stablePool.stablePoolAssetId)
+      setTransactionId(result.txId)
+      setLoading(false)
+      setSuccessfulTransactionModalIsVisible(true)
+    } catch (e) {
+      setLoading(false)
+      setErrorModalIsVisible(true)
+      console.log(e)
+    }
   }
 
   const handleAddLiquidityButton = () => {
@@ -166,6 +218,10 @@ export default function AddLiquidityPool () {
 
   const handleOptinButton = () => {
     setConfirmOptinModalIsVisible(true)
+  }
+
+  const handleOkErrorButton = () => {
+    setErrorModalIsVisible(false)
   }
 
   const AssetInput = (
@@ -268,6 +324,7 @@ export default function AddLiquidityPool () {
           </Tooltip>
         </Container>
         {getInputs()}
+        <ExpectedAmountInfo amount={expectedAmount} slippage={5} asset={poolAsset.symbol} />
         <DynamicButton items={buttonOptions} index={step} loading={loading} />
       </Container>
       <ConfirmModal
@@ -344,6 +401,11 @@ export default function AddLiquidityPool () {
           </Text>
         </Container>
       </InfoModal>
+      <ErrorModal
+        isVisible={errorModalIsVisible}
+        onHide={() => setErrorModalIsVisible(false)}
+        onPress={() => { handleOkErrorButton() }}
+      />
     </Container>
   )
 }

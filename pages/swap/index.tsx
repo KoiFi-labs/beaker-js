@@ -17,6 +17,7 @@ import ErrorModal from '../../src/components/modules/Modals/ErrorModal'
 import { BsArrowDownUp } from 'react-icons/bs'
 import useTimer from '../../src/hooks/useTimmer'
 import { DynamicButton } from '../../src/components/DynamicButton/DynamicButton'
+import ExpectedAmountInfo from '../../src/components/modules/Modals/ExpectedAmountInfo'
 
 enum Step {
   WALLET_CONNECT_NEEDED,
@@ -245,24 +246,7 @@ export default function Swap () {
               </Grid>
             </Grid.Container>
           </Card>
-          <Container css={{ m: 0, p: '24px 16px' }}>
-            <Container display='flex' justify='space-between' css={{ p: 0, m: 0 }}>
-              <Text size={14} css={{ color: '$kondorGray' }}>
-                You will receive a minimun of
-              </Text>
-              <Text size={14} css={{ color: '$kondorGray' }}>
-                {Number(buyInput.value) ? (Number(buyInput.value) * 0.995).toFixed(4) : 0} {inAsset.symbol}
-              </Text>
-            </Container>
-            <Container display='flex' justify='space-between' css={{ p: 0, m: 0 }}>
-              <Text size={14} css={{ color: '$kondorGray' }}>
-                Slippage tolerance
-              </Text>
-              <Text size={14} css={{ color: '$kondorGray' }}>
-                0.5%
-              </Text>
-            </Container>
-          </Container>
+          <ExpectedAmountInfo amount={Number(buyInput.value)} slippage={5} asset={inAsset.symbol} />
           <DynamicButton items={buttonOptions} index={step} loading={loading} />
         </Container>
       </Container>

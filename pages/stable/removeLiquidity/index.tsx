@@ -116,23 +116,36 @@ export default function AddLiquidityPool () {
     } catch (e) {
       setLoading(false)
       setErrorModalIsVisible(true)
+      console.log(e)
     }
   }
 
   const handleConfirmOptinAButton = async () => {
-    setLoading(true)
-    const result = await optin(account.addr, config.stablePool.assetIdA)
-    setTransactionId(result.txId)
-    setLoading(false)
-    setSuccessfulTransactionModalIsVisible(true)
+    try {
+      setLoading(true)
+      const result = await optin(account.addr, config.stablePool.assetIdA)
+      setTransactionId(result.txId)
+      setLoading(false)
+      setSuccessfulTransactionModalIsVisible(true)
+    } catch (e) {
+      setLoading(false)
+      setErrorModalIsVisible(true)
+      console.log(e)
+    }
   }
 
   const handleConfirmOptinBButton = async () => {
-    setLoading(true)
-    const result = await optin(account.addr, config.stablePool.assetIdB)
-    setTransactionId(result.txId)
-    setLoading(false)
-    setSuccessfulTransactionModalIsVisible(true)
+    try {
+      setLoading(true)
+      const result = await optin(account.addr, config.stablePool.assetIdB)
+      setTransactionId(result.txId)
+      setLoading(false)
+      setSuccessfulTransactionModalIsVisible(true)
+    } catch (e) {
+      setLoading(false)
+      setErrorModalIsVisible(true)
+      console.log(e)
+    }
   }
 
   const handleRemoveLiquidityButton = () => {

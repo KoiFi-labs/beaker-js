@@ -295,10 +295,7 @@ export const getMintAmount = async (amount: number, assetToKnow: number) => {
   if (assetToKnow !== config.stablePool.assetIdA && assetToKnow !== config.stablePool.assetIdB) {
     throw new Error('Invalid asset')
   }
-  const [assetASupply, assetBSupply] = await Promise.all([
-    getAssetBalance(config.stablePool.assetIdA, config.stablePool.appAddress),
-    getAssetBalance(config.stablePool.assetIdB, config.stablePool.appAddress)
-  ])
+  const [assetASupply, assetBSupply] = await getStablePoolSupply()
   if (assetToKnow === config.stablePool.assetIdA) {
     return amount / (assetASupply / assetBSupply)
   }
@@ -389,10 +386,13 @@ function getY (x: number, assetInBalance: number, assetOutBalance: number): numb
   throw new Error('Approximation did not converge')
 }
 
-export const getStablePoolSupply = async (): Promise<[number, number]> => {
-  const aSupply = await getAssetBalance(config.stablePool.assetIdA, config.stablePool.appAddress)
-  const bSupply = await getAssetBalance(config.stablePool.assetIdB, config.stablePool.appAddress)
-  return [aSupply, bSupply]
+export const getStablePoolSupply = async (): Promise<[number, number, number]> => {
+  const [aSupply, bSupply, lpSupply] = await Promise.all([
+    getAssetBalance(config.stablePool.assetIdA, config.stablePool.appAddress),
+    getAssetBalance(config.stablePool.assetIdB, config.stablePool.appAddress),
+    getAssetBalance(config.stablePool.stablePoolAssetId, config.stablePool.appAddress)
+  ])
+  return [aSupply, bSupply, lpSupply]
 }
 
 export const getStableParticipation = async (address: string): Promise<number> => {
@@ -402,4 +402,60 @@ export const getStableParticipation = async (address: string): Promise<number> =
   ])
   const issued = TOTAL_SUPPLY - poolBalance
   return Number(((addressBalance * 100) / issued).toFixed(8))
+}
+
+export const calculateMint = async (amountA: number, amountB: number) => {
+  const TOTAL_SUPPLY = 1e14
+
+  const [aSupply, bSupply, lpSupply] = await getStablePoolSupply()
+  const issued = TOTAL_SUPPLY - lpSupply
+  const swapFee = config.stablePool.fee
+  return tokensToMint(issued, aSupply, bSupply, amountA * SCALE_DECIMALS, amountB * SCALE_DECIMALS, swapFee) / SCALE_DECIMALS
+}
+
+const tokensToMint = (
+  issued: number,
+  aSupply: number,
+  bSupply: number,
+  aAmount: number,
+  bAmount: number,
+  swapFee: number
+) => {
+  const oldK = aSupply * bSupply
+  const newK = (aSupply + aAmount) * (bSupply + bAmount)
+  const r = Math.sqrt(oldK) / issued
+  const newIssued = Math.sqrt(newK) / r
+  let tokenOut = newIssued - issued
+  const newASupply = aSupply + aAmount
+  const newBSupply = bSupply + bAmount
+  const calculatedAAmount = (tokenOut * newASupply) / newIssued
+  const caluclatedBAmount = (tokenOut * newBSupply) / newIssued
+  let aSwapAmount = 0
+  let bSwapAmount = 0
+  let swapAmount = 0
+  let feeAsPoolToken = 0
+  if (aAmount > calculatedAAmount) {
+    aSwapAmount = aAmount - calculatedAAmount
+  }
+  if (bAmount > caluclatedBAmount) {
+    bSwapAmount = bAmount - caluclatedBAmount
+  }
+
+  if (aSwapAmount > bSwapAmount) {
+    swapAmount = aSwapAmount
+  } else {
+    swapAmount = bSwapAmount
+  }
+
+  const feeAmount = (swapAmount * swapFee) / (100 - swapFee)
+  if (aSwapAmount > bSwapAmount) {
+    feeAsPoolToken = (feeAmount * newIssued) / (newASupply * 2)
+  }
+
+  if (bSwapAmount > aSwapAmount) {
+    feeAsPoolToken = (feeAmount * newIssued) / (newBSupply * 2)
+  }
+
+  tokenOut = tokenOut - feeAsPoolToken
+  return tokenOut
 }
