@@ -33,6 +33,10 @@ const Nav: React.FC = (): JSX.Element => {
     {
       label: 'USD Stable',
       href: '/stable'
+    },
+    {
+      label: 'Funds',
+      href: '/funds'
     }
   ]
 
@@ -228,9 +232,14 @@ const Nav: React.FC = (): JSX.Element => {
         }}
       >
         <Link href='/swap' onClick={() => { setIsToggleSelected(false) }}>
-          <Container css={{ display: 'flex', alignItems: 'center', width: '201px', p: 0 }}>
-            <Image src='/KondorLogo5.png' alt='Kondor Finance logo' width={201} height={40} />
-          </Container>
+          <Grid.Container>
+            <Grid xs={0} sm={12} css={{ display: 'flex', alignItems: 'center', width: '201px', p: 0 }}>
+              <Image src='/KondorLogo5.png' alt='Kondor Finance logo' width={201} height={40} />
+            </Grid>
+            <Grid xs={12} sm={0} css={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '201px', p: 0 }}>
+              <Image src='/KondorLogo.png' alt='Kondor Finance logo' width={40} height={40} />
+            </Grid>
+          </Grid.Container>
         </Link>
       </Navbar.Brand>
       <Navbar.Content hideIn='xs'>

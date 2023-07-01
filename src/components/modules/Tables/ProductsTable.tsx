@@ -33,7 +33,8 @@ export default function ProductsTable ({ products } : { products: Product[] }) {
       aria-label='Example table with custom cells'
       css={{
         height: 'auto',
-        minWidth: '100%'
+        minWidth: '100%',
+        zIndex: 2
       }}
       bordered
       selectionMode='single'

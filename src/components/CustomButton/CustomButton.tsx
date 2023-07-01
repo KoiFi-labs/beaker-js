@@ -1,31 +1,26 @@
 import { Button, CSS, Loading } from '@nextui-org/react'
 
-type Item = {
-    text: string,
-    onPress?: () => void,
-    disabled?: boolean,
-}
-
 type Props = {
-        items: Item[]
-        index: number
         bordered?: boolean
         rounded?: boolean
         loading?: boolean
-        css?: CSS
+        onPress?: () => void,
+        disabled?: boolean,
+        css?: CSS,
+        children: JSX.Element | JSX.Element[] | string
     }
 
-export const DynamicButton = ({
-  items,
-  index,
+export const CustomButton = ({
   bordered = true,
   rounded = true,
   loading = false,
+  disabled = false,
+  onPress = () => {},
+  children,
   css
 }: Props) => {
-  const cssProps = css || { width: '100%', color: '$white', borderColor: '$kondorPrimary' }
-  const disabled = items[index]?.disabled || loading
-  const onPress = items[index]?.onPress || (() => {})
+  const cssProps = { width: '100%', color: '$white', borderColor: '$kondorPrimary' }
+  Object.assign(cssProps, css)
   return (
     <Button
       onPress={onPress}
@@ -35,7 +30,7 @@ export const DynamicButton = ({
       css={cssProps}
     >
       {loading ? <Loading /> : null}
-      {items[index].text}
+      {children}
     </Button>
   )
 }
