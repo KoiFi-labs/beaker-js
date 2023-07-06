@@ -17,14 +17,14 @@ export type AssetsConfig = {
 export const assetsConfig: AssetsConfig = {
   testnet: [
     {
-      id: 210124674,
+      id: 253927051,
       name: 'Theter USDt',
       symbol: 'USDT',
       icon: 'https://seeklogo.com/images/T/tether-usdt-logo-FA55C7F397-seeklogo.com.png',
       decimals: 6
     },
     {
-      id: 210125266,
+      id: 253927090,
       name: 'USD Coin',
       symbol: 'USDC',
       icon: 'https://cryptologos.cc/logos/usd-coin-usdc-logo.png?v=024',
@@ -38,16 +38,16 @@ export const assetsConfig: AssetsConfig = {
       decimals: 6
     },
     {
-      id: 249671352,
-      name: 'wBTC',
-      symbol: 'WBTC',
+      id: 253927168,
+      name: 'goBTC',
+      symbol: 'goBTC',
       icon: 'https://assets.algoexplorer.io/asset-logo-465818554.image',
       decimals: 6
     },
     {
-      id: 465818555,
-      name: 'bgoETH',
-      symbol: 'bgoETH',
+      id: 253927235,
+      name: 'goETH',
+      symbol: 'goETH',
       icon: 'https://assets.algoexplorer.io/asset-logo-465818554.image',
       decimals: 8
     },

@@ -1,9 +1,9 @@
-import { contract } from './contract'
+import { stablePool } from './contracts/stablePool'
 import algosdk from 'algosdk'
 import { config } from '../../../config'
 import { mySigner } from '../signer'
 
-const TOTAL_SUPPLY = 1e14 // This value must be obtained from the smarth contract
+const TOTAL_SUPPLY = 1e14 // This value must be obtained from the smarth stablePool
 const SCALE_DECIMALS = 1000000
 const SCALE_FEE = 1000
 const nT = 2 // number of assets in the pool
@@ -16,7 +16,7 @@ const client = new algosdk.Algodv2(config.network.token, config.network.server, 
 
 export const stableForStableSwap = async (addr: string, amount: number, assetOutput: number) => {
   const sp = await client.getTransactionParams().do()
-  const abiContract = new algosdk.ABIContract(contract)
+  const abiContract = new algosdk.ABIContract(stablePool)
   const signer = await mySigner(addr)
   const comp = new algosdk.AtomicTransactionComposer()
 
@@ -54,7 +54,7 @@ export const stableForStableSwap = async (addr: string, amount: number, assetOut
 
 export const mint = async (addr: string, aAmount: number, bAmount: number) => {
   const sp = await client.getTransactionParams().do()
-  const abiContract = new algosdk.ABIContract(contract)
+  const abiContract = new algosdk.ABIContract(stablePool)
   const signer = await mySigner(addr)
   const comp = new algosdk.AtomicTransactionComposer()
 
@@ -127,7 +127,7 @@ export const mint = async (addr: string, aAmount: number, bAmount: number) => {
 
 export const burn = async (addr: string, amount: number) => {
   const sp = await client.getTransactionParams().do()
-  const abiContract = new algosdk.ABIContract(contract)
+  const abiContract = new algosdk.ABIContract(stablePool)
   const signer = await mySigner(addr)
   const comp = new algosdk.AtomicTransactionComposer()
 
@@ -249,7 +249,7 @@ export const createAsset = async (addr: string) => {
 export const bootstrap = async (addr: string, amount: number, assetA: number, assetB: number) => {
   try {
     const sp = await client.getTransactionParams().do()
-    const abiContract = new algosdk.ABIContract(contract)
+    const abiContract = new algosdk.ABIContract(stablePool)
     const signer = await mySigner(addr)
 
     const commonParams = {

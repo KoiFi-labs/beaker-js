@@ -21,12 +21,22 @@ export const poolsConfig: PoolsConfig = {
   ],
   testnet: [
     {
-      name: 'WBTC/KONDOR-LP',
-      appId: 249657042,
-      appAddress: 'JQ4BHLEI3YTOIPPR7PI3WRKWDWY7R3WHHYCBPQ7JK7AFUSRX27WAT3KISI',
-      lpId: 250299512,
-      assetIdA: 249671352,
-      assetIdB: 210171142,
+      name: 'goBTC/KONDOR-LP',
+      appId: 253926956,
+      appAddress: 'UU7N6H5R34T4WSLECHBYRJMI3KN36BT6GG6HCTDPVH3HEBEGROUWCTDCQI',
+      lpId: 253927506,
+      assetIdA: 253927235,
+      assetIdB: 253927168,
+      scale: 1000000,
+      fee: 5
+    },
+    {
+      name: 'goETH/KONDOR-LP',
+      appId: 253926987,
+      appAddress: 'IBZRA3LAHZTZFZ3BD7ARKEOPRHCILUTALKGZIAN3LPEHRRP646FKQUF43I',
+      lpId: 253927506,
+      assetIdA: 253927235,
+      assetIdB: 253927203,
       scale: 1000000,
       fee: 5
     }

@@ -1,4 +1,4 @@
-import { contract } from './contract'
+import { swapper } from './contracts/swapper'
 import algosdk from 'algosdk'
 import { config } from '../../../config'
 import { mySigner } from '../signer'
@@ -15,69 +15,207 @@ const A: number = __A * A_PRECISION
 const client = new algosdk.Algodv2(config.network.token, config.network.server, config.network.port)
 
 export const swap = async (addr: string, amountOut: number, assetIn: number, assetOut: number) => {
-  return await stableForStableSwap(addr, amountOut, assetOut)
-  // if (assetIn === assetOut) throw new Error('assetIn can not be equal to assetOut')
-  // if (isStableAsset(assetIn) && isStableAsset(assetOut)) return await stableForStableSwap(addr, amountOut, assetOut)
-  // if (isStableAsset(assetIn) && !isStableAsset(assetIn)) return await stableForNoStableSwap(addr, amountOut, assetOut, assetIn)
-  // if (!isStableAsset(assetIn) && isStableAsset(assetIn)) return await noStableForStableSwap(addr, amountOut, assetOut)
+  if (assetIn === assetOut) throw new Error('assetIn can not be equal to assetOut')
+  if (isStableAsset(assetIn) && isStableAsset(assetOut)) return await stableForStableSwap(addr, amountOut, assetOut)
+  if (isStableAsset(assetOut) && !isStableAsset(assetIn)) return await stableForNoStableSwap(addr, amountOut, assetOut, assetIn)
+  if (isStableAsset(assetIn) && !isStableAsset(assetOut)) return await noStableForStableSwap(addr, amountOut, assetOut, assetIn)
+  if (!isStableAsset(assetIn) && !isStableAsset(assetOut)) return await noStableForNoStableSwap(addr, amountOut, assetOut, assetIn)
 }
 
 export const stableForNoStableSwap = async (addr: string, amount: number, assetOut: number, assetIn: number) => {
-  if (!isStableAsset(assetOut)) throw new Error('assetOut should be stable')
-  if (isStableAsset(assetIn)) throw new Error('assetIn should not be stable')
+  try {
+    if (!isStableAsset(assetOut)) throw new Error('assetOut should be stable')
+    if (isStableAsset(assetIn)) throw new Error('assetIn should not be stable')
+    const noStablePool = getPoolByAsset(assetIn)
+    const sp = await client.getTransactionParams().do()
+    const abiContract = new algosdk.ABIContract(swapper)
+    const signer = await mySigner(addr)
+    const comp = new algosdk.AtomicTransactionComposer()
 
-  const sp = await client.getTransactionParams().do()
-  const abiContract = new algosdk.ABIContract(contract)
-  const signer = await mySigner(addr)
-  const comp = new algosdk.AtomicTransactionComposer()
+    const axfer = algosdk.makeAssetTransferTxnWithSuggestedParamsFromObject({
+      from: addr,
+      to: config.stablePool.appAddress,
+      amount: amount * SCALE_DECIMALS,
+      assetIndex: assetOut,
+      suggestedParams: sp
+    })
 
-  const assetTransferTxnStable = algosdk.makeAssetTransferTxnWithSuggestedParamsFromObject({
-    from: addr,
-    to: config.stablePool.appAddress,
-    amount: amount * SCALE_DECIMALS,
-    assetIndex: assetOut,
-    suggestedParams: sp
-  })
+    const pxfer = algosdk.makePaymentTxnWithSuggestedParamsFromObject({
+      from: addr,
+      to: config.swapper.appAddress,
+      amount: 7000,
+      suggestedParams: sp
+    })
 
-  comp.addMethodCall({
-    method: abiContract.getMethodByName('mint_single'),
-    methodArgs: [
-      {
-        txn: assetTransferTxnStable,
-        signer
-      },
-      config.stablePool.stablePoolAssetId,
-      config.stablePool.assetIdA,
-      config.stablePool.assetIdB
-    ],
-    appID: config.stablePool.appId,
-    sender: addr,
-    suggestedParams: { ...sp, flatFee: true, fee: 4 * 1000 },
-    signer
-  })
+    comp.addMethodCall({
+      suggestedParams: { ...sp, flatFee: true, fee: 9 * 1000 },
+      appID: config.swapper.appId,
+      method: abiContract.getMethodByName('swap_s_ns'),
+      methodArgs: [
+        {
+          txn: pxfer,
+          signer
+        },
+        {
+          txn: axfer,
+          signer
+        },
+        config.stablePool.assetIdA,
+        config.stablePool.assetIdB,
+        config.stablePool.appId,
+        config.stablePool.appAddress,
+        config.stablePool.stablePoolAssetId,
+        assetIn,
+        noStablePool.appId,
+        noStablePool.appAddress
+      ],
+      sender: addr,
+      signer,
+      appForeignApps: [config.stablePool.appId, noStablePool.appId],
+      appForeignAssets: [config.stablePool.assetIdB, config.stablePool.assetIdA, config.stablePool.stablePoolAssetId]
+    })
 
-  const results = await comp.execute(client, 2)
-  return {
-    result: results.methodResults[0].returnValue,
-    txId: results.methodResults[0].txID
+    const results = await comp.execute(client, 2)
+    return {
+      result: results.methodResults[0].returnValue,
+      txId: results.methodResults[0].txID
+    }
+  } catch (error) {
+    console.log(error)
   }
 }
 
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
+export const noStableForStableSwap = async (addr: string, amount: number, assetOut: number, assetIn: number) => {
+  try {
+    if (isStableAsset(assetOut)) throw new Error('assetOut should not be stable')
+    if (!isStableAsset(assetIn)) throw new Error('assetIn should be stable')
+    const noStablePool = getPoolByAsset(assetOut)
+    const sp = await client.getTransactionParams().do()
+    const abiContract = new algosdk.ABIContract(swapper)
+    const signer = await mySigner(addr)
+    const comp = new algosdk.AtomicTransactionComposer()
+
+    const axfer = algosdk.makeAssetTransferTxnWithSuggestedParamsFromObject({
+      from: addr,
+      to: noStablePool.appAddress,
+      amount: amount * SCALE_DECIMALS,
+      assetIndex: assetOut,
+      suggestedParams: sp
+    })
+
+    const pxfer = algosdk.makePaymentTxnWithSuggestedParamsFromObject({
+      from: addr,
+      to: noStablePool.appAddress,
+      amount: 7000,
+      suggestedParams: sp
+    })
+
+    comp.addMethodCall({
+      suggestedParams: { ...sp, flatFee: true, fee: 11 * 1000 },
+      appID: config.swapper.appId,
+      method: abiContract.getMethodByName('swap_ns_s'),
+      methodArgs: [
+        {
+          txn: pxfer,
+          signer
+        },
+        {
+          txn: axfer,
+          signer
+        },
+        noStablePool.appId,
+        noStablePool.appAddress,
+        assetIn,
+        config.stablePool.assetIdA,
+        config.stablePool.assetIdB,
+        config.stablePool.stablePoolAssetId,
+        config.stablePool.appId,
+        config.stablePool.appAddress
+      ],
+      sender: addr,
+      signer,
+      appForeignApps: [config.stablePool.appId, noStablePool.appId],
+      appForeignAssets: [config.stablePool.assetIdB, config.stablePool.assetIdA, config.stablePool.stablePoolAssetId, assetOut]
+    })
+
+    const results = await comp.execute(client, 2)
+    return {
+      result: results.methodResults[0].returnValue,
+      txId: results.methodResults[0].txID
+    }
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+export const noStableForNoStableSwap = async (addr: string, amount: number, assetOut: number, assetIn: number) => {
+  try {
+    if (isStableAsset(assetOut)) throw new Error('assetOut should not be stable')
+    if (isStableAsset(assetIn)) throw new Error('assetIn should not be stable')
+    const inPool = getPoolByAsset(assetIn)
+    const outPool = getPoolByAsset(assetOut)
+    const sp = await client.getTransactionParams().do()
+    const abiContract = new algosdk.ABIContract(swapper)
+    const signer = await mySigner(addr)
+    const comp = new algosdk.AtomicTransactionComposer()
+
+    const axfer = algosdk.makeAssetTransferTxnWithSuggestedParamsFromObject({
+      from: addr,
+      to: outPool.appAddress,
+      amount: amount * SCALE_DECIMALS,
+      assetIndex: assetOut,
+      suggestedParams: sp
+    })
+
+    const pxfer = algosdk.makePaymentTxnWithSuggestedParamsFromObject({
+      from: addr,
+      to: outPool.appAddress,
+      amount: 7000,
+      suggestedParams: sp
+    })
+
+    comp.addMethodCall({
+      suggestedParams: { ...sp, flatFee: true, fee: 9 * 1000 },
+      appID: config.swapper.appId,
+      method: abiContract.getMethodByName('swap_ns_ns'),
+      methodArgs: [
+        {
+          txn: pxfer,
+          signer
+        },
+        {
+          txn: axfer,
+          signer
+        },
+        outPool.appId,
+        outPool.appAddress,
+        config.stablePool.stablePoolAssetId,
+        assetIn,
+        inPool.appId,
+        inPool.appAddress
+      ],
+      sender: addr,
+      signer,
+      appForeignApps: [inPool.appId, outPool.appId],
+      appForeignAssets: [assetIn, assetOut, config.stablePool.stablePoolAssetId]
+    })
+
+    const results = await comp.execute(client, 2)
+    return {
+      result: results.methodResults[0].returnValue,
+      txId: results.methodResults[0].txID
+    }
+  } catch (error) {
+    console.log(error)
+  }
+}
 
 export const isStableAsset = (assetId: number) => {
   return assetId === config.stablePool.assetIdA || assetId === config.stablePool.assetIdB
+}
+
+export const getPoolByAsset = (assetId: number) => {
+  return config.pools.filter(p => p.assetIdB === assetId)[0]
 }
 
 export const getMintAmount = async (amount: number, assetToKnow: number) => {

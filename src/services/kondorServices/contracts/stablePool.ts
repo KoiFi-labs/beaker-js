@@ -1,4 +1,4 @@
-export const contract = {
+export const stablePool = {
   name: 'SymmetricPool',
   methods: [
     {
