@@ -112,7 +112,7 @@ const SideBar: React.FC = () => {
                 color: themes[theme].sidebar.color
               }}
             >
-              <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', height: '820px' }}>
                 <div style={{ padding: '20px', display: 'flex', justifyContent: collapsed ? 'center' : 'flex-end' }}>
                   <Switch
                     size='xs'
