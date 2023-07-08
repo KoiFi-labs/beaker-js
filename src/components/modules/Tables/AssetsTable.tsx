@@ -40,14 +40,14 @@ export default function AssetsTable ({ items }: { items: TableItemType[] }) {
         )
       case 'id':
         return (
-          <Text size={14} css={{ tt: 'capitalize' }}>
+          <Text size={16} weight='bold' css={{ tt: 'capitalize', color: '$kondorTextGray' }}>
             {asset.id}
           </Text>
         )
       case 'balance':
         return (
           <Container css={{ d: 'flex', justifyContent: 'flex-start', p: 0 }}>
-            <Text size={14} css={{ tt: 'capitalize' }}>
+            <Text size={16} weight='bold' css={{ tt: 'capitalize' }}>
               {`${asset.balance / (Math.pow(10, asset.decimals))} ${asset.symbol}`}
             </Text>
           </Container>

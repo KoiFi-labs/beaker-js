@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react'
 
 type Props = {
      children: JSX.Element | JSX.Element[];
-    };
+    }
 
 export const Layout = ({ children }: Props) => {
   const [isHydrating, setIsHydrating] = useState<boolean>(false)

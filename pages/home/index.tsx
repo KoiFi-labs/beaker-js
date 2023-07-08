@@ -3,6 +3,8 @@ import { useWallet } from '../../src/contexts/useWallet'
 import { Balance } from '../../src/services/algoService'
 import { useEffect, useState } from 'react'
 import AssetsTable from '../../src/components/modules/Tables/AssetsTable'
+import ResumeCard from '../../src/components/modules/Cards/ResumeCard'
+import { Container, Spacer } from '@nextui-org/react'
 
 const assets = config.assetList
 
@@ -32,8 +34,10 @@ export default function Home () {
   }, [balances])
 
   return (
-    <div>
+    <Container css={{ p: '16px', width: '100%', d: 'flex' }}>
+      <ResumeCard />
+      <Spacer y={2} />
       <AssetsTable items={assetsTableItems} />
-    </div>
+    </Container>
   )
 }
