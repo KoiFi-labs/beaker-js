@@ -19,7 +19,7 @@ export const themeConfig = {
       kondorBlack: '#000000',
       kondorBlue: '#06171E',
       kondorBlueLight: '#0C303F',
-      kondorBlueOver: '#6BAC96',
+      kondorBlueHover: '#6BAC96',
       primary: '#04595A',
       secondary: '#9BA1A6',
       error: '#bd0013',

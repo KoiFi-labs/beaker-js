@@ -93,7 +93,12 @@ const SideBar: React.FC = () => {
   }
 
   return (
-    <div style={{ maxWidth: '250px', zIndex: 3 }}>
+    <div
+      style={{
+        maxWidth: '250px',
+        zIndex: 3
+      }}
+    >
       <Grid.Container>
         <Grid xs={0} sm={12}>
           <div style={{ position: 'fixed', display: 'flex', height: '100vh', direction: 'ltr' }}>
