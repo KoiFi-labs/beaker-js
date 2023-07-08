@@ -11,7 +11,7 @@ export const LinkButton = styled('button', {
   minWidth: '140px',
   padding: '16px',
   margin: '0',
-  bg: '$black',
+  bg: 'red',
   transition: '$default',
   '&:hover': {
     opacity: '0.8'

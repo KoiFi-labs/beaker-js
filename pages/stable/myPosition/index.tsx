@@ -52,7 +52,6 @@ const MyPosition = () => {
             css={{
               width: '100%',
               color: '$white',
-              bgColor: '$black',
               borderColor: '$kondorPrimary',
               zIndex: 1,
               m: '4px 0px'
@@ -67,7 +66,6 @@ const MyPosition = () => {
             css={{
               width: '100%',
               color: '$white',
-              bgColor: '$black',
               borderColor: '$kondorPrimary',
               zIndex: 1,
               m: '4px 0px'

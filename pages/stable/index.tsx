@@ -61,7 +61,6 @@ export default function Stable () {
             css={{
               width: '100%',
               color: '$white',
-              bgColor: '$black',
               borderColor: '$kondorPrimary',
               zIndex: 1,
               m: '4px 0px'
@@ -76,7 +75,6 @@ export default function Stable () {
             css={{
               width: '100%',
               color: '$white',
-              bgColor: '$black',
               borderColor: '$kondorPrimary',
               zIndex: 1,
               m: '4px 0px'

@@ -111,7 +111,7 @@ export default function Swap () {
       setLoading(true)
       const amount = Number(sellInput.value)
       const result = await swap(account.addr, amount, inAsset.id, outAsset.id)
-      setTransactionId(result.txId)
+      if (result?.txId) setTransactionId(result.txId)
       sellInput.setValue('')
       buyInput.setValue('')
       reloadBalances()
@@ -180,7 +180,7 @@ export default function Swap () {
   }, [outAsset, inAsset, isConnected, balances])
 
   return (
-    <Container display='flex' justify='center' css={{ p: 0, width: '100%' }}>
+    <Container fluid display='flex' justify='center' css={{ p: 0, width: '100%' }}>
       <Container css={{
         minWidth: '330px',
         width: '100%',

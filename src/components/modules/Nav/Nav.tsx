@@ -35,8 +35,8 @@ const Nav: React.FC = (): JSX.Element => {
       href: '/stable'
     },
     {
-      label: 'Funds',
-      href: '/funds'
+      label: 'Home',
+      href: '/home'
     }
   ]
 
@@ -210,7 +210,7 @@ const Nav: React.FC = (): JSX.Element => {
     if (isToggleSelected) {
       return (
         <Navbar.Collapse disableAnimation>
-          {pages.map((item, index) => (
+          {pages.map((item) => (
             <Navbar.CollapseItem key={item.label} onClick={() => { setIsToggleSelected(!isToggleSelected) }}>
               <Link href={item.href}>
                 {item.label}
@@ -222,15 +222,9 @@ const Nav: React.FC = (): JSX.Element => {
     }
   }
   return (
-    <Navbar variant='sticky' maxWidth='fluid' isCompact isBordered>
+    <Navbar variant='sticky' maxWidth='fluid' isCompact css={{ backgroundColor: '$kondorBlueLight' }}>
       <Navbar.Toggle showIn='xs' isSelected={isToggleSelected} onChange={(isSelected) => { setIsToggleSelected(isSelected as boolean) }} />
-      <Navbar.Brand
-        css={{
-          '@xs': {
-            w: '12%'
-          }
-        }}
-      >
+      <Navbar.Brand>
         <Link href='/swap' onClick={() => { setIsToggleSelected(false) }}>
           <Grid.Container>
             <Grid xs={0} sm={12} css={{ display: 'flex', alignItems: 'center', width: '201px', p: 0 }}>
@@ -242,11 +236,6 @@ const Nav: React.FC = (): JSX.Element => {
           </Grid.Container>
         </Link>
       </Navbar.Brand>
-      <Navbar.Content hideIn='xs'>
-        {pages.map((page) => (
-          <Link href={page.href} key={page.label}>{page.label}</Link>
-        ))}
-      </Navbar.Content>
       <Navbar.Content>
         <Navbar.Item>
           <div>
