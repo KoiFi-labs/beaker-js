@@ -1,5 +1,6 @@
 import { NETWORK } from './Networks'
 import { Pool } from '../interfaces'
+import { amm } from './amm'
 
 export type PoolsConfig = {
 //  eslint-disable-next-line
@@ -22,21 +23,21 @@ export const poolsConfig: PoolsConfig = {
   testnet: [
     {
       name: 'goBTC/KONDOR-LP',
-      appId: 253926956,
-      appAddress: 'UU7N6H5R34T4WSLECHBYRJMI3KN36BT6GG6HCTDPVH3HEBEGROUWCTDCQI',
-      lpId: 253927506,
-      assetIdA: 253927235,
-      assetIdB: 253927168,
+      appId: amm.gobtc.appId,
+      appAddress: amm.gobtc.appAddress,
+      lpId: amm.gobtc.lp,
+      assetIdA: amm.gobtc.assetA,
+      assetIdB: amm.gobtc.assetB,
       scale: 1000000,
       fee: 5
     },
     {
       name: 'goETH/KONDOR-LP',
-      appId: 253926987,
-      appAddress: 'IBZRA3LAHZTZFZ3BD7ARKEOPRHCILUTALKGZIAN3LPEHRRP646FKQUF43I',
-      lpId: 253927506,
-      assetIdA: 253927235,
-      assetIdB: 253927203,
+      appId: amm.goeth.appId,
+      appAddress: amm.goeth.appAddress,
+      lpId: amm.goeth.lp,
+      assetIdA: amm.goeth.assetA,
+      assetIdB: amm.goeth.assetB,
       scale: 1000000,
       fee: 5
     }

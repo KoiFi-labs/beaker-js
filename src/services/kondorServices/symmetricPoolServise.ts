@@ -40,7 +40,7 @@ export const stableForStableSwap = async (addr: string, amount: number, assetOut
     ],
     appID: config.stablePool.appId,
     sender: addr,
-    suggestedParams: { ...sp, flatFee: true, fee: 4 * 1000 },
+    suggestedParams: { ...sp, flatFee: true, fee: 5 * 1000 },
     signer
   })
 
@@ -320,10 +320,14 @@ export const calculateInStableSwap = async (
   amount: number,
   assetOut: number
 ): Promise<number> => {
+  console.log('amount :', amount)
+  console.log('assetOut :', getAssetById(assetOut))
+
   const amountToSwap = Math.round(amount * config.decimalScale)
   const [aSupply, bSupply] = await getStablePoolSupply()
   const outSupply = assetOut === config.stablePool.assetIdA ? aSupply : bSupply
   const inSupply = assetOut === config.stablePool.assetIdA ? bSupply : aSupply
+  console.log('assetOutSupply', outSupply)
   const fee = config.stablePool.fee
   const x: number = amountToSwap + inSupply
   const y = getY(x, inSupply, outSupply)
@@ -464,4 +468,8 @@ const tokensToMint = (
 
   tokenOut = tokenOut - feeAsPoolToken
   return tokenOut
+}
+
+export const getAssetById = (assetId:number) => {
+  return config.assetList.find(a => a.id === assetId)
 }

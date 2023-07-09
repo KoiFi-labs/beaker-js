@@ -1,4 +1,5 @@
 import { NETWORK } from './Networks'
+import { amm } from './amm'
 
 export type SwapperConfig = {
     appId: number;
@@ -18,9 +19,9 @@ export const swappersConfig: SwappersConfig = {
     fee: 5
   },
   testnet: {
-    appId: 253927029,
-    appAddress: 'TOTHJYG6CS6IYUF2CYFCBCPOAMUJ26V2EQ5NGQWCPJ4GQ3G3U755G3NZVI',
-    fee: 5
+    appId: amm.swapper.appId,
+    appAddress: amm.swapper.appAddress,
+    fee: amm.swapper.fee
   },
   mainnet: {
     appId: 210171059,

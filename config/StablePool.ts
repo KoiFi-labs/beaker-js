@@ -1,4 +1,5 @@
 import { NETWORK } from './Networks'
+import { amm } from './amm'
 
 export type StablePoolConfig = {
     appId: number;
@@ -26,13 +27,13 @@ export const stablePoolsConfig: StablePoolsConfig = {
     fee: 5
   },
   testnet: {
-    appId: 253926875,
-    appAddress: 'GLPTQQ7QDN5KLJAIH2Y742EFGU7QKAT2OQD7JBWPHCSTSDGNRVFIDCGJXU',
-    stablePoolAssetId: 253927235,
-    assetIdA: 253927051,
-    assetIdB: 253927090,
+    appId: amm.stable.appId,
+    appAddress: amm.stable.appAddress,
+    stablePoolAssetId: amm.stable.lp,
+    assetIdA: amm.stable.assetA,
+    assetIdB: amm.stable.assetB,
     scale: 1000000,
-    fee: 5
+    fee: 3
   },
   mainnet: {
     appId: 210171059,

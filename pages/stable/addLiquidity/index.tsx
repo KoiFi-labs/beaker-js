@@ -13,12 +13,13 @@ import { useRouter } from 'next/router'
 import { hasOptin } from '../../../src/services/algoService'
 import { BindingsChangeTarget } from '@nextui-org/react/types/use-input/use-input'
 import { getMintAmount, mint, optin, calculateMint } from '../../../src/services/kondorServices/symmetricPoolServise'
-import { Asset, config } from '../../../config'
+import { config } from '../../../config'
 import { useWallet } from '../../../src/contexts/useWallet'
 import useTimer from '../../../src/hooks/useTimmer'
 import { BiInfoCircle } from 'react-icons/bi'
 import ExpectedAmountInfo from '../../../src/components/modules/Modals/ExpectedAmountInfo'
 import ErrorModal from '../../../src/components/modules/Modals/ErrorModal'
+import AssetInputCard from '../../../src/components/AssetInputCard/AssetInputCard'
 
 enum StyleType {
   ALIQUOT = 'aliquot',
@@ -45,7 +46,7 @@ export default function AddLiquidityPool () {
   const [step, setStep] = useState<Step>(Step.WALLET_CONNECT_NEEDED)
   const [isOptedin, setIsOptedin] = useState<boolean>(false)
   const [expectedAmount, setExpectedAmount] = useState<number>(0)
-  const { isConnected, balances, account, reloadBalances, connectWallet, getAssetBalance } = useWallet()
+  const { isConnected, balances, account, reloadBalances, connectWallet } = useWallet()
   const { timerFlag, runTimer } = useTimer()
   const [style, setStyle] = useState<StyleType>(StyleType.ALIQUOT)
   const inputA = useInput('')
@@ -226,32 +227,6 @@ export default function AddLiquidityPool () {
     setErrorModalIsVisible(false)
   }
 
-  const AssetInput = (
-    asset: Asset,
-    value:string,
-    onChange: (event: BindingsChangeTarget) => void,
-    label?: string
-  ) => {
-    return (
-      <Card key={asset.id} css={{ bgColor: '$kondorBlueCard', m: '4px 0px' }}>
-        <Grid.Container justify='center' css={{ p: '8px' }}>
-          <Grid xs={12} css={{ d: 'flex', flexDirection: 'column' }}>
-            <Text>{label || `Add ${asset.symbol}`}</Text>
-            <LigthInput
-              value={value}
-              onChange={onChange}
-              aria-label={label || `Add ${asset}`}
-              placeholder='0.00'
-            />
-          </Grid>
-          <Container display='flex' justify='flex-start' css={{ p: 0 }}>
-            <Text size={14} css={{ color: '$kondorGray' }}>Balance {getAssetBalance(asset.id) / DECIMALS} {asset.symbol}</Text>
-          </Container>
-        </Grid.Container>
-      </Card>
-    )
-  }
-
   const getResumeDetails = (label: string, value: string) => {
     return (
       <Container css={{ p: 0 }} display='flex' justify='space-between'>
@@ -268,23 +243,23 @@ export default function AddLiquidityPool () {
         return (
           <>
             <Container css={{ p: '16px 0px 8px 0px' }}>
-              {AssetInput(assetA, inputA.value, onChangeInputA)}
+              {AssetInputCard({ asset: assetA, value: inputA.value, onChange: onChangeInputA, label: `Add ${assetA.symbol}` })}
             </Container>
             <Container css={{ p: '8px 0px 16px 0px' }}>
-              {AssetInput(assetB, inputB.value, onChangeInputB)}
+              {AssetInputCard({ asset: assetB, value: inputB.value, onChange: onChangeInputB, label: `Add ${assetB.symbol}` })}
             </Container>
           </>
         )
       case StyleType.ASSET_A:
         return (
           <Container css={{ p: '16px 0px' }}>
-            {AssetInput(assetA, inputA.value, onChangeInputA)}
+            {AssetInputCard({ asset: assetA, value: inputA.value, onChange: onChangeInputA, label: `Add ${assetA.symbol}` })}
           </Container>
         )
       case StyleType.ASSET_B:
         return (
           <Container css={{ p: '16px 0px' }}>
-            {AssetInput(assetB, inputB.value, onChangeInputB)}
+            {AssetInputCard({ asset: assetB, value: inputB.value, onChange: onChangeInputB, label: `Add ${assetB.symbol}` })}
           </Container>
         )
     }

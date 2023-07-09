@@ -1,5 +1,5 @@
 import { NETWORK } from './Networks'
-import { stablePoolsConfig } from './StablePool'
+import { amm } from './amm'
 
 export type Asset = {
     id: number;
@@ -17,14 +17,14 @@ export type AssetsConfig = {
 export const assetsConfig: AssetsConfig = {
   testnet: [
     {
-      id: 253927051,
+      id: amm.stable.assetA,
       name: 'Theter USDt',
       symbol: 'USDT',
       icon: 'https://seeklogo.com/images/T/tether-usdt-logo-FA55C7F397-seeklogo.com.png',
       decimals: 6
     },
     {
-      id: 253927090,
+      id: amm.stable.assetB,
       name: 'USD Coin',
       symbol: 'USDC',
       icon: 'https://cryptologos.cc/logos/usd-coin-usdc-logo.png?v=024',
@@ -38,14 +38,14 @@ export const assetsConfig: AssetsConfig = {
       decimals: 6
     },
     {
-      id: 253927168,
+      id: amm.gobtc.assetB,
       name: 'goBTC',
       symbol: 'goBTC',
       icon: 'https://assets.algoexplorer.io/asset-logo-465818554.image',
       decimals: 6
     },
     {
-      id: 253927203,
+      id: amm.goeth.assetB,
       name: 'goETH',
       symbol: 'goETH',
       icon: 'https://assets.algoexplorer.io/asset-logo-465818554.image',
@@ -87,7 +87,7 @@ export const assetsConfig: AssetsConfig = {
       decimals: 6
     },
     {
-      id: stablePoolsConfig.testnet.stablePoolAssetId,
+      id: amm.stable.lp,
       name: 'KF-V1-SPOOL-USDT-USDT',
       symbol: 'KF-V1-SPOOL-USDT-USDT',
       icon: 'https://assets.algoexplorer.io/asset-logo-465818554.image',

@@ -133,7 +133,9 @@ const SideBar: React.FC = () => {
                         Payments
                       </Text>
                     </Container>
-                    <MenuItem icon={<FiSend size={20} />}><Text b size={18}>Send</Text></MenuItem>
+                    <Link href='/send'>
+                      <MenuItem icon={<FiSend size={20} />}><Text b size={18}>Send</Text></MenuItem>
+                    </Link>
                     <MenuItem icon={<FiSend size={20} style={{ transform: 'rotate(180deg)' }} />}><Text b size={18}>Receive</Text></MenuItem>
                     <MenuItem icon={<FiList size={20} />}><Text b size={18}>History</Text></MenuItem>
                     <Container><Divider height={2} /></Container>

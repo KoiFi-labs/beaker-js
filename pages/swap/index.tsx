@@ -18,6 +18,7 @@ import { BsArrowDownUp } from 'react-icons/bs'
 import useTimer from '../../src/hooks/useTimmer'
 import { DynamicButton } from '../../src/components/DynamicButton/DynamicButton'
 import ExpectedAmountInfo from '../../src/components/modules/Modals/ExpectedAmountInfo'
+import AssetSelectCard from '../../src/components/AssetSelectCard/AssetSelectCard'
 
 enum Step {
   WALLET_CONNECT_NEEDED,
@@ -190,26 +191,13 @@ export default function Swap () {
       >
         <Text h1>Swap</Text>
         <Container display='flex' justify='center' css={{ p: 0 }}>
-          <Card css={{ p: '16px', bgColor: '$kondorBlueCard' }}>
-            <Grid.Container justify='center' css={{ p: 0 }}>
-              <Grid xs={6} css={{ d: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-                <LigthInput
-                  aria-label='Amount to sell'
-                  onChange={onChangeSellInput}
-                  value={sellInput.value}
-                  placeholder='0.00'
-                />
-                <Container display='flex' justify='flex-start' css={{ p: 0 }}>
-                  <Text size={14} css={{ color: '$kondorGray' }}>
-                    Balance {balanceToSell ? balanceToSell.toFixed(6) : 0} {outAsset.symbol}
-                  </Text>
-                </Container>
-              </Grid>
-              <Grid xs={6} css={{ d: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
-                <AssetSelect asset={outAsset} onPress={handleSellAssetSelect} />
-              </Grid>
-            </Grid.Container>
-          </Card>
+          <AssetSelectCard
+            asset={outAsset}
+            input={sellInput}
+            onChange={onChangeSellInput}
+            balance={balanceToSell}
+            onPressAssetSelec={handleSellAssetSelect}
+          />
           <Button
             bordered
             rounded
@@ -226,26 +214,13 @@ export default function Swap () {
           >
             <BsArrowDownUp size={20} />
           </Button>
-          <Card css={{ p: '16px', bgColor: '$kondorBlueCard' }}>
-            <Grid.Container justify='center'>
-              <Grid xs={6} css={{ d: 'flex', flexDirection: 'column' }}>
-                <LigthInput
-                  aria-label='Amount to buy'
-                  onChange={onChangeBuyInput}
-                  value={buyInput.value}
-                  placeholder='0.00'
-                />
-                <Container display='flex' justify='flex-start' css={{ p: 0 }}>
-                  <Text size={14} css={{ color: '$kondorGray' }}>
-                    Balance {balanceToBuy ? balanceToBuy.toFixed(4) : 0} {inAsset.symbol}
-                  </Text>
-                </Container>
-              </Grid>
-              <Grid xs={6} css={{ d: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
-                <AssetSelect asset={inAsset} onPress={handleBuyAssetSelect} />
-              </Grid>
-            </Grid.Container>
-          </Card>
+          <AssetSelectCard
+            asset={inAsset}
+            input={buyInput}
+            onChange={onChangeBuyInput}
+            balance={balanceToBuy}
+            onPressAssetSelec={handleBuyAssetSelect}
+          />
           <ExpectedAmountInfo amount={Number(buyInput.value)} slippage={5} asset={inAsset.symbol} />
           <DynamicButton items={buttonOptions} index={step} loading={loading} />
         </Container>
