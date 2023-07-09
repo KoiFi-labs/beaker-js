@@ -62,17 +62,17 @@ export const mint = async (addr: string, aAmount: number, bAmount: number) => {
 
   const assetTransferTxnA = algosdk.makeAssetTransferTxnWithSuggestedParamsFromObject({
     from: addr,
-    to: config.pools[0].appAddress,
+    to: config.stablePool.appAddress,
     amount: aAmount * SCALE_DECIMALS,
-    assetIndex: config.pools[0].assetIdA,
+    assetIndex: config.stablePool.assetIdA,
     suggestedParams: sp
   })
 
   const assetTransferTxnB = algosdk.makeAssetTransferTxnWithSuggestedParamsFromObject({
     from: addr,
-    to: config.pools[0].appAddress,
+    to: config.stablePool.appAddress,
     amount: bAmount * SCALE_DECIMALS,
-    assetIndex: config.pools[0].assetIdB,
+    assetIndex: config.stablePool.assetIdB,
     suggestedParams: sp
   })
 
@@ -88,11 +88,11 @@ export const mint = async (addr: string, aAmount: number, bAmount: number) => {
           txn: assetTransferTxnB,
           signer
         },
-        config.pools[0].lpId,
-        config.pools[0].assetIdA,
-        config.pools[0].assetIdB
+        config.stablePool.stablePoolAssetId,
+        config.stablePool.assetIdA,
+        config.stablePool.assetIdB
       ],
-      appID: config.pools[0].appId,
+      appID: config.stablePool.appId,
       sender: addr,
       suggestedParams: { ...sp, flatFee: true, fee: 4 * 1000 },
       signer
@@ -105,15 +105,13 @@ export const mint = async (addr: string, aAmount: number, bAmount: number) => {
         {
           txn,
           signer
-        },
-        config.pools[0].lpId,
-        config.pools[0].assetIdA,
-        config.pools[0].assetIdB
+        }
       ],
-      appID: config.pools[0].appId,
+      appID: config.stablePool.appId,
       sender: addr,
       suggestedParams: { ...sp, flatFee: true, fee: 4 * 1000 },
-      signer
+      signer,
+      appForeignAssets: [config.stablePool.assetIdB, config.stablePool.assetIdA, config.stablePool.stablePoolAssetId]
     })
   }
 
@@ -411,6 +409,14 @@ export const calculateMint = async (amountA: number, amountB: number) => {
   const issued = TOTAL_SUPPLY - lpSupply
   const swapFee = config.stablePool.fee
   return tokensToMint(issued, aSupply, bSupply, amountA * SCALE_DECIMALS, amountB * SCALE_DECIMALS, swapFee) / SCALE_DECIMALS
+}
+
+export const calculateTokensToMint = async (amountA: number, amountB: number) => { // This funcion not use decimals multiplicator
+  const TOTAL_SUPPLY = 1e14
+  const [aSupply, bSupply, lpSupply] = await getStablePoolSupply()
+  const issued = TOTAL_SUPPLY - lpSupply
+  const swapFee = config.stablePool.fee
+  return tokensToMint(issued, aSupply, bSupply, amountA, amountB, swapFee)
 }
 
 const tokensToMint = (

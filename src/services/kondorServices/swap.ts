@@ -2,7 +2,7 @@ import { swapper } from './contracts/swapper'
 import algosdk from 'algosdk'
 import { config } from '../../../config'
 import { mySigner } from '../signer'
-import { stableForStableSwap } from './symmetricPoolServise'
+import { stableForStableSwap, calculateInStableSwap, calculateTokensToMint } from './symmetricPoolServise'
 
 const SCALE_DECIMALS = 1000000
 const SCALE_FEE = 1000
@@ -210,12 +210,26 @@ export const noStableForNoStableSwap = async (addr: string, amount: number, asse
   }
 }
 
+export const calculateSwap = async (amountOut: number, assetIn: number, assetOut: number) => {
+  if (assetIn === assetOut) throw new Error('assetIn can not be equal to assetOut')
+  console.log(isStableAsset(assetIn))
+  if (isStableAsset(assetIn) && isStableAsset(assetOut)) return await calculateInStableSwap(amountOut, assetOut)
+  if (isStableAsset(assetOut) && !isStableAsset(assetIn)) return await calculateStableForNoStableSwap(amountOut, assetOut, assetIn)
+  throw new Error('invalid input')
+  // if (isStableAsset(assetIn) && !isStableAsset(assetOut)) return await calculateNoStableForStableSwap(amountOut, assetOut, assetIn)
+  // if (!isStableAsset(assetIn) && !isStableAsset(assetOut)) return await calculateNoStableForNoStableSwap(amountOut, assetOut, assetIn)
+}
+
 export const isStableAsset = (assetId: number) => {
   return assetId === config.stablePool.assetIdA || assetId === config.stablePool.assetIdB
 }
 
 export const getPoolByAsset = (assetId: number) => {
   return config.pools.filter(p => p.assetIdB === assetId)[0]
+}
+
+export const getPoolById = (poolId: number) => {
+  return config.pools.filter(p => p.appId === poolId)[0]
 }
 
 export const getMintAmount = async (amount: number, assetToKnow: number) => {
@@ -320,4 +334,51 @@ export const getPoolSupply = async (): Promise<[number, number]> => {
   const aSupply = await getAssetBalance(config.stablePool.assetIdA, config.stablePool.appAddress)
   const bSupply = await getAssetBalance(config.stablePool.assetIdB, config.stablePool.appAddress)
   return [aSupply, bSupply]
+}
+
+export const calculateStableForNoStableSwap = async (
+  amountOut: number,
+  assetOut: number,
+  assetIn: number
+): Promise<number> => {
+  if (!isStableAsset(assetOut)) throw new Error('assetOut should be stable')
+  if (isStableAsset(assetIn)) throw new Error('assetIn should not be stable')
+  const amountToSwap = Math.round(amountOut * config.decimalScale)
+  const amountA = assetOut === config.stablePool.assetIdA ? amountToSwap : 0
+  const amountB = assetOut === config.stablePool.assetIdB ? amountToSwap : 0
+  console.log('amountA:', amountA)
+  console.log('amountB:', amountB)
+  const lpAmount = await calculateTokensToMint(amountA, amountB)
+  console.log('lpAmount:', lpAmount)
+  return (await calculateLpForNoStableSwap(lpAmount, assetIn)) / config.decimalScale
+}
+
+export const calculateLpForNoStableSwap = async (lpAmount: number, noStableAsset: number) => {
+  const pool = getPoolByAsset(noStableAsset)
+  const [lpSupply, assetSupply] = await getNoStablePoolSupply(pool.appId)
+  return tokensToSwap(lpAmount, lpSupply, assetSupply)
+}
+
+export const getNoStablePoolSupply = async (poolId: number): Promise<[number, number]> => {
+  const pool = getPoolById(poolId)
+  const [lpSupply, assetSupply] = await Promise.all([
+    getAssetBalance(pool.assetIdA, pool.appAddress),
+    getAssetBalance(pool.assetIdB, pool.appAddress)
+  ])
+  return [lpSupply, assetSupply]
+}
+
+const tokensToSwap = (amount: number, inSupply: number, outSupply: number) => { // blockchain side. In and out is opposite
+  // Total Fee = floor((Input Amount * Total Fee Share) / 10000)
+  // Protocol Fee = floor(Total Fee / Protocol Fee Ratio)
+  // Poolers Fee = Total Fee - Protocol Fee
+  // Swap Amount = Input Amount - Total Fee
+  // K = Input Supply * Output Supply
+  // Swap Output = Output Supply - (floor(K / (Input Supply + Swap Amount)) + 1)
+  const totalFee = Math.floor((amount * 3) / 10000)
+  const swapAmount = amount - totalFee
+  const K = inSupply * outSupply
+  const swapOutput = outSupply - (Math.floor(K / (inSupply + swapAmount)) + 1)
+  console.log('hpñaaaaaaaaaaaaaaaaa')
+  return swapOutput
 }

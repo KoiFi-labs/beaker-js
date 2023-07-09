@@ -10,7 +10,7 @@ import { useWallet } from '../../src/contexts/useWallet'
 import { Balance, hasOptin } from '../../src/services/algoService'
 import { microToStandard } from '../../src/utils/math'
 import { calculateInStableSwap, calculateOutStableSwap, optin } from '../../src/services/kondorServices/symmetricPoolServise'
-import { swap } from '../../src/services/kondorServices/swap'
+import { swap, calculateSwap } from '../../src/services/kondorServices/swap'
 import ConfirmModal from '../../src/components/modules/Modals/ConfirmModal'
 import SuccessfulTransactionModal from '../../src/components/modules/Modals/SuccessfulTransactionModal'
 import ErrorModal from '../../src/components/modules/Modals/ErrorModal'
@@ -47,7 +47,7 @@ export default function Swap () {
 
   useEffect(() => {
     if (sellInput.value) {
-      calculateInStableSwap(Number(sellInput.value), outAsset.id)
+      calculateSwap(Number(sellInput.value), inAsset.id, outAsset.id)
         .then((amount: number) => { buyInput.setValue(amount === 0 ? '0.00' : amount.toFixed(6)) })
     }
     if (buyInput.value) {
@@ -190,7 +190,7 @@ export default function Swap () {
       >
         <Text h1>Swap</Text>
         <Container display='flex' justify='center' css={{ p: 0 }}>
-          <Card css={{ p: '16px' }}>
+          <Card css={{ p: '16px', bgColor: '$kondorBlueCard' }}>
             <Grid.Container justify='center' css={{ p: 0 }}>
               <Grid xs={6} css={{ d: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
                 <LigthInput
@@ -226,7 +226,7 @@ export default function Swap () {
           >
             <BsArrowDownUp size={20} />
           </Button>
-          <Card css={{ p: '16px' }}>
+          <Card css={{ p: '16px', bgColor: '$kondorBlueCard' }}>
             <Grid.Container justify='center'>
               <Grid xs={6} css={{ d: 'flex', flexDirection: 'column' }}>
                 <LigthInput

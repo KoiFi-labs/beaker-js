@@ -18,7 +18,7 @@ const AssetSelect = ({ asset, onPress }: AssetSelectProps) => {
 
   return (
     <>
-      <Button onPress={handlerButton} rounded css={{ bg: '$gray300', d: 'flex', width: 'auto', minWidth: '80px', p: '8px' }}>
+      <Button onPress={handlerButton} rounded bordered css={{ d: 'flex', width: 'auto', minWidth: '80px', p: '8px' }}>
         <Image src={asset.icon} alt={`${asset.symbol} logo`} css={{ height: '28px', width: '28px', maxWidth: '28px', borderRadius: '50%', bgColor: '$white' }} />
         <Spacer x={0.5} />
         <Text size={16}>{asset.symbol}</Text>

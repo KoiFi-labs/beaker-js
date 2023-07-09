@@ -24,6 +24,7 @@ export const themeConfig = {
       kondorTextLight: '#627E7E',
       kondorTextBlue: '#02948E',
       kondorTextGray: '#698584',
+      kondorGreen: '#16C36D',
       primary: '#04595A',
       secondary: '#9BA1A6',
       error: '#bd0013',

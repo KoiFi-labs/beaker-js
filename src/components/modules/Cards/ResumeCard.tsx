@@ -16,7 +16,7 @@ const ResumeCard = () => {
       <ResumeCardItem label='Current balance' value='= $17876.09' />
       <ResumeCardItem label='Incomming 7D' value='= $17876.09' />
       <ResumeCardItem label='Outcomming 7D' value='≈ $8745.60' />
-      <ResumeCardItem label='P&L 7D' value='+ ≈ $5147.17' />
+      <ResumeCardItem label='P&L 7D' value='+ ≈ $5147.17' color='$kondorGreen' />
     </Container>
   )
 }

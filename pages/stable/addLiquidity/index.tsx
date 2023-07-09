@@ -233,7 +233,7 @@ export default function AddLiquidityPool () {
     label?: string
   ) => {
     return (
-      <Card key={asset.id} css={{ $$cardColor: '$colors$gray100', m: '4px 0px' }}>
+      <Card key={asset.id} css={{ bgColor: '$kondorBlueCard', m: '4px 0px' }}>
         <Grid.Container justify='center' css={{ p: '8px' }}>
           <Grid xs={12} css={{ d: 'flex', flexDirection: 'column' }}>
             <Text>{label || `Add ${asset.symbol}`}</Text>

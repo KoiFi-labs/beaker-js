@@ -45,7 +45,7 @@ export const assetsConfig: AssetsConfig = {
       decimals: 6
     },
     {
-      id: 253927235,
+      id: 253927203,
       name: 'goETH',
       symbol: 'goETH',
       icon: 'https://assets.algoexplorer.io/asset-logo-465818554.image',

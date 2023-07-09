@@ -77,22 +77,10 @@ export const stablePool = {
         {
           type: 'axfer',
           name: 'xfer'
-        },
-        {
-          type: 'asset',
-          name: 'pool_asset'
-        },
-        {
-          type: 'asset',
-          name: 'a_asset'
-        },
-        {
-          type: 'asset',
-          name: 'b_asset'
         }
       ],
       returns: {
-        type: 'void'
+        type: 'string'
       },
       desc: "mint pool tokens given some amount of asset on commit.\nGiven some amount of stable assets in the transfer, mint some number of  pool tokens calculated with the pool's current balance and  circulating supply of pool tokens.\nArgs:     xfer: Asset Transfer Transaction of asset as a deposit to the      pool in exchange for pool tokens.     pool_asset: The asset ID of the pool token so that we may      asset: The asset ID so that we may distribute it."
     },
@@ -124,6 +112,25 @@ export const stablePool = {
         type: 'void'
       },
       desc: 'burn pool tokens to get back some amount of asset A and asset B'
+    },
+    {
+      name: 'burn_single',
+      args: [
+        {
+          type: 'uint64',
+          name: 'asset_out',
+          desc: 'Asset ID of Asset so we may inspect balance and distribute it'
+        },
+        {
+          type: 'axfer',
+          name: 'pool_xfer',
+          desc: 'Asset Transfer Transaction of the pool token for the amount the sender wishes to redeem'
+        }
+      ],
+      returns: {
+        type: 'string'
+      },
+      desc: 'burn pool tokens to get back some amount of asset A or asset B'
     },
     {
       name: 'swap',
