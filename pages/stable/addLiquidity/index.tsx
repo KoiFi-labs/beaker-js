@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-unused-vars */
 import { Text, Container, Card, Grid, useInput, Radio, Spacer, Tooltip } from '@nextui-org/react'
-import { LigthInput } from '../../../src/components/LighInput/LigthInput'
+import { LightInput } from '../../../src/components/LightInput/LightInput'
 import { DynamicButton } from '../../../src/components/DynamicButton/DynamicButton'
 import { useState, useEffect } from 'react'
 import ConfirmModal from '../../../src/components/modules/Modals/ConfirmModal'

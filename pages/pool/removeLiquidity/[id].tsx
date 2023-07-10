@@ -68,7 +68,7 @@ export default function RemoveLiquidity () {
           <Text>0.00 {pool?.pool}</Text>
         </Container>
         <Spacer />
-        <Button bordered rounded css={{ borderColor: '$kondorPrimary', color: '$kondorLigth' }} onPress={() => { setConfirmModalVisible(true) }}>
+        <Button bordered rounded css={{ borderColor: '$kondorPrimary', color: '$kondorLight' }} onPress={() => { setConfirmModalVisible(true) }}>
           Remove liquidity
         </Button>
       </Card>

@@ -2,7 +2,7 @@
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from 'react'
 import { Button, Text, Container, Card, Grid, useInput, Spacer } from '@nextui-org/react'
-import { LigthInput } from '../../src/components/LighInput/LigthInput'
+import { LightInput } from '../../src/components/LightInput/LightInput'
 import { Asset } from '../../config/Assets'
 import { config } from '../../config'
 import AssetSelect from '../../src/components/AssetSelect/AssetSelect'
@@ -206,7 +206,7 @@ export default function Swap () {
               height: '40px',
               minWidth: '40px',
               w: '40px',
-              color: '$kondorLigth',
+              color: '$kondorLight',
               borderColor: '$kondorPrimary',
               m: '16px',
               zIndex: 1

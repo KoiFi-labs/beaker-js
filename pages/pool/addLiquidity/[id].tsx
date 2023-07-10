@@ -83,7 +83,7 @@ export default function AddLiquidity () {
           <Text>15400 {pool?.pool} KONDOR TOKEN</Text>
         </Container>
         <Spacer />
-        <Button bordered rounded css={{ borderColor: '$kondorPrimary', color: '$kondorLigth' }} onPress={() => { setConfirmModalVisible(true) }}>
+        <Button bordered rounded css={{ borderColor: '$kondorPrimary', color: '$kondorLight' }} onPress={() => { setConfirmModalVisible(true) }}>
           Add liquidity
         </Button>
       </Card>

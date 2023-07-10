@@ -32,7 +32,7 @@ const ConnectWalletModal = ({ isVisible, onHide }: ConnectWalletModalProps) => {
         <Button
           bordered
           rounded
-          css={{ borderColor: '$kondorPrimary', color: '$kondorLigth' }}
+          css={{ borderColor: '$kondorPrimary', color: '$kondorLight' }}
           onPress={() => handleButton(WALLET_PROVIDER.PERA)}
         >
           Connect with Pera
@@ -40,7 +40,7 @@ const ConnectWalletModal = ({ isVisible, onHide }: ConnectWalletModalProps) => {
         {/* <Button
           bordered
           rounded
-          css={{ borderColor: '$kondorPrimary', color: '$kondorLigth' }}
+          css={{ borderColor: '$kondorPrimary', color: '$kondorLight' }}
           onPress={() => handleButton(WALLET_PROVIDER.MY_ALGO)}
         >
           Connect with MyAlgo
@@ -48,7 +48,7 @@ const ConnectWalletModal = ({ isVisible, onHide }: ConnectWalletModalProps) => {
         <Button
           bordered
           rounded
-          css={{ borderColor: '$kondorPrimary', color: '$kondorLigth', bc: '$black' }}
+          css={{ borderColor: '$kondorPrimary', color: '$kondorLight', bc: '$black' }}
           onPress={() => handleButton(WALLET_PROVIDER.SANDBOX)}
         >
           Connect with Sandbox

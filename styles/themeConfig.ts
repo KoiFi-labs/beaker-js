@@ -13,7 +13,7 @@ export const themeConfig = {
       primaryShadow: '$green500',
       transparent: '#ff000020',
       kondorPrimary: '#00D6C9',
-      kondorLigth: '#DAD9D9',
+      kondorLight: '#DAD9D9',
       kondorGray: '#AFB0B8',
       kondorDark: '#060606',
       kondorBlack: '#000000',

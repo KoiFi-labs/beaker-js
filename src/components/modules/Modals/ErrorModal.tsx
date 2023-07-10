@@ -32,7 +32,7 @@ const ErrorModal = ({ isVisible, onHide, onPress }: ErrorModalProps) => {
       <Button
         bordered
         rounded
-        css={{ borderColor: '$kondorPrimary', color: '$kondorLigth', minWidth: '136px', width: '100%', bc: '$black' }}
+        css={{ borderColor: '$kondorPrimary', color: '$kondorLight', minWidth: '136px', width: '100%', bc: '$black' }}
         onPress={() => handleOkButton()}
       >
         Ok

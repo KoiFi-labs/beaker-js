@@ -125,7 +125,7 @@ const Nav: React.FC = (): JSX.Element => {
                 height: '36px',
                 minWidth: '128px',
                 w: '128px',
-                color: '$kondorLigth',
+                color: '$kondorLight',
                 borderColor: '$kondorPrimary'
               }}
             >Connect
@@ -140,7 +140,7 @@ const Nav: React.FC = (): JSX.Element => {
                 height: '36px',
                 minWidth: '36px',
                 w: '36px',
-                color: '$kondorLigth',
+                color: '$kondorLight',
                 borderColor: '$kondorPrimary'
               }}
             >
@@ -163,7 +163,7 @@ const Nav: React.FC = (): JSX.Element => {
                   height: '36px',
                   minWidth: '120px',
                   w: '120px',
-                  color: '$kondorLigth',
+                  color: '$kondorLight',
                   borderColor: '$kondorPrimary'
                 }}
               >
@@ -192,7 +192,7 @@ const Nav: React.FC = (): JSX.Element => {
                   height: '36px',
                   minWidth: '36px',
                   w: '36px',
-                  color: '$kondorLigth',
+                  color: '$kondorLight',
                   borderColor: '$kondorPrimary'
                 }}
               >

@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-unused-vars */
 import { Text, Container, Card, Grid, useInput } from '@nextui-org/react'
-import { LigthInput } from '../../../src/components/LighInput/LigthInput'
+import { LightInput } from '../../../src/components/LightInput/LightInput'
 import { DynamicButton } from '../../../src/components/DynamicButton/DynamicButton'
 import { useState, useEffect } from 'react'
 import ConfirmModal from '../../../src/components/modules/Modals/ConfirmModal'
@@ -171,7 +171,7 @@ export default function AddLiquidityPool () {
         <Grid.Container justify='center' css={{ p: '8px' }}>
           <Grid xs={12} css={{ d: 'flex', flexDirection: 'column' }}>
             <Text>{label || `Remove ${asset.name}`}</Text>
-            <LigthInput
+            <LightInput
               value={value}
               onChange={onChange}
               aria-label={label || `Remove ${asset.name}`}

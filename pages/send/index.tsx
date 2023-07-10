@@ -9,13 +9,15 @@ import InfoModal from '../../src/components/modules/Modals/InfoModal'
 import SendingTransactionModal from '../../src/components/modules/Modals/SendingTransaction'
 import { abbreviateNumber, isNumber } from '../../src/utils/utils'
 import { useRouter } from 'next/router'
-import { hasOptin, Balance } from '../../src/services/algoService'
+import { Balance } from '../../src/services/algoService'
 import { config, Asset } from '../../config'
 import { useWallet } from '../../src/contexts/useWallet'
 import { BiInfoCircle } from 'react-icons/bi'
 import ErrorModal from '../../src/components/modules/Modals/ErrorModal'
 import AssetSelectCard from '../../src/components/AssetSelectCard/AssetSelectCard'
 import { microToStandard } from '../../src/utils/math'
+import AddressInput from '../../src/components/AddressInput/AddressInput'
+import TagsInput from '../../src/components/TagsInput/TagsInput'
 
 enum StyleType {
   SINGLE = 'single',
@@ -38,11 +40,14 @@ export default function Send () {
   const { isConnected, balances, account, reloadBalances, connectWallet } = useWallet()
   const [style, setStyle] = useState<StyleType>(StyleType.SINGLE)
   const inputAmount = useInput('')
+  const inputAddress = useInput('')
+  const inputTag = useInput('')
   const router = useRouter()
   const [transactionId, setTransactionId] = useState<string>('')
   const [loading, setLoading] = useState<boolean>(false)
   const [balance, setBalance] = useState<number>(0)
   const [asset, setAsset] = useState<Asset>(config.assetList.filter(a => a.id === config.stablePool.assetIdA)[0])
+  const [tags, setTags] = useState<string[]>(['salary'])
 
   useEffect(() => {
     reloadState()
@@ -128,6 +133,10 @@ export default function Send () {
     setAsset(asset)
   }
 
+  const selectedTags = (tags: string[]) => {
+    console.log('Tags: ', tags)
+  }
+
   const getResumeDetails = (label: string, value: string) => {
     return (
       <Container css={{ p: 0 }} display='flex' justify='space-between'>
@@ -166,15 +175,21 @@ export default function Send () {
             <BiInfoCircle size={20} onClick={() => setInfoModalIsVisible(true)} />
           </Tooltip>
         </Container>
-        <Container css={{ p: '16px 0px 8px 0px' }}>
-          <AssetSelectCard
-            asset={asset}
-            input={inputAmount}
-            onChange={onChangeInputAmount}
-            balance={balance}
-            onPressAssetSelec={handleAssetSelect}
-          />
-        </Container>
+        <Spacer />
+        <AddressInput
+          input={inputAddress}
+        />
+        <Spacer />
+        <AssetSelectCard
+          asset={asset}
+          input={inputAmount}
+          onChange={onChangeInputAmount}
+          balance={balance}
+          onPressAssetSelec={handleAssetSelect}
+        />
+        <Spacer />
+        <TagsInput tags={tags} selectedTags={selectedTags} />
+        <Spacer />
         <DynamicButton items={buttonOptions} index={step} loading={loading} />
       </Container>
       <ConfirmModal

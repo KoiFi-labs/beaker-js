@@ -2,7 +2,7 @@ import React from 'react'
 import { Grid, Text, Card, Container } from '@nextui-org/react'
 import { Asset } from '../../../config'
 import { BindingsChangeTarget } from '@nextui-org/react/types/use-input/use-input'
-import { LigthInput } from '../LighInput/LigthInput'
+import { LightInput } from '../LightInput/LightInput'
 import { useWallet } from '../../contexts/useWallet'
 
 const DECIMALS = 1000000
@@ -21,7 +21,7 @@ const AssetInputCard = ({ asset, value, onChange, label }: AssetInputCardProps) 
       <Grid.Container justify='center' css={{ p: '8px' }}>
         <Grid xs={12} css={{ d: 'flex', flexDirection: 'column' }}>
           <Text>{label || `Add ${asset.symbol}`}</Text>
-          <LigthInput
+          <LightInput
             value={value}
             onChange={onChange}
             aria-label={label}

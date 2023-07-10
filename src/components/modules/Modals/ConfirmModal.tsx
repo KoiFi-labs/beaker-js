@@ -41,7 +41,7 @@ const ConfirmModal = ({ isVisible, onHide, title, onPress, children }: ConfirmMo
             bordered
             css={{
               borderColor: '$kondorPrimary',
-              color: '$kondorLigth',
+              color: '$kondorLight',
               minWidth: '136px',
               width: '100%',
               m: '4px'
@@ -55,7 +55,7 @@ const ConfirmModal = ({ isVisible, onHide, title, onPress, children }: ConfirmMo
           <Button
             bordered
             rounded
-            css={{ borderColor: '$kondorPrimary', color: '$kondorLigth', backgroundColor: '$kondorPrimary', minWidth: '136px', width: '100%', m: '4px' }}
+            css={{ borderColor: '$kondorPrimary', color: '$kondorLight', backgroundColor: '$kondorPrimary', minWidth: '136px', width: '100%', m: '4px' }}
             onPress={() => handleConfirmButton()}
           >
             Confirm

@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import { Button, Text, Container, Card, Grid, useInput, Radio, Spacer, Collapse, Checkbox, Input, Modal, Image, Backdrop } from '@nextui-org/react'
-import { LigthInput } from '../../../src/components/LighInput/LigthInput'
+import { LightInput } from '../../../src/components/LightInput/LightInput'
 import PoolSelect from '../../../src/components/PoolSelect/PoolSelect'
 import { PoolType, getPoolBySymbol, getPools } from '../../../src/services/stablePoolService'
 import { useState, useEffect, Dispatch, MutableRefObject, SetStateAction } from 'react'
@@ -237,7 +237,7 @@ export default function CreateProduct () {
       <Card key={`${pool.pool}${Math.random}`} css={{ $$cardColor: '$colors$gray50', m: '8px 0px' }}>
         <Grid.Container justify='center' css={{ p: '16px' }}>
           <Grid xs={6} css={{ d: 'flex', flexDirection: 'column' }}>
-            <LigthInput
+            <LightInput
               value={assetInput.input.currentRef.current}
               onChange={onChange}
               placeholder='0.00'
@@ -366,7 +366,7 @@ export default function CreateProduct () {
             <Grid.Container>
               <Grid xs={6} css={{ d: 'flex', flexDirection: 'column' }}>
                 <Text size={14} css={{ color: '$kondorGray' }}>{pool.pool} %</Text>
-                <LigthInput
+                <LightInput
                   value={assetInput.input.currentRef.current}
                   onChange={onChange}
                   placeholder='0.00'
@@ -415,7 +415,7 @@ export default function CreateProduct () {
         <Grid.Container justify='center' css={{ p: '16px' }}>
           <Grid xs={4} css={{ d: 'flex', flexDirection: 'column' }}>
             <Text color='secondary'>STABLE %</Text>
-            <LigthInput
+            <LightInput
               value={stablePercentageInput.value}
               onChange={onChange}
               placeholder='0.00'
@@ -581,11 +581,11 @@ export default function CreateProduct () {
         <Collapse title='Summary' css={{ fontSize: '$xs' }}>
           <Container css={{ p: 0 }}>
             <Container css={{ p: 0 }} display='flex' justify='space-between'>
-              <Text size={16} css={{ color: '$kondorLigth' }}>Total investment amount</Text>
+              <Text size={16} css={{ color: '$kondorLight' }}>Total investment amount</Text>
               <Text size={14} css={{ color: '$kondorLight' }}>{assetSupply} {assetTotalSupply.asset.symbol}</Text>
             </Container>
             <Container css={{ p: 0 }} display='flex' justify='space-between'>
-              <Text size={16} css={{ color: '$kondorLigth' }}>Your investment will be divided into: </Text>
+              <Text size={16} css={{ color: '$kondorLight' }}>Your investment will be divided into: </Text>
             </Container>
             {getResumeDetailByAsset(asset1.asset.symbol, assetAmount1, assetAmountUSD1, percentage1)}
             {inputsAmount > 1 ? getResumeDetailByAsset(asset2.asset.symbol, assetAmount2, assetAmountUSD2, percentage2) : null}
@@ -655,12 +655,12 @@ export default function CreateProduct () {
             css={{
               m: '16px',
               bgColor: '$black',
-              border: '1px solid $kondorLigth'
+              border: '1px solid $kondorLight'
             }}
           >
-            <Text b size={20} css={{ color: '$kondorLigth' }}>Automatic Stablecoin conversion</Text>
+            <Text b size={20} css={{ color: '$kondorLight' }}>Automatic Stablecoin conversion</Text>
             <Container css={{ p: '16px', textAlign: 'left' }}>
-              <Text size={14} css={{ color: '$kondorLigth' }}>
+              <Text size={14} css={{ color: '$kondorLight' }}>
                 All products must have at least 5% invested in our stablecoin USD (2.5% USDC - 2.5% USDT).
                 You can select this option to automatically convert 2.5% to USDT and 2.5% to USDC if you do not have the minimum.
               </Text>
@@ -686,12 +686,12 @@ export default function CreateProduct () {
             css={{
               m: '16px',
               bgColor: '$black',
-              border: '1px solid $kondorLigth'
+              border: '1px solid $kondorLight'
             }}
           >
-            <Text b size={20} css={{ color: '$kondorLigth' }}>Automatic balance stablecoin</Text>
+            <Text b size={20} css={{ color: '$kondorLight' }}>Automatic balance stablecoin</Text>
             <Container css={{ p: '16px', textAlign: 'left' }}>
-              <Text size={14} css={{ color: '$kondorLigth' }}>
+              <Text size={14} css={{ color: '$kondorLight' }}>
                 All products must have the same amount of USDT and USDC.
                 You can select this option to automatically balance your investment in the same amount of USDT and USDC
               </Text>
