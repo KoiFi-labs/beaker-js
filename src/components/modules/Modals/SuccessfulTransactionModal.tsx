@@ -1,7 +1,7 @@
 import React from 'react'
 import { Modal, Text, Button, Container, Link, Tooltip, Spacer } from '@nextui-org/react'
 import { config } from '../../../../config'
-import { abbreviateTransactionHash } from '../../../../src/utils/utils'
+import { abbreviateTransaction } from '../../../../src/utils/utils'
 import { BiCopy } from 'react-icons/bi'
 
 export type SuccessfulTransactionModalProps = {
@@ -35,7 +35,7 @@ const SuccessfulTransactionModal = ({ isVisible, onHide, onPress, transactionId 
           <BiCopy />
         </Tooltip>
         <Spacer x={0.5} />
-        <Text>Transaction ID: {abbreviateTransactionHash(transactionId)}</Text>
+        <Text>Transaction ID: {abbreviateTransaction(transactionId)}</Text>
         <Link underline isExternal href={`${config.network.explorer}/tx/${transactionId}`} target='_blank' rel='noreferrer' css={{ color: '$primary' }}>
           View transaction on AlgoExplorer
         </Link>

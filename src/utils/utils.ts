@@ -1,8 +1,8 @@
-export const abbreviateTransactionHash = (hash: string) => {
+export const abbreviateTransaction = (hash: string) => {
   return `${hash.slice(0, 6)}...${hash.slice(-4)}`
 }
 
-export const abbreviateWallet = (wallet: string): string => {
+export const abbreviateAddress = (wallet: string): string => {
   return wallet.slice(0, 6) + '...' + wallet.slice(wallet.length - 4, wallet.length)
 }
 
@@ -36,4 +36,43 @@ export const sleep = (ms: number) => {
 
 export const isNumber = (c: string) => {
   return !isNaN(Number(c))
+}
+
+export const isValidAlgorandAddress = (address: string): boolean => {
+  const addressRegex = /^(?:[A-Z2-7]{58})$/
+  return addressRegex.test(address)
+}
+
+export const algorandErrorCleaner = (input: string): string => {
+  const prefix = 'Network request error. Received status 400 (): TransactionPool.Remember: transaction '
+  const cleanedString = input.startsWith(prefix) ? input.substring(prefix.length + 54) : input
+  return cleanedString
+}
+
+export const stringToUint8Array = (input: string): Uint8Array => {
+  const encoder = new TextEncoder()
+  return encoder.encode(input)
+}
+
+export const base64Decode = (input: string) => {
+  // In browser
+  if (typeof atob === 'function') {
+    return atob(input)
+  }
+  // In Node.js
+  if (typeof Buffer !== 'undefined') {
+    const buffer = Buffer.from(input, 'base64')
+    return buffer.toString('utf-8')
+  }
+  throw new Error('Unable to decode Base64 in this environment')
+}
+
+export const generateRandomString = (length: number) => {
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+  let result = ''
+  for (let i = 0; i < length; i++) {
+    const randomIndex = Math.floor(Math.random() * characters.length)
+    result += characters.charAt(randomIndex)
+  }
+  return result
 }

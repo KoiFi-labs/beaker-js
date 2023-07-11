@@ -379,6 +379,5 @@ const tokensToSwap = (amount: number, inSupply: number, outSupply: number) => { 
   const swapAmount = amount - totalFee
   const K = inSupply * outSupply
   const swapOutput = outSupply - (Math.floor(K / (inSupply + swapAmount)) + 1)
-  console.log('hpñaaaaaaaaaaaaaaaaa')
   return swapOutput
 }

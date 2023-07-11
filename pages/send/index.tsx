@@ -7,7 +7,7 @@ import ConfirmModal from '../../src/components/modules/Modals/ConfirmModal'
 import SuccessfulTransactionModal from '../../src/components/modules/Modals/SuccessfulTransactionModal'
 import InfoModal from '../../src/components/modules/Modals/InfoModal'
 import SendingTransactionModal from '../../src/components/modules/Modals/SendingTransaction'
-import { abbreviateNumber, isNumber } from '../../src/utils/utils'
+import { abbreviateNumber, isNumber, isValidAlgorandAddress } from '../../src/utils/utils'
 import { useRouter } from 'next/router'
 import { Balance } from '../../src/services/algoService'
 import { config, Asset } from '../../config'
@@ -18,6 +18,8 @@ import AssetSelectCard from '../../src/components/AssetSelectCard/AssetSelectCar
 import { microToStandard } from '../../src/utils/math'
 import AddressInput from '../../src/components/AddressInput/AddressInput'
 import TagsInput from '../../src/components/TagsInput/TagsInput'
+import { getAssetById } from '../../src/services/kondorServices/symmetricPoolServise'
+import { createTransaction } from '../../src/services/kondorServices/transactions'
 
 enum StyleType {
   SINGLE = 'single',
@@ -26,6 +28,7 @@ enum StyleType {
 
 enum Step {
   WALLET_CONNECT_NEEDED,
+  INVALID_ALGORAND_ADDRESS,
   INSUFFICIENT_BALANCE,
   READY
 }
@@ -36,18 +39,20 @@ export default function Send () {
   const [sendingTransactionModalIsVisible, setSendingTransactionModalIsVisible] = useState<boolean>(false)
   const [errorModalIsVisible, setErrorModalIsVisible] = useState<boolean>(false)
   const [infoModalIsVisible, setInfoModalIsVisible] = useState<boolean>(false)
+  const [errorDetails, setErrorDetails] = useState<string>('')
   const [step, setStep] = useState<Step>(Step.WALLET_CONNECT_NEEDED)
   const { isConnected, balances, account, reloadBalances, connectWallet } = useWallet()
   const [style, setStyle] = useState<StyleType>(StyleType.SINGLE)
   const inputAmount = useInput('')
   const inputAddress = useInput('')
-  const inputTag = useInput('')
   const router = useRouter()
   const [transactionId, setTransactionId] = useState<string>('')
   const [loading, setLoading] = useState<boolean>(false)
   const [balance, setBalance] = useState<number>(0)
-  const [asset, setAsset] = useState<Asset>(config.assetList.filter(a => a.id === config.stablePool.assetIdA)[0])
-  const [tags, setTags] = useState<string[]>(['salary'])
+  const [asset, setAsset] = useState<Asset>(
+    config.assetList.filter(a => a.id === Number(router.query?.asset))[0] ||
+    config.assetList.filter(a => a.id === config.stablePool.assetIdA)[0])
+  const [tags, setTags] = useState<string[]>([])
 
   useEffect(() => {
     reloadState()
@@ -73,13 +78,22 @@ export default function Send () {
     }
   }, [asset, isConnected, balances])
 
+  useEffect(() => {
+    if (router.query) {
+      const newAsset = getAssetById(Number(router.query.asset))
+      setAsset(newAsset || config.assetList[0])
+    }
+  }, [router.query.asset])
+
   const updateStep = () => {
     if (!isConnected) return setStep(Step.WALLET_CONNECT_NEEDED)
+    if (!isValidAlgorandAddress(inputAddress.value) && inputAddress.value !== '') return setStep(Step.INVALID_ALGORAND_ADDRESS)
     if (balance < Number(inputAmount.value)) return setStep(Step.INSUFFICIENT_BALANCE)
     setStep(Step.READY)
   }
 
   const onChangeInputAmount = (e: any) => {
+    if (!isValidAlgorandAddress(inputAddress.value)) return
     if (!isNumber(e.target.value)) return
     inputAmount.setValue(e.target.value)
   }
@@ -95,6 +109,10 @@ export default function Send () {
       onPress: () => { connectWallet() }
     },
     {
+      text: 'Invalid Algorand address',
+      disabled: true
+    },
+    {
       text: `Insufficient ${asset.symbol} balance`,
       disabled: true
     },
@@ -107,11 +125,16 @@ export default function Send () {
   const handleConfirmButton = async () => {
     try {
       setLoading(true)
-      // const result = await mint(account.addr, Number(inputA.value), Number(inputB.value))
-      // setTransactionId(result.txId)
-      setTransactionId('1234')
+      const result = await createTransaction(account.addr, Number(inputAmount.value), asset.id, inputAddress.value, tags)
+      console.log(result)
+      if (result?.txId) {
+        setTransactionId(result.txId)
+        setSuccessfulTransactionModalIsVisible(true)
+      } else {
+        setErrorModalIsVisible(true)
+        setErrorDetails(result.errorDetails)
+      }
       setLoading(false)
-      setSuccessfulTransactionModalIsVisible(true)
     } catch (e) {
       setLoading(false)
       setErrorModalIsVisible(true)
@@ -131,10 +154,14 @@ export default function Send () {
 
   const handleAssetSelect = (asset: Asset) => {
     setAsset(asset)
+    router.push({
+      pathname: router.pathname,
+      query: { asset: asset.id }
+    })
   }
 
-  const selectedTags = (tags: string[]) => {
-    console.log('Tags: ', tags)
+  const selectedTags = (tagsParams: string[]) => {
+    setTags(tagsParams)
   }
 
   const getResumeDetails = (label: string, value: string) => {
@@ -232,6 +259,7 @@ export default function Send () {
         isVisible={errorModalIsVisible}
         onHide={() => setErrorModalIsVisible(false)}
         onPress={() => { handleOkErrorButton() }}
+        details={errorDetails}
       />
     </Container>
   )

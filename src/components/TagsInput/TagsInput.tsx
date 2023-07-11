@@ -10,7 +10,7 @@ export type TagsInputProps = {
 }
 
 const TagsInput = ({ tags, selectedTags }: TagsInputProps) => {
-  const [_tags, setTags] = useState<string[]>(['salary'])
+  const [_tags, setTags] = useState<string[]>([])
   const removeTags = (indexToRemove: number) => {
     setTags([..._tags.filter((_, index) => index !== indexToRemove)])
   }

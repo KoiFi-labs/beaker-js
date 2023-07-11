@@ -5,7 +5,7 @@ import { ChevronIcon } from '../../../../public/icons/chevron-down'
 import { Balance } from '../../../services/algoService'
 import { microToStandard } from '../../../utils/math'
 import { config } from '../../../../config'
-import { abbreviateWallet, copyToClipboard } from '../../../utils/utils'
+import { abbreviateAddress, copyToClipboard } from '../../../utils/utils'
 import Link from 'next/link'
 import { BsWallet2 } from 'react-icons/bs'
 import { BiCopy, BiLinkExternal } from 'react-icons/bi'
@@ -61,7 +61,7 @@ const Nav: React.FC = (): JSX.Element => {
               <Spacer x={0.2} />
               <BsWallet2 size={24} />
               <Spacer x={0.2} />
-              <Text b>{abbreviateWallet(account?.addr)}</Text>
+              <Text b>{abbreviateAddress(account?.addr)}</Text>
             </Grid>
             <Grid xs={4} css={{ d: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
               <Tooltip content='Open in explorer' placement='bottom'>
@@ -173,7 +173,7 @@ const Nav: React.FC = (): JSX.Element => {
                   alignItems='center'
                   css={{ p: 0, m: 0, width: '120px' }}
                 >
-                  <Text>{account?.addr ? abbreviateWallet(account.addr) : null}</Text>
+                  <Text>{account?.addr ? abbreviateAddress(account.addr) : null}</Text>
                   <ChevronIcon size={20} fill='#DAD9D9' />
                 </Container>
               </Button>

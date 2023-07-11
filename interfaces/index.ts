@@ -19,6 +19,16 @@ export type Price = {
     price: number
 }
 
+export type Transaction = {
+  txId: string,
+  sender: string,
+  receiver: string,
+  amount: number,
+  asset: number,
+  txType: string,
+  note?: string,
+}
+
 export type PoolInterface = {
     id: string,
     assetA: {
