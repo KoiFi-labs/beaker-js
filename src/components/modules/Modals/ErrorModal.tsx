@@ -7,7 +7,7 @@ export type ErrorModalProps = {
     isVisible: boolean,
     onHide: () => void,
     onPress: () => void,
-    details: string
+    details?: string
 }
 
 const ErrorModal = ({ isVisible, onHide, onPress, details }: ErrorModalProps) => {
