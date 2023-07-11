@@ -64,7 +64,7 @@ export const hasOptin: (account: string, asset: number) => Promise<boolean> =
   }
 
 export const getTransactions = async (account: string) => {
-  const txs = await algoIndexer.searchForTransactions().address(account).limit(20).do()
+  const txs = await algoIndexer.searchForTransactions().address(account).limit(10).do()
   const parsedTxs = parseTransactions(txs)
   console.log(parsedTxs)
   return parsedTxs

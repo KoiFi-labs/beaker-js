@@ -5,6 +5,8 @@ import { useEffect, useState } from 'react'
 import AssetsTable from '../../src/components/modules/Tables/AssetsTable'
 import ResumeCard from '../../src/components/modules/Cards/ResumeCard'
 import { Container, Spacer } from '@nextui-org/react'
+import TransactionsTable from '../../src/components/modules/Tables/TransactionsTable'
+import useTransactions from '../../src/hooks/useTransactions'
 
 const assets = config.assetList
 
@@ -24,6 +26,7 @@ const defaultAssetItem = {
 export default function Home () {
   const { balances }: { balances: Balance[]} = useWallet()
   const [assetsTableItems, setAssetsTableItems] = useState<TableItemType[]>([defaultAssetItem])
+  const { transactions } = useTransactions()
 
   useEffect(() => {
     const assetsWithBalance = assets.map(asset => {
@@ -38,6 +41,8 @@ export default function Home () {
       <ResumeCard />
       <Spacer y={2} />
       <AssetsTable items={assetsTableItems} />
+      <Spacer y={2} />
+      <TransactionsTable items={transactions} />
     </Container>
   )
 }
