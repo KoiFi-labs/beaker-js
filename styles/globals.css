@@ -135,6 +135,21 @@ a {
 	}
 }
 
+#tag-select {
+  background-color: transparent;
+  border: 3px solid #05202b;
+  border-radius: 20px;
+  padding: 0px 10px;
+}
+
+#tag-select option {
+  background-color: #1a4d63;
+}
+
+#tag-select #default {
+  background-color: #3d6a7e;
+}
+
 @keyframes animate{
   0%{
       transform: rotate(0deg);
