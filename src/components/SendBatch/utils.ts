@@ -8,28 +8,31 @@ export const validateExcelTransactionsData = (data: ExcelData): string[] => {
   for (let i = 1; i < data.length; i++) {
     const row = data[i]
 
+    console.log('row: ', row)
+
     // Validate the first column (valid Algorand address)
     const address = row[0]
     if (!isValidAddress(address)) {
-      errors.push(`Row ${i + 1}: The Algorand address "${address}" is not valid.`)
+      errors.push(`Row ${i + 1}: The Algorand address is not valid.`)
     }
 
     // Validate the second column (valid amount)
     const amount = row[1]
     if (!isValidAmount(amount)) {
-      errors.push(`Row ${i + 1}: The amount "${amount}" is not valid.`)
+      errors.push(`Row ${i + 1}: The amount is not valid.`)
     }
 
     // Validate the third column (integer number or empty string)
     const assetId = row[2]
-    if (!isValidAssetColumn(assetId)) {
-      errors.push(`Row ${i + 1}: The value "${assetId}" in the asset column is not valid.`)
+    if (!isValidAsset(assetId)) {
+      console.log(typeof assetId)
+      errors.push(`Row ${i + 1}: The asset id is not valid.${row}`)
     }
 
     // Validate the fourth column (string or empty string)
     const tags = row[3]
     if (!isValidTagsColumn(tags)) {
-      errors.push(`Row ${i + 1}: The value "${tags}" in the tags column is not valid.`)
+      errors.push(`Row ${i + 1}: The tags are not valid.`)
     }
   }
 
@@ -42,12 +45,13 @@ const isValidAmount = (amount: string): boolean => {
   return !isNaN(parsedAmount) && parsedAmount > 0
 }
 
-const isValidAssetColumn = (value: string): boolean => {
-  return Number.isInteger(Number(value)) || value === ''
+const isValidAsset = (value: string): boolean => {
+  if (value === undefined) return true
+  return !Number.isNaN(Number(value))
 }
 
 const isValidTagsColumn = (value: string): boolean => {
-  if (value === '') return true
+  if (value === undefined) return true
   const words = value.split(',')
   return words.every((word) => word.trim() !== '')
 }

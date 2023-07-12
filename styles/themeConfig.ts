@@ -27,7 +27,8 @@ export const themeConfig = {
       kondorGreen: '#16C36D',
       primary: '#04595A',
       secondary: '#9BA1A6',
-      error: '#bd0013',
+      error: '#a7124f',
+      successful: '#00da73',
 
       gradient: 'linear-gradient(112deg, $blue100 -25%, $pink500 -10%, $purple500 80%)',
       link: '#5E1DAD'

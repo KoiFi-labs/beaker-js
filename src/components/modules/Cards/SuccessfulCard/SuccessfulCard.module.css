@@ -1,0 +1,10 @@
+.successfulCard {
+  background: rgba(0, 218, 115);
+  background: linear-gradient(90deg, rgba(0, 218, 115, 0.5) 0%, rgba(18, 46, 57, 1) 50%);
+  border-radius: 16px;
+  padding: 8px;
+}
+
+.icon {
+  color: '#a7124f'
+}
