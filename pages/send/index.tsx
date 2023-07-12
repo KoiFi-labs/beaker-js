@@ -1,26 +1,11 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-unused-vars */
-import { Text, Container, useInput, Radio, Spacer, Tooltip } from '@nextui-org/react'
-import { DynamicButton } from '../../src/components/DynamicButton/DynamicButton'
-import { useState, useEffect } from 'react'
-import ConfirmModal from '../../src/components/modules/Modals/ConfirmModal'
-import SuccessfulTransactionModal from '../../src/components/modules/Modals/SuccessfulTransactionModal'
-import InfoModal from '../../src/components/modules/Modals/InfoModal'
-import SendingTransactionModal from '../../src/components/modules/Modals/SendingTransaction'
-import { abbreviateNumber, isNumber, isValidAlgorandAddress } from '../../src/utils/utils'
-import { useRouter } from 'next/router'
-import { Balance } from '../../src/services/algoService'
-import { config, Asset } from '../../config'
-import { useWallet } from '../../src/contexts/useWallet'
+import { Text, Container, Radio, Tooltip, Spacer } from '@nextui-org/react'
+import { useState } from 'react'
 import { BiInfoCircle } from 'react-icons/bi'
-import ErrorModal from '../../src/components/modules/Modals/ErrorModal'
-import AssetSelectCard from '../../src/components/AssetSelectCard/AssetSelectCard'
-import { microToStandard } from '../../src/utils/math'
-import AddressInput from '../../src/components/AddressInput/AddressInput'
-import TagsInput from '../../src/components/TagsInput/TagsInput'
-import { getAssetById } from '../../src/services/kondorServices/symmetricPoolServise'
-import { createTransaction } from '../../src/services/kondorServices/transactions'
 import SendSingle from '../../src/components/SendSingle/SendSingle'
+import SendBatch from '../../src/components/SendBatch/SendBatch'
+import InfoModal from '../../src/components/modules/Modals/InfoModal'
 
 enum StyleType {
   SINGLE = 'single',
@@ -68,7 +53,24 @@ export default function Send () {
           </Tooltip>
         </Container>
       </Container>
-      <SendSingle />
+      <InfoModal
+        isVisible={infoModalIsVisible}
+        onHide={() => setInfoModalIsVisible(false)}
+        title='Send styles'
+      >
+        <Container css={{ p: 0, textAlign: 'initial' }}>
+          <Text b>Single</Text>
+          <Text size={14}>
+            Send an Asset to any Algorand address.
+          </Text>
+          <Spacer y={0.5} />
+          <Text b>Batch</Text>
+          <Text size={14}>
+            Send multiple transactions to differents addreses.
+          </Text>
+        </Container>
+      </InfoModal>
+      {style === StyleType.SINGLE ? <SendSingle /> : <SendBatch />}
     </Container>
   )
 }

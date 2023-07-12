@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-unused-vars */
-import { Text, Container, useInput, Radio, Spacer, Tooltip } from '@nextui-org/react'
+import { Text, Container, useInput, Spacer } from '@nextui-org/react'
 import { DynamicButton } from '../../../src/components/DynamicButton/DynamicButton'
 import { useState, useEffect } from 'react'
 import ConfirmModal from '../../../src/components/modules/Modals/ConfirmModal'
@@ -210,29 +210,6 @@ const SendSingle = () => {
         onHide={() => setSuccessfulTransactionModalIsVisible(false)}
         onPress={() => { handleOkButton() }}
         transactionId={transactionId}
-      />
-      <InfoModal
-        isVisible={infoModalIsVisible}
-        onHide={() => setInfoModalIsVisible(false)}
-        title='Send styles'
-      >
-        <Container css={{ p: 0, textAlign: 'initial' }}>
-          <Text b>Single</Text>
-          <Text size={14}>
-            Send an Asset to any Algorand address.
-          </Text>
-          <Spacer y={0.5} />
-          <Text b>Batch</Text>
-          <Text size={14}>
-            Send multiple transactions to differents addreses.
-          </Text>
-        </Container>
-      </InfoModal>
-      <ErrorModal
-        isVisible={errorModalIsVisible}
-        onHide={() => setErrorModalIsVisible(false)}
-        onPress={() => { handleOkErrorButton() }}
-        details={errorDetails}
       />
     </Container>
   )

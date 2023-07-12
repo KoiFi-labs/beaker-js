@@ -1,0 +1,22 @@
+.inputFile {
+  display: none;
+}
+
+.inputFileButton {
+  border: 2px solid #00D6C9;
+  padding: 6px 16px;
+  border-radius: 32px;
+  width: 100%;
+  display: block;
+  text-align: center;
+}
+
+.inputFileButton {
+  border: 2px solid #00D6C9;
+  padding: 6px 16px;
+  border-radius: 32px;
+  width: 100%;
+  display: block;
+  text-align: center;
+  cursor: pointer;
+}
