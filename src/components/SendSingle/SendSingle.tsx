@@ -119,7 +119,6 @@ const SendSingle = () => {
     try {
       setLoading(true)
       const result = await createTransaction(account.addr, Number(inputAmount.value), asset.id, inputAddress.value, tags)
-      console.log(result)
       if (result?.txId) {
         setTransactionId(result.txId)
         setSuccessfulTransactionModalIsVisible(true)

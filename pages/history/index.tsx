@@ -3,7 +3,7 @@ import { Container, Spacer, Text } from '@nextui-org/react'
 import useTransactions from '../../src/hooks/useTransactions'
 import TableFilter from '../../src/components/modules/TableFilter/TableFilter'
 
-export default function Home () {
+export default function History () {
   const { transactions } = useTransactions()
 
   return (

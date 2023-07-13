@@ -9,6 +9,7 @@ type Item = {
 type Props = {
         items: Item[]
         index: number
+        disabled?: boolean
         bordered?: boolean
         rounded?: boolean
         loading?: boolean
@@ -18,20 +19,21 @@ type Props = {
 export const DynamicButton = ({
   items,
   index,
+  disabled = false,
   bordered = true,
   rounded = true,
   loading = false,
   css
 }: Props) => {
   const cssProps = css || { width: '100%', color: '$white', borderColor: '$kondorPrimary' }
-  const disabled = items[index]?.disabled || loading
+  const disabledValue = disabled || items[index]?.disabled || loading
   const onPress = items[index]?.onPress || (() => {})
   return (
     <Button
       onPress={onPress}
       bordered={bordered}
       rounded={rounded}
-      disabled={disabled}
+      disabled={disabledValue}
       css={cssProps}
     >
       {loading ? <Loading /> : null}

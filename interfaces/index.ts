@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 export type Product = {
     id: number
     name: string,
@@ -58,4 +59,28 @@ export type Pool = {
     assetIdB: number
     scale: number
     fee: number
+}
+
+export enum TransactionsBatchStatus {
+    PENDING = 'pending',
+    DONE = 'done',
+    ERRORED = 'errored'
+}
+export type TransactionsBatch = {
+    id?: string,
+    status: TransactionsBatchStatus,
+    createdAt?: string,
+    updatedAt?: string,
+    data: string[][],
+    sender: string,
+    processed?: number
+}
+
+export type TransactionPreview = {
+  to: string,
+  from: string,
+  amount: number,
+  assetId: number,
+  tags: string[],
+  row: number
 }

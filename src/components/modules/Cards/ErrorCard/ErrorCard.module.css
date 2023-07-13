@@ -1,6 +1,6 @@
 .cardError {
   background: rgb(111,13,41);
-  background: linear-gradient(90deg, rgba(111,13,41,0.5) 0%, rgba(18, 46, 57, 1) 50%);
+  background: linear-gradient(90deg, rgba(111,13,41,0.5) 0%, rgba(18, 46, 57, 1) 25%);
   border-radius: 16px;
   padding: 8px;
 }

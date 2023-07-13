@@ -1,3 +1,4 @@
+import { TransactionPreview, TransactionsBatch } from '../../interfaces'
 import * as XLSX from 'xlsx'
 
 export const generateExcel = (data: (string | number)[][]) => {
@@ -18,4 +19,15 @@ export const generateExcel = (data: (string | number)[][]) => {
   a.click()
 
   URL.revokeObjectURL(url)
+}
+
+export const parseTransactionPreview: (batch: TransactionsBatch) => TransactionPreview[] = (batch: TransactionsBatch) => {
+  return batch.data.map((row, index) => ({
+    to: row[0] as string,
+    from: batch.sender,
+    amount: Number(row[1]),
+    assetId: Number(row[2]),
+    tags: String(row[3]).split(','),
+    row: index + 1
+  }))
 }

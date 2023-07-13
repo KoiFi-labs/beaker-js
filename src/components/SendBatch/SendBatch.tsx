@@ -1,22 +1,26 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-unused-vars */
-import { Container, Spacer, Text } from '@nextui-org/react'
+import { Container, Spacer, Text, Loading, Grid, Collapse } from '@nextui-org/react'
 import { useEffect, useState, useRef } from 'react'
-import { CustomButton } from '../CustomButton/CustomButton'
 import * as XLSX from 'xlsx'
 import styles from './SendBatch.module.css'
 import { generateExcel } from '../../utils/excel'
 import { transactionsTemplateData } from './transactionsTemplate'
-import { validateExcelTransactionsData } from './utils'
+import { validateExcelTransactionsData } from './validator'
 import ErrorCard from '../modules/Cards/ErrorCard/ErrorCard'
 import SuccessfulCard from '../modules/Cards/SuccessfulCard/SuccessfulCard'
-import { AiOutlineCloseCircle } from 'react-icons/ai'
+import { AiOutlineCloseCircle, AiOutlineCloudDownload, AiOutlineCloudUpload } from 'react-icons/ai'
 import { IconButton } from '../IconButton/IconButton'
+import { useWallet } from '../../contexts/useWallet'
+import { DynamicButton } from '../DynamicButton/DynamicButton'
+import { createTransactionsBatch } from '../../services/transactionsBatchService'
+import { TransactionsBatchStatus } from '../../../interfaces'
+import { useRouter } from 'next/router'
 
 enum Step {
   WALLET_CONNECT_NEEDED,
-  INVALID_ALGORAND_ADDRESS,
-  INSUFFICIENT_BALANCE,
+  UPLOAD_EXCEL,
+  EXCEL_WITH_ERRORS,
   READY
 }
 
@@ -25,21 +29,73 @@ const SendBatch = () => {
   const [excelData, setExcelData] = useState<string[][] | null>(null)
   const [excelErrors, setExcelErrors] = useState<string[] | null>(null)
   const [fileName, setFileName] = useState<string>('')
+  const [loading, setLoading] = useState<boolean>(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const { balances, connectWallet, isConnected, account } = useWallet()
+  const router = useRouter()
 
   useEffect(() => {
-    if (excelData) {
-      const errors = validateExcelTransactionsData(excelData)
-      setExcelErrors(errors)
+    if (excelData && excelData.length > 0) {
+      setLoading(true)
+      validateExcelTransactionsData(excelData, balances)
+        .then(errors => {
+          setExcelErrors(errors)
+          setLoading(false)
+          updateStep(excelData, errors)
+        })
     } else {
       setExcelErrors([])
+      updateStep(excelData, excelErrors)
     }
-  }, [excelData])
+  }, [excelData, isConnected])
+
+  const updateStep = (data: string[][] | null, errors: string[] | null) => {
+    if (!isConnected) return setStep(Step.WALLET_CONNECT_NEEDED)
+    if (!data || data[0].length === 0) return setStep(Step.UPLOAD_EXCEL)
+    console.log('errors:', errors)
+    if (errors && errors.length > 0) return setStep(Step.EXCEL_WITH_ERRORS)
+    if (data.length > 1 && errors && errors.length === 0) return setStep(Step.READY)
+  }
 
   const clearExcelData = () => {
     setExcelData([[]])
     setFileName('')
     if (fileInputRef.current) fileInputRef.current.value = ''
+  }
+
+  const buttonOptions = [
+    {
+      text: 'Connect your wallet',
+      onPress: () => { connectWallet() }
+    },
+    {
+      text: 'Excel required',
+      disabled: true
+    },
+    {
+      text: 'Excel with errors',
+      disabled: true
+    },
+    {
+      text: 'Next',
+      onPress: () => { handleNextButton() }
+    }
+  ]
+
+  const handleNextButton = async () => {
+    try {
+      if (!excelData) throw new Error('Invalid data')
+      setLoading(true)
+      const transactionBatch = await createTransactionsBatch({
+        data: excelData.splice(1),
+        status: TransactionsBatchStatus.PENDING,
+        sender: account.addr
+      })
+      router.push(`/send/batch/${transactionBatch.id}`)
+    } catch (e) {
+      setLoading(false)
+      console.log('Error creating transactions batch: ', e)
+    }
   }
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -62,6 +118,7 @@ const SendBatch = () => {
   }
 
   const getExcelPreprossedCard = () => {
+    if (loading) return <Container css={{ p: 0, width: '100%', d: 'flex', justifyContent: 'center' }}><Loading /></Container>
     if (excelErrors?.length) {
       return (
         <>
@@ -72,11 +129,7 @@ const SendBatch = () => {
     }
     if (excelData?.length && excelData.length > 1) {
       return (
-        <>
-          <SuccessfulCard title='Excel preprocessed successfully' details={`${excelData?.length! - 1} transactions are ready to be sent`} />
-          <Spacer />
-          <CustomButton>Send transactions</CustomButton>
-        </>
+        <SuccessfulCard title='Excel preprocessed successfully' details={`${excelData?.length! - 1} transactions are ready to be sent`} />
       )
     }
   }
@@ -91,11 +144,20 @@ const SendBatch = () => {
       }}
       >
         <Spacer y={1.5} />
-        <CustomButton onPress={() => { generateExcel(transactionsTemplateData) }}>Download Excel template</CustomButton>
-        <Spacer y={0.5} />
-        <label className={styles.inputFileButton} htmlFor='input-file'>
-          Upload Excel
-        </label>
+        <Grid.Container justify='space-between'>
+          <Grid xs={5.75}>
+            <label className={styles.inputFileLabel} htmlFor='input-file'>
+              <AiOutlineCloudUpload size={50} />
+              Upload excel
+            </label>
+          </Grid>
+          <Grid xs={5.75}>
+            <button className={styles.inputFileButton} onClick={() => { generateExcel(transactionsTemplateData) }}>
+              <AiOutlineCloudDownload size={50} />
+              Download template
+            </button>
+          </Grid>
+        </Grid.Container>
         <input
           id='input-file'
           className={styles.inputFile}
@@ -120,6 +182,8 @@ const SendBatch = () => {
             : null
         }
         {getExcelPreprossedCard()}
+        <Spacer />
+        <DynamicButton items={buttonOptions} index={step} disabled={loading} />
       </Container>
     </Container>
   )

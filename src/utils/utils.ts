@@ -76,3 +76,19 @@ export const generateRandomString = (length: number) => {
   }
   return result
 }
+
+export function divideIntoBatches<T> (arr: T[], batchSize: number): T[][] {
+  const batches: T[][] = []
+  let currentBatch: T[] = []
+
+  for (let i = 0; i < arr.length; i++) {
+    currentBatch.push(arr[i])
+
+    if (currentBatch.length === batchSize || i === arr.length - 1) {
+      batches.push(currentBatch)
+      currentBatch = []
+    }
+  }
+
+  return batches
+}

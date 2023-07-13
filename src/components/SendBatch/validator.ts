@@ -1,8 +1,10 @@
 import { isValidAddress } from 'algosdk'
+import { Balance, hasOptin } from '../../services/algoService'
 type ExcelData = string[][];
 
-export const validateExcelTransactionsData = (data: ExcelData): string[] => {
+export const validateExcelTransactionsData = async (data: ExcelData, balances: Balance[]): Promise<string[]> => {
   const errors: string[] = []
+  const assetSums: Map<string, number> = new Map()
 
   // Validate each data row (ignore the first row which is the header)
   for (let i = 1; i < data.length; i++) {
@@ -33,6 +35,34 @@ export const validateExcelTransactionsData = (data: ExcelData): string[] => {
     const tags = row[3]
     if (!isValidTagsColumn(tags)) {
       errors.push(`Row ${i + 1}: The tags are not valid.`)
+    }
+
+    if (isValidAmount(amount) && isValidAsset(assetId)) {
+      const currentSum = assetSums.get(assetId) || 0
+      if (assetId === undefined) {
+        assetSums.set('0', currentSum + Number(amount))
+      } else {
+        assetSums.set(assetId, currentSum + Number(amount))
+      }
+    }
+
+    if (isValidAddress(address) && isValidAsset(assetId) && assetId !== undefined) {
+      if (!(await hasOptin(address, Number(assetId)))) {
+        errors.push(`Row ${i + 1}: Address need optin asset ${assetId}`)
+      }
+    }
+  }
+
+  if (errors.length === 0) {
+    for (const [assetId, sum] of assetSums.entries()) {
+      const balance = balances.find((b) => b.assetId === Number(assetId))
+      if (balance === undefined || sum > balance.amount) {
+        if (assetId === '0') {
+          errors.push('Insufficient \'ALGO\' balance')
+        } else {
+          errors.push(`Insufficient balance for asset ${assetId}`)
+        }
+      }
     }
   }
 
