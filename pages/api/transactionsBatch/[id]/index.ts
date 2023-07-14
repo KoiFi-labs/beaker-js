@@ -34,9 +34,9 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       break
     case 'PUT':
       try {
-        if (typeof req.body.proccesed !== 'number') throw new Error('processed is required')
+        if (typeof req.body.processed !== 'number') throw new Error('processed is required')
         const b = await TransactionsBatch.findOneAndUpdate({ _id: id }, {
-          proccesed: req.body.proccesed
+          processed: req.body.processed
         })
         res.status(200).json({
           id: b._id,

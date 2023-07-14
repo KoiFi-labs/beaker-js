@@ -56,17 +56,22 @@ export default function Send () {
       <InfoModal
         isVisible={infoModalIsVisible}
         onHide={() => setInfoModalIsVisible(false)}
-        title='Send styles'
+        title='Send options'
       >
         <Container css={{ p: 0, textAlign: 'initial' }}>
           <Text b>Single</Text>
           <Text size={14}>
-            Send an Asset to any Algorand address.
+            Send Algo or any Algorand Standard Asset in one transaction.
           </Text>
           <Spacer y={0.5} />
           <Text b>Batch</Text>
           <Text size={14}>
-            Send multiple transactions to differents addreses.
+            Effortlessly send multiple transactions of Algo or any Algorand Standard Asset
+          </Text>
+          <Spacer y={0.5} />
+          <Text b>Tag field</Text>
+          <Text size={14}>
+            Allows adding descriptive words to precisely identify the transaction.
           </Text>
         </Container>
       </InfoModal>

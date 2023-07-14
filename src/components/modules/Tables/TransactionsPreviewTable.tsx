@@ -14,7 +14,7 @@ const columns = [
 
 export default function TransactionsPreviewTable ({ items }: { items: TransactionPreview[] }) {
   const [viewAll, setViewAll] = useState<boolean>(false)
-  const itemsToRender = viewAll ? items : items.slice(0, 7)
+  const itemsToRender = viewAll ? items : items.slice(0, 5)
 
   const renderCell = (tx: TransactionPreview, columnKey: React.Key) => {
     switch (columnKey) {

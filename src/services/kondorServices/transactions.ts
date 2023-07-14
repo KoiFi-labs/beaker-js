@@ -118,7 +118,7 @@ export const createTransactionsBatch = async (addr: string, transactions: Transa
   }
 }
 
-const getUniqueAssets = async (assetIds: number[]) => {
+export const getUniqueAssets = async (assetIds: number[]) => {
   const uniqueAssets = []
   const assetInfoMap = new Map()
 
@@ -133,6 +133,9 @@ const getUniqueAssets = async (assetIds: number[]) => {
       }
     }
   }
-  console.log(assetInfoMap)
   return uniqueAssets as AssetInfo[]
+}
+
+export const getSuggestedParams = async () => {
+  return await client.getTransactionParams().do()
 }

@@ -2,6 +2,7 @@ import algoSdk from 'algosdk'
 import { config } from '../../config'
 import { Transaction } from '../../interfaces'
 import { base64Decode } from '../utils/utils'
+import { AssetInfo } from './kondorServices/types'
 
 const algoClient = new algoSdk.Algodv2(config.network.token, config.network.server, config.network.port)
 const algoIndexer = new algoSdk.Indexer(config.network.token, config.network.indexer, config.network.port)
@@ -83,4 +84,18 @@ const parseTransactions: (txs: any) => Transaction[] = (txs: any) => {
       txType: tx['tx-type']
     }
   })
+}
+
+export const getAssetDetails = async (assetId: number) => {
+  try {
+    const assetInfo = await algoIndexer.lookupAssetByID(assetId).do()
+    return assetInfo as AssetInfo
+  } catch (error) {
+    return null
+  }
+}
+
+export const getAddressMinBalance = async (address: string) => {
+  const accountInfo = await algoClient.accountInformation(address).do()
+  return accountInfo['min-balance']
 }

@@ -1,12 +1,12 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-unused-vars */
-import { Container, Spacer, Text, Loading, Grid, Collapse } from '@nextui-org/react'
+import { Container, Spacer, Text, Loading, Grid } from '@nextui-org/react'
 import { useEffect, useState, useRef } from 'react'
 import * as XLSX from 'xlsx'
 import styles from './SendBatch.module.css'
 import { generateExcel } from '../../utils/excel'
 import { transactionsTemplateData } from './transactionsTemplate'
-import { validateExcelTransactionsData } from './validator'
+import { parseRowData, validateExcelTransactionsData } from './validator'
 import ErrorCard from '../modules/Cards/ErrorCard/ErrorCard'
 import SuccessfulCard from '../modules/Cards/SuccessfulCard/SuccessfulCard'
 import { AiOutlineCloseCircle, AiOutlineCloudDownload, AiOutlineCloudUpload } from 'react-icons/ai'
@@ -16,6 +16,7 @@ import { DynamicButton } from '../DynamicButton/DynamicButton'
 import { createTransactionsBatch } from '../../services/transactionsBatchService'
 import { TransactionsBatchStatus } from '../../../interfaces'
 import { useRouter } from 'next/router'
+import { getAddressMinBalance } from '../../services/algoService'
 
 enum Step {
   WALLET_CONNECT_NEEDED,
@@ -37,11 +38,14 @@ const SendBatch = () => {
   useEffect(() => {
     if (excelData && excelData.length > 0) {
       setLoading(true)
-      validateExcelTransactionsData(excelData, balances)
-        .then(errors => {
-          setExcelErrors(errors)
-          setLoading(false)
-          updateStep(excelData, errors)
+      getAddressMinBalance(account.addr)
+        .then(minBal => {
+          validateExcelTransactionsData(excelData, balances, minBal)
+            .then(errors => {
+              setExcelErrors(errors)
+              setLoading(false)
+              updateStep(excelData, errors)
+            })
         })
     } else {
       setExcelErrors([])
@@ -52,7 +56,6 @@ const SendBatch = () => {
   const updateStep = (data: string[][] | null, errors: string[] | null) => {
     if (!isConnected) return setStep(Step.WALLET_CONNECT_NEEDED)
     if (!data || data[0].length === 0) return setStep(Step.UPLOAD_EXCEL)
-    console.log('errors:', errors)
     if (errors && errors.length > 0) return setStep(Step.EXCEL_WITH_ERRORS)
     if (data.length > 1 && errors && errors.length === 0) return setStep(Step.READY)
   }
@@ -87,7 +90,7 @@ const SendBatch = () => {
       if (!excelData) throw new Error('Invalid data')
       setLoading(true)
       const transactionBatch = await createTransactionsBatch({
-        data: excelData.splice(1),
+        data: excelData.splice(1).map(r => parseRowData(r)),
         status: TransactionsBatchStatus.PENDING,
         sender: account.addr
       })
@@ -146,7 +149,7 @@ const SendBatch = () => {
         <Spacer y={1.5} />
         <Grid.Container justify='space-between'>
           <Grid xs={5.75}>
-            <label className={styles.inputFileLabel} htmlFor='input-file'>
+            <label className={isConnected ? styles.inputFileLabel : styles.inputFileLabelDisabled} htmlFor={isConnected ? 'input-file' : undefined}>
               <AiOutlineCloudUpload size={50} />
               Upload excel
             </label>

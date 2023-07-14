@@ -31,6 +31,7 @@ export default function Batch () {
     if (router.query.id) {
       getTransactionsBatchById(router.query.id as string)
         .then(b => {
+          console.log(b)
           setTransactions(parseTransactionPreview(b))
           setProcessed(b.processed)
         })
@@ -92,7 +93,7 @@ export default function Batch () {
       <Spacer />
       <Grid.Container justify='space-between'>
         <Grid sm={2} xs={6}>
-          <CustomButton onPress={handleCancelButton}>Cancel</CustomButton>
+          <CustomButton onPress={handleCancelButton} disabled={step === Step.FINISHED}>Cancel</CustomButton>
         </Grid>
         <Grid sm={2} xs={6}>
           <DynamicButton items={buttonOptions} index={step} loading={loading} />

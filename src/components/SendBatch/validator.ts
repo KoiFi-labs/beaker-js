@@ -1,8 +1,9 @@
 import { isValidAddress } from 'algosdk'
-import { Balance, hasOptin } from '../../services/algoService'
+import { Balance, getAssetDetails, hasOptin } from '../../services/algoService'
+import { getSuggestedParams } from '../../services/kondorServices/transactions'
 type ExcelData = string[][];
 
-export const validateExcelTransactionsData = async (data: ExcelData, balances: Balance[]): Promise<string[]> => {
+export const validateExcelTransactionsData = async (data: ExcelData, balances: Balance[], minBalance: number): Promise<string[]> => {
   const errors: string[] = []
   const assetSums: Map<string, number> = new Map()
 
@@ -53,13 +54,37 @@ export const validateExcelTransactionsData = async (data: ExcelData, balances: B
     }
   }
 
+  const assetsInfo = await Promise.all(
+    Array.from(assetSums.keys())
+      .filter(a => Number(a) !== 0)
+      .map(a => Number(a))
+      .map(a => getAssetDetails(a)))
+
+  const getAssetDecimal = (assetId: number) => {
+    return assetsInfo.find(a => a?.asset.index === assetId)?.asset.params.decimals
+  }
+
+  // check algo balance
+  const algoBalance = balances.find(b => b.assetId === 0)
+  const algoSum = assetSums.get('0') ? assetSums.get('0')! * Math.pow(10, 6) : 0 // add decimals
+  const fees = (await getSuggestedParams()).minFee * (data.length - 1) // min fee * txs amount
+  const algoTotal = algoSum + fees + minBalance
+  if (algoTotal > algoBalance?.amount!) {
+    errors.push('Insufficient \'ALGO\' balance')
+  }
+
   if (errors.length === 0) {
     for (const [assetId, sum] of assetSums.entries()) {
-      const balance = balances.find((b) => b.assetId === Number(assetId))
-      if (balance === undefined || sum > balance.amount) {
-        if (assetId === '0') {
-          errors.push('Insufficient \'ALGO\' balance')
-        } else {
+      if (assetId !== '0') { // Ignore ALGO case
+        const balance = balances.find((b) => b.assetId === Number(assetId))
+        const assetDecimals = getAssetDecimal(Number(assetId))
+        if (!assetDecimals) {
+          errors.push(`Invalid asset ${assetId}`)
+          continue
+        }
+        const sumValue = sum * Math.pow(10, assetDecimals)
+        console.log('Asset: ', assetId, 'Sum: ', sumValue, 'Balance: ', balance?.amount)
+        if (balance === undefined || sumValue > balance.amount) {
           errors.push(`Insufficient balance for asset ${assetId}`)
         }
       }
@@ -84,4 +109,8 @@ const isValidTagsColumn = (value: string): boolean => {
   if (value === undefined) return true
   const words = value.split(',')
   return words.every((word) => word.trim() !== '')
+}
+
+export const parseRowData = (data: string[]) => {
+  return [data[0], data[1], data[2], data[3] ? data[3] : '']
 }

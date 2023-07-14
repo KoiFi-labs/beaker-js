@@ -1,4 +1,4 @@
-import { Button, CSS, Loading } from '@nextui-org/react'
+import { Button, CSS, Loading, Spacer } from '@nextui-org/react'
 
 type Item = {
     text: string,
@@ -36,7 +36,7 @@ export const DynamicButton = ({
       disabled={disabledValue}
       css={cssProps}
     >
-      {loading ? <Loading /> : null}
+      {loading ? <><Loading size='sm' /><Spacer /></> : null}
       {items[index].text}
     </Button>
   )
