@@ -4,6 +4,7 @@ import { useWallet } from '../../src/contexts/useWallet'
 import { BiCopy } from 'react-icons/bi'
 import { IconButton } from '../../src/components/IconButton/IconButton'
 import { CustomButton } from '../../src/components/CustomButton/CustomButton'
+import { copyToClipboard } from '../../src/utils/utils'
 
 export default function Receive () {
   const { account, isConnected, connectWallet } = useWallet()
@@ -35,7 +36,7 @@ export default function Receive () {
                 <QRCode value={account.addr} />
                 <Spacer y={2} />
                 <Text size={14}>{account.addr}</Text>
-                <IconButton><BiCopy />Copy address</IconButton>
+                <IconButton onClick={() => { copyToClipboard(account.addr) }}><BiCopy />Copy address</IconButton>
               </>
               )
             : (
