@@ -8,14 +8,14 @@ export const networks = {
     explorer: ''
   },
   testnet: {
-    token: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
-    server: 'https://node.testnet.algoexplorerapi.io',
-    indexer: 'https://testnet-idx.algonode.cloud',
+    token: process.env.NEXT_PUBLIC_ALGO_TOKEN,
+    server: process.env.NEXT_PUBLIC_ALGO_SERVER,
+    indexer: process.env.NEXT_PUBLIC_ALGO_INDEXER,
     port: '',
-    explorer: 'https://testnet.algoexplorer.io'
+    explorer: process.env.NEXT_PUBLIC_ALGO_EXPLORER
   },
   mainnet: {
-    token: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
+    token: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
     server: 'https://mainnet-api.algonode.cloud',
     indexer: 'https://mainnet-idx.algonode.cloud',
     port: '',
