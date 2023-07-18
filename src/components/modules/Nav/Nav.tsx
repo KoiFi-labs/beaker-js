@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { Button, Navbar, Popover, Text, Card, Avatar, Container, Divider, Spacer, Grid, Tooltip } from '@nextui-org/react'
 import { useWallet } from '../../../contexts/useWallet'
 import { ChevronIcon } from '../../../../public/icons/chevron-down'
-import { Balance } from '../../../services/algoService'
+import { Balance } from '../../../services/algoClient'
 import { microToStandard } from '../../../utils/math'
 import { config } from '../../../../config'
 import { abbreviateAddress, copyToClipboard } from '../../../utils/utils'
@@ -225,7 +225,7 @@ const Nav: React.FC = (): JSX.Element => {
     <Navbar variant='sticky' maxWidth='fluid' isCompact css={{ backgroundColor: '$kondorBlueLight' }}>
       <Navbar.Toggle showIn='xs' isSelected={isToggleSelected} onChange={(isSelected) => { setIsToggleSelected(isSelected as boolean) }} />
       <Navbar.Brand>
-        <Link href='/swap' onClick={() => { setIsToggleSelected(false) }}>
+        <Link href='/home' onClick={() => { setIsToggleSelected(false) }}>
           <Grid.Container>
             <Grid xs={0} sm={12} css={{ display: 'flex', alignItems: 'center', width: '201px', p: 0 }}>
               <Image src='/KondorLogo5.png' alt='Kondor Finance logo' width={201} height={40} />

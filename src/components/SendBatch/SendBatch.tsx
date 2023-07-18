@@ -16,7 +16,7 @@ import { DynamicButton } from '../DynamicButton/DynamicButton'
 import { createTransactionsBatch } from '../../services/transactionsBatchService'
 import { TransactionsBatchStatus } from '../../../interfaces'
 import { useRouter } from 'next/router'
-import { getAddressMinBalance } from '../../services/algoService'
+import { getAddressMinBalance } from '../../services/algoClient'
 
 enum Step {
   WALLET_CONNECT_NEEDED,

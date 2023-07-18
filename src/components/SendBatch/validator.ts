@@ -1,5 +1,5 @@
 import { isValidAddress } from 'algosdk'
-import { Balance, getAssetDetails, hasOptin } from '../../services/algoService'
+import { Balance, getAssetDetails, hasOptin } from '../../services/algoClient'
 import { getSuggestedParams } from '../../services/kondorServices/transactions'
 type ExcelData = string[][];
 

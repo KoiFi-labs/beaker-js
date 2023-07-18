@@ -151,12 +151,20 @@ const SideBar: React.FC = () => {
                         DeFi
                       </Text>
                     </Container>
-                    <Link href='/swap'>
-                      <MenuItem icon={<TbArrowsExchange size={20} />}><Text b size={18}>Swap</Text></MenuItem>
-                    </Link>
-                    <Link href='/stable'>
-                      <MenuItem icon={<BiDollarCircle size={20} />}><Text b size={18}>Stable USD</Text></MenuItem>
-                    </Link>
+                    <MenuItem
+                      disabled
+                      icon={<TbArrowsExchange size={20} />}
+                      suffix={<Badge size='xs'>SOON</Badge>}
+                    >
+                      <Text b size={18}>Swap</Text>
+                    </MenuItem>
+                    <MenuItem
+                      disabled
+                      icon={<BiDollarCircle size={20} />}
+                      suffix={<Badge size='xs'>SOON</Badge>}
+                    >
+                      <Text b size={18}>Stable USD</Text>
+                    </MenuItem>
                     <MenuItem
                       disabled
                       icon={<TbDatabase size={20} />}

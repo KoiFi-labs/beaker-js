@@ -1,6 +1,6 @@
 import { Asset, config } from '../../config'
 import { useWallet } from '../../src/contexts/useWallet'
-import { Balance } from '../../src/services/algoService'
+import { Balance } from '../../src/services/algoClient'
 import { useEffect, useState } from 'react'
 import AssetsTable from '../../src/components/modules/Tables/AssetsTable'
 import ResumeCard from '../../src/components/modules/Cards/ResumeCard'

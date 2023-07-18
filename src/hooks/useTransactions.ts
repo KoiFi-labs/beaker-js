@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useWallet } from '../contexts/useWallet'
-import { getTransactions } from '../services/algoService'
+import { getTransactions } from '../services/algoClient'
 import { Transaction } from '../../interfaces'
 const useTransactions = () => {
   const { account } = useWallet()

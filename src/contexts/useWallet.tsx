@@ -3,7 +3,7 @@ import React, { createContext, useContext, useEffect, useState } from 'react'
 import { peraService } from '../services/walletServices/peraService'
 import { myAlgoService } from '../services/walletServices/myAlgoService'
 import { useSandbox } from './useSandbox'
-import { getBalances, Balance } from '../services/algoService'
+import { getBalances, Balance } from '../services/algoClient'
 import ConnectWalletModal from '../components/modules/Modals/ConnectWalletModal'
 
 const WalletContext = createContext({})

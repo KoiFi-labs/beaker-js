@@ -1,6 +1,6 @@
 import { Text, Card } from '@nextui-org/react'
 import { useWallet } from '../../contexts/useWallet'
-import { Balance } from '../../services/algoService'
+import { Balance } from '../../services/algoClient'
 import { config } from '../../../config'
 import { useState, useEffect } from 'react'
 const DECIMALS = 1000000

@@ -3,6 +3,7 @@ import algosdk from 'algosdk'
 import { config } from '../../../config'
 import { mySigner } from '../signer'
 import { stableForStableSwap, calculateInStableSwap, calculateTokensToMint } from './symmetricPoolServise'
+import { getTransactionsParams } from '../algoService'
 
 const SCALE_DECIMALS = 1000000
 const SCALE_FEE = 1000
@@ -27,7 +28,7 @@ export const stableForNoStableSwap = async (addr: string, amount: number, assetO
     if (!isStableAsset(assetOut)) throw new Error('assetOut should be stable')
     if (isStableAsset(assetIn)) throw new Error('assetIn should not be stable')
     const noStablePool = getPoolByAsset(assetIn)
-    const sp = await client.getTransactionParams().do()
+    const sp = await getTransactionsParams()
     const abiContract = new algosdk.ABIContract(swapper)
     const signer = await mySigner(addr)
     const comp = new algosdk.AtomicTransactionComposer()
@@ -90,7 +91,7 @@ export const noStableForStableSwap = async (addr: string, amount: number, assetO
     if (isStableAsset(assetOut)) throw new Error('assetOut should not be stable')
     if (!isStableAsset(assetIn)) throw new Error('assetIn should be stable')
     const noStablePool = getPoolByAsset(assetOut)
-    const sp = await client.getTransactionParams().do()
+    const sp = await getTransactionsParams()
     const abiContract = new algosdk.ABIContract(swapper)
     const signer = await mySigner(addr)
     const comp = new algosdk.AtomicTransactionComposer()
@@ -154,7 +155,7 @@ export const noStableForNoStableSwap = async (addr: string, amount: number, asse
     if (isStableAsset(assetIn)) throw new Error('assetIn should not be stable')
     const inPool = getPoolByAsset(assetIn)
     const outPool = getPoolByAsset(assetOut)
-    const sp = await client.getTransactionParams().do()
+    const sp = await getTransactionsParams()
     const abiContract = new algosdk.ABIContract(swapper)
     const signer = await mySigner(addr)
     const comp = new algosdk.AtomicTransactionComposer()
